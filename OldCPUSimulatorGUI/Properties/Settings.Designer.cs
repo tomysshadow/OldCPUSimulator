@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OldCPUEmulatorGUI.Properties {
+namespace OldCPUSimulatorGUI.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -26,120 +26,120 @@ namespace OldCPUEmulatorGUI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString0 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString0 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString0"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString0"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString0"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString0"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString1 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString1 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString1"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString1"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString1"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString1"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString2 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString2 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString2"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString2"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString2"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString2"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString3 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString3 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString3"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString3"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString3"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString3"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString4 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString4 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString4"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString4"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString4"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString4"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString5 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString5 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString5"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString5"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString5"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString5"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString6 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString6 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString6"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString6"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString6"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString6"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString7 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString7 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString7"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString7"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString7"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString7"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString8 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString8 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString8"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString8"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString8"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString8"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUEmulatorSaveDataRecentFilesListBoxItemString9 {
+        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString9 {
             get {
-                return ((string)(this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString9"]));
+                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString9"]));
             }
             set {
-                this["oldCPUEmulatorSaveDataRecentFilesListBoxItemString9"] = value;
+                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString9"] = value;
             }
         }
     }

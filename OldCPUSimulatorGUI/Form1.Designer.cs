@@ -1,4 +1,4 @@
-﻿namespace OldCPUEmulatorGUI
+﻿namespace OldCPUSimulatorGUI
 {
 	partial class Form1
 	{
@@ -80,9 +80,9 @@
             this.titleLabel.Font = new System.Drawing.Font("Trebuchet MS", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.titleLabel.Location = new System.Drawing.Point(12, 12);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(256, 27);
+            this.titleLabel.Size = new System.Drawing.Size(261, 27);
             this.titleLabel.TabIndex = 2;
-            this.titleLabel.Text = "Old CPU Emulator 1.5.3";
+            this.titleLabel.Text = "Old CPU Simulator 1.5.4";
             // 
             // subtitleLabel
             // 
@@ -162,8 +162,8 @@
             this.setProcessPriorityHighCheckBox.Size = new System.Drawing.Size(117, 30);
             this.setProcessPriorityHighCheckBox.TabIndex = 2;
             this.setProcessPriorityHighCheckBox.Text = "Set Process Priority\r\nto High";
-            this.helpToolTip.SetToolTip(this.setProcessPriorityHighCheckBox, "Set the process priority of Old CPU Emulator to High,\r\nin order to potentially im" +
-        "prove the accuracy of the emulation.");
+            this.helpToolTip.SetToolTip(this.setProcessPriorityHighCheckBox, "Set the process priority of Old CPU Simulator to High,\r\nin order to potentially i" +
+        "mprove the accuracy of the simulation.");
             this.setProcessPriorityHighCheckBox.UseVisualStyleBackColor = true;
             // 
             // refreshHzGroupBox
@@ -271,7 +271,7 @@
             this.targetMhzComboBox.Name = "targetMhzComboBox";
             this.targetMhzComboBox.Size = new System.Drawing.Size(260, 21);
             this.targetMhzComboBox.TabIndex = 0;
-            this.helpToolTip.SetToolTip(this.targetMhzComboBox, "The Target Rate (in MHz, from 1 to your CPU\'s current clock speed)\r\nto emulate.");
+            this.helpToolTip.SetToolTip(this.targetMhzComboBox, "The Target Rate (in MHz, from 1 to your CPU\'s current clock speed)\r\nto simulate.");
             this.targetMhzComboBox.SelectedIndexChanged += new System.EventHandler(this.targetMhzComboBox_SelectedIndexChanged);
             this.targetMhzComboBox.TextUpdate += new System.EventHandler(this.targetMhzComboBox_TextUpdate);
             // 
@@ -373,7 +373,7 @@
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Old CPU Emulator 1.5.3";
+            this.Text = "Old CPU Simulator";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.recentFilesGroupBox.ResumeLayout(false);
             this.optionsGroupBox.ResumeLayout(false);

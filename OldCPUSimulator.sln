@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OldCPUEmulator", "OldCPUEmulator\OldCPUEmulator.vcxproj", "{1DEE25DA-41EE-4EC1-890F-BE2D1BD02C9D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OldCPUSimulator", "OldCPUSimulator\OldCPUSimulator.vcxproj", "{1DEE25DA-41EE-4EC1-890F-BE2D1BD02C9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldCPUEmulatorGUI", "OldCPUEmulatorGUI\OldCPUEmulatorGUI.csproj", "{FCFAAA94-08FB-44EC-96B2-1DB75B760AA2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldCPUSimulatorGUI", "OldCPUSimulatorGUI\OldCPUSimulatorGUI.csproj", "{FCFAAA94-08FB-44EC-96B2-1DB75B760AA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

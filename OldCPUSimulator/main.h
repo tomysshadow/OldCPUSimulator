@@ -69,7 +69,7 @@ typedef struct _PROCESSOR_POWER_INFORMATION {
 HANDLE hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 HANDLE hConsoleError = GetStdHandle(STD_ERROR_HANDLE);
 */
-const UINT UWM_EMULATE_OLD_CPUS_SYNC_PROCESS = RegisterWindowMessage("UWM_EMULATE_OLD_CPUS_SYNC_PROCESS");
+const UINT UWM_SIMULATE_OLD_CPUS_SYNC_PROCESS = RegisterWindowMessage("UWM_SIMULATE_OLD_CPUS_SYNC_PROCESS");
 
 void consoleLog(const char *buffer, int newline = true, int tab = false, bool err = false) {
 	for (int i = 0;i < tab;i++) {
@@ -92,20 +92,20 @@ void consoleLog(const char *buffer, int newline = true, int tab = false, bool er
 }
 
 void help() {
-	 consoleLog("This command line tool emulates running a process on a CPU with a", true, true);
+	 consoleLog("This command line tool simulates running a process on a CPU with a", true, true);
 	 consoleLog("slower clock speed in order to make old games run at the correct speed", true, true);
 	 consoleLog("or underclock CPU intensive processes like video encoding.", 3, true);
 
 
-	consoleLog("Usage: OldCPUEmulator pathname.exe -t targetRate [options]", 2);
+	consoleLog("Usage: OldCPUSimulator pathname.exe -t targetRate [options]", 2);
 
 	consoleLog("-t targetRate");
 	 consoleLog("The Target Rate (in MHz, from 1 to your CPU's current clock speed)", true, true);
-	 consoleLog("to emulate.", true, true);
+	 consoleLog("to simulate.", true, true);
 	 consoleLog("This argument is required.", 2, true);
 
-	 consoleLog("Try 233 to emulate an Intel Pentium II 233 MHz from the late 1990s.", true, true);
-	 consoleLog("Try 350 to emulate an Intel Pentium II 350 MHz from the early 2000s.", 2, true);
+	 consoleLog("Try 233 to simulate an Intel Pentium II 233 MHz from the late 1990s.", true, true);
+	 consoleLog("Try 350 to simulate an Intel Pentium II 350 MHz from the early 2000s.", 2, true);
 
 	 consoleLog("Go to http://intel.com/pressroom/kits/quickrefyr.htm", true, true);
 	 consoleLog("for a quick reference of year to clock speed.", true, true);
@@ -119,14 +119,14 @@ void help() {
 	 consoleLog("Effectively an accuracy meter.", true, true);
 	 consoleLog("Lower numbers are more accurate but result in choppier playback.", true, true);
 	 consoleLog("Higher numbers are less accurate but result in smoother playback.", true, true);
-	 consoleLog("If not specified, Old CPU Emulator will default to the", true, true);
+	 consoleLog("If not specified, Old CPU Simulator will default to the", true, true);
 	 consoleLog("smoothest possible playback setting.", 2, true);
 
 	 consoleLog("Try 60, 30 or 15 for gaming, 1 to 6 for video encoding.", 2, true);
 
 	consoleLog("--set-process-priority-high");
-	 consoleLog("Set the process priority of Old CPU Emulator to High,", true, true);
-	 consoleLog("in order to potentially improve the accuracy of the emulation.", 2, true);
+	 consoleLog("Set the process priority of Old CPU Simulator to High,", true, true);
+	 consoleLog("in order to potentially improve the accuracy of the simulation.", 2, true);
 
 	consoleLog("--set-synced-process-affinity-one");
 	 consoleLog("Set the process affinity of the synced process", true, true);
@@ -135,7 +135,7 @@ void help() {
 
 	consoleLog("--synced-process-main-thread-only");
 	 consoleLog("Try enabling this if the process you're running", true, true);
-	 consoleLog("seems to be barely affected by Old CPU Emulator,", true, true);
+	 consoleLog("seems to be barely affected by Old CPU Simulator,", true, true);
 	 consoleLog("as it may increase accuracy on some Windows versions,", true, true);
 	 consoleLog("as well as reduce audio stutters,", true, true);
 	 consoleLog("but could also introduce instability with some games.", 2, true);

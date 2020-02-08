@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace OldCPUEmulatorGUI {
+namespace OldCPUSimulatorGUI {
     public partial class Form1 : Form {
         public Form1() {
             InitializeComponent();
@@ -17,16 +17,16 @@ namespace OldCPUEmulatorGUI {
         private void Form1_Load(object sender, EventArgs e) {
             targetMhzComboBox.SelectedIndex = 0;
             floorRefreshRateFifteen();
-            recentFilesListBox.Items.Insert(0, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString0);
-            recentFilesListBox.Items.Insert(1, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString1);
-            recentFilesListBox.Items.Insert(2, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString2);
-            recentFilesListBox.Items.Insert(3, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString3);
-            recentFilesListBox.Items.Insert(4, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString4);
-            recentFilesListBox.Items.Insert(5, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString5);
-            recentFilesListBox.Items.Insert(6, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString6);
-            recentFilesListBox.Items.Insert(7, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString7);
-            recentFilesListBox.Items.Insert(8, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString8);
-            recentFilesListBox.Items.Insert(9, Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString9);
+            recentFilesListBox.Items.Insert(0, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString0);
+            recentFilesListBox.Items.Insert(1, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString1);
+            recentFilesListBox.Items.Insert(2, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString2);
+            recentFilesListBox.Items.Insert(3, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString3);
+            recentFilesListBox.Items.Insert(4, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString4);
+            recentFilesListBox.Items.Insert(5, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString5);
+            recentFilesListBox.Items.Insert(6, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString6);
+            recentFilesListBox.Items.Insert(7, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString7);
+            recentFilesListBox.Items.Insert(8, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString8);
+            recentFilesListBox.Items.Insert(9, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString9);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -45,31 +45,34 @@ namespace OldCPUEmulatorGUI {
         private bool getCurrentMhz(out long currentMhz) {
             currentMhz = 0;
             // create the Get Current Mhz Process to get the Current Rate
-            ProcessStartInfo oldCPUEmulatorProcessStartInfo = new ProcessStartInfo("OldCPUEmulator.exe", "--dev-get-current-mhz");
-            oldCPUEmulatorProcessStartInfo.UseShellExecute = false;
-            oldCPUEmulatorProcessStartInfo.RedirectStandardError = false;
-            oldCPUEmulatorProcessStartInfo.RedirectStandardOutput = true;
-            oldCPUEmulatorProcessStartInfo.RedirectStandardInput = false;
-            oldCPUEmulatorProcessStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            oldCPUEmulatorProcessStartInfo.CreateNoWindow = true;
-            oldCPUEmulatorProcessStartInfo.ErrorDialog = false;
-            oldCPUEmulatorProcessStartInfo.WorkingDirectory = Environment.CurrentDirectory;
+            ProcessStartInfo oldCPUSimulatorProcessStartInfo = new ProcessStartInfo("OldCPUSimulator.exe", "--dev-get-current-mhz");
+            oldCPUSimulatorProcessStartInfo.UseShellExecute = false;
+            oldCPUSimulatorProcessStartInfo.RedirectStandardError = false;
+            oldCPUSimulatorProcessStartInfo.RedirectStandardOutput = true;
+            oldCPUSimulatorProcessStartInfo.RedirectStandardInput = false;
+            oldCPUSimulatorProcessStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            oldCPUSimulatorProcessStartInfo.CreateNoWindow = true;
+            oldCPUSimulatorProcessStartInfo.ErrorDialog = false;
+            oldCPUSimulatorProcessStartInfo.WorkingDirectory = Environment.CurrentDirectory;
 
             try {
-                Process oldCPUEmulatorProcess = new Process();
-                oldCPUEmulatorProcess.StartInfo = oldCPUEmulatorProcessStartInfo;
-                oldCPUEmulatorProcess.Start();
-                string oldCPUEmulatorProcessStandardOutput = oldCPUEmulatorProcess.StandardOutput.ReadToEnd();
-                oldCPUEmulatorProcess.WaitForExit();
+                Process oldCPUSimulatorProcess = new Process();
+                oldCPUSimulatorProcess.StartInfo = oldCPUSimulatorProcessStartInfo;
+                oldCPUSimulatorProcess.Start();
+                string oldCPUSimulatorProcessStandardOutput = oldCPUSimulatorProcess.StandardOutput.ReadToEnd();
 
-                if (oldCPUEmulatorProcess.ExitCode != 0 || !long.TryParse(oldCPUEmulatorProcessStandardOutput.Split('\n').Last(), out currentMhz)) {
+                if (!oldCPUSimulatorProcess.HasExited) {
+                    oldCPUSimulatorProcess.WaitForExit();
+                }
+
+                if (oldCPUSimulatorProcess.ExitCode != 0 || !long.TryParse(oldCPUSimulatorProcessStandardOutput.Split('\n').Last(), out currentMhz)) {
                     MessageBox.Show("Failed to Get Current Rate");
                     return false;
                 }
 
                 // set the Current Rate Value Label's Text to the Current Rate String
                 currentMhzValueLabel.Text = currentMhz.ToString();
-            } catch (Exception e) {
+            } catch (Exception) {
                 MessageBox.Show("Failed to Get Current Rate");
                 return false;
             }
@@ -121,9 +124,9 @@ namespace OldCPUEmulatorGUI {
             return true;
         }
 
-        private bool createOldCPUEmulatorProcess() {
-            // create Arguments for the Old CPU Emulator Process Start Info
-            string oldCPUEmulatorProcessStartInfoArguments = "\"" + recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem) + "\"";
+        private bool createOldCPUSimulatorProcess() {
+            // create Arguments for the Old CPU Simulator Process Start Info
+            string oldCPUSimulatorProcessStartInfoArguments = "\"" + recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem) + "\"";
 
             long targetMhz = 0;
             long currentMhz = 0;
@@ -132,57 +135,57 @@ namespace OldCPUEmulatorGUI {
                 return false;
             }
 
-            oldCPUEmulatorProcessStartInfoArguments += " -t " + targetMhz;
-            oldCPUEmulatorProcessStartInfoArguments += " -r " + refreshHzNumericUpDown.Value;
+            oldCPUSimulatorProcessStartInfoArguments += " -t " + targetMhz;
+            oldCPUSimulatorProcessStartInfoArguments += " -r " + refreshHzNumericUpDown.Value;
 
             if (setProcessPriorityHighCheckBox.Checked) {
-                oldCPUEmulatorProcessStartInfoArguments += " --set-process-priority-high";
+                oldCPUSimulatorProcessStartInfoArguments += " --set-process-priority-high";
             }
 
             if (setSyncedProcessAffinityOneCheckBox.Checked) {
-                oldCPUEmulatorProcessStartInfoArguments += " --set-synced-process-affinity-one";
+                oldCPUSimulatorProcessStartInfoArguments += " --set-synced-process-affinity-one";
             }
 
             if (syncedProcessMainThreadOnlyCheckBox.Checked) {
-                oldCPUEmulatorProcessStartInfoArguments += " --synced-process-main-thread-only";
+                oldCPUSimulatorProcessStartInfoArguments += " --synced-process-main-thread-only";
             }
 
             if (refreshRateFloorFifteenCheckBox.Checked) {
-                oldCPUEmulatorProcessStartInfoArguments += " --refresh-rate-floor-fifteen";
+                oldCPUSimulatorProcessStartInfoArguments += " --refresh-rate-floor-fifteen";
             }
 
-            // create the Old CPU Emulator Process Start Info
-            ProcessStartInfo oldCPUEmulatorProcessStartInfo = new ProcessStartInfo("OldCPUEmulator.exe", oldCPUEmulatorProcessStartInfoArguments);
-            oldCPUEmulatorProcessStartInfo.UseShellExecute = false;
-            oldCPUEmulatorProcessStartInfo.RedirectStandardError = true;
-            oldCPUEmulatorProcessStartInfo.RedirectStandardOutput = false;
-            oldCPUEmulatorProcessStartInfo.RedirectStandardInput = false;
-            oldCPUEmulatorProcessStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            oldCPUEmulatorProcessStartInfo.CreateNoWindow = true;
-            oldCPUEmulatorProcessStartInfo.ErrorDialog = false;
-            oldCPUEmulatorProcessStartInfo.WorkingDirectory = Environment.CurrentDirectory;
+            // create the Old CPU Simulator Process Start Info
+            ProcessStartInfo oldCPUSimulatorProcessStartInfo = new ProcessStartInfo("OldCPUSimulator.exe", oldCPUSimulatorProcessStartInfoArguments);
+            oldCPUSimulatorProcessStartInfo.UseShellExecute = false;
+            oldCPUSimulatorProcessStartInfo.RedirectStandardError = true;
+            oldCPUSimulatorProcessStartInfo.RedirectStandardOutput = false;
+            oldCPUSimulatorProcessStartInfo.RedirectStandardInput = false;
+            oldCPUSimulatorProcessStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            oldCPUSimulatorProcessStartInfo.CreateNoWindow = true;
+            oldCPUSimulatorProcessStartInfo.ErrorDialog = false;
+            oldCPUSimulatorProcessStartInfo.WorkingDirectory = Environment.CurrentDirectory;
 
             try {
-                // create the Old CPU Emulator Process
-                Process oldCPUEmulatorProcess = new Process();
-                oldCPUEmulatorProcess.StartInfo = oldCPUEmulatorProcessStartInfo;
-                oldCPUEmulatorProcess.Start();
-                string oldCPUEmulatorProcessStandardError = oldCPUEmulatorProcess.StandardError.ReadToEnd();
-                oldCPUEmulatorProcess.WaitForExit();
+                // create the Old CPU Simulator Process
+                Process oldCPUSimulatorProcess = new Process();
+                oldCPUSimulatorProcess.StartInfo = oldCPUSimulatorProcessStartInfo;
+                oldCPUSimulatorProcess.Start();
+                string oldCPUSimulatorProcessStandardError = oldCPUSimulatorProcess.StandardError.ReadToEnd();
+                oldCPUSimulatorProcess.WaitForExit();
 
-                switch (oldCPUEmulatorProcess.ExitCode) {
+                switch (oldCPUSimulatorProcess.ExitCode) {
                     case 0:
                     break;
                     case -1:
-                    string[] lastOldCPUEmulatorProcessStandardErrors = oldCPUEmulatorProcessStandardError.Split('\n');
-                    string lastOldCPUEmulatorProcessStandardError = lastOldCPUEmulatorProcessStandardErrors.Length < 2 ? null : lastOldCPUEmulatorProcessStandardErrors[lastOldCPUEmulatorProcessStandardErrors.Length - 2];
+                    string[] lastOldCPUSimulatorProcessStandardErrors = oldCPUSimulatorProcessStandardError.Split('\n');
+                    string lastOldCPUSimulatorProcessStandardError = lastOldCPUSimulatorProcessStandardErrors.Length < 2 ? null : lastOldCPUSimulatorProcessStandardErrors[lastOldCPUSimulatorProcessStandardErrors.Length - 2];
 
-                    if (!string.IsNullOrEmpty(lastOldCPUEmulatorProcessStandardError)) {
-                        MessageBox.Show(lastOldCPUEmulatorProcessStandardError);
+                    if (!string.IsNullOrEmpty(lastOldCPUSimulatorProcessStandardError)) {
+                        MessageBox.Show(lastOldCPUSimulatorProcessStandardError);
                     }
                     return false;
                     case -2:
-                    MessageBox.Show("You cannot run multiple instances of Old CPU Emulator.");
+                    MessageBox.Show("You cannot run multiple instances of Old CPU Simulator.");
                     return false;
                     case -3:
                     MessageBox.Show("Failed to Create New String");
@@ -191,11 +194,11 @@ namespace OldCPUEmulatorGUI {
                     MessageBox.Show("Failed to Set String");
                     return false;
                     default:
-                    MessageBox.Show("Failed to Emulate Old CPU");
+                    MessageBox.Show("Failed to Simulate Old CPU");
                     return false;
                 }
             } catch (Exception e) {
-                MessageBox.Show("Failed to Create Old CPU Emulator Process");
+                MessageBox.Show("Failed to Create Old CPU Simulator Process");
                 return false;
             }
             return true;
@@ -269,18 +272,18 @@ namespace OldCPUEmulatorGUI {
 
                 recentFilesListBox.Items.Insert(0, newOpenFileDialog.FileName);
                 recentFilesListBox.SelectedIndex = 0;
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString0 = recentFilesListBox.Items[0].ToString();
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString1 = recentFilesListBox.Items[1].ToString();
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString2 = recentFilesListBox.Items[2].ToString();
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString3 = recentFilesListBox.Items[3].ToString();
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString4 = recentFilesListBox.Items[4].ToString();
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString5 = recentFilesListBox.Items[5].ToString();
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString6 = recentFilesListBox.Items[6].ToString();
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString7 = recentFilesListBox.Items[7].ToString();
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString8 = recentFilesListBox.Items[8].ToString();
-                Properties.Settings.Default.oldCPUEmulatorSaveDataRecentFilesListBoxItemString9 = recentFilesListBox.Items[9].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString0 = recentFilesListBox.Items[0].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString1 = recentFilesListBox.Items[1].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString2 = recentFilesListBox.Items[2].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString3 = recentFilesListBox.Items[3].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString4 = recentFilesListBox.Items[4].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString5 = recentFilesListBox.Items[5].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString6 = recentFilesListBox.Items[6].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString7 = recentFilesListBox.Items[7].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString8 = recentFilesListBox.Items[8].ToString();
+                Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString9 = recentFilesListBox.Items[9].ToString();
                 Properties.Settings.Default.Save();
-                createOldCPUEmulatorProcess();
+                createOldCPUSimulatorProcess();
             }
         }
 
@@ -289,7 +292,7 @@ namespace OldCPUEmulatorGUI {
         }
 
         private void goButton_Click() {
-            createOldCPUEmulatorProcess();
+            createOldCPUSimulatorProcess();
         }
 
         private void goButton_Click(object sender, EventArgs e) {

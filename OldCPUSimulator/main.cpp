@@ -249,7 +249,7 @@ bool endRefreshTimePeriod(UINT &suspendMs, UINT &resumeMs, UINT ms) {
 void CALLBACK OneShotTimer(UINT, UINT, DWORD dwUser, DWORD, DWORD) {
 	// posts the message to incite the timer
 	// you're not supposed to call anything other than PostMessage in these callbacks
-	PostMessage((HWND)dwUser, UWM_EMULATE_OLD_CPUS_SYNC_PROCESS, NULL, NULL);
+	PostMessage((HWND)dwUser, UWM_SIMULATE_OLD_CPUS_SYNC_PROCESS, NULL, NULL);
 }
 
 bool syncProcess(HWND hWnd,
@@ -520,16 +520,16 @@ void getOriginalNtDll(HINSTANCE &originalNtDll,
 }
 
 int main(int argc, char** argv) {
-	HANDLE oldCPUEmulatorMutex = CreateMutex(NULL, FALSE, "Old CPU Emulator");
+	HANDLE oldCPUSimulatorMutex = CreateMutex(NULL, FALSE, "Old CPU Simulator");
 
 	if (GetLastError() == ERROR_ALREADY_EXISTS) {
-		//consoleLog("You cannot run multiple instances of Old CPU Emulator.", true, false, true);
+		//consoleLog("You cannot run multiple instances of Old CPU Simulator.", true, false, true);
 		return -2;
 	}
 
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 
-	consoleLog("Old CPU Emulator 1.5.3");
+	consoleLog("Old CPU Simulator 1.5.4");
 	consoleLog("By Anthony Kleine", 2);
 
 	ULONG currentMhz = 0;
@@ -537,7 +537,7 @@ int main(int argc, char** argv) {
 	if (argc < 2) {
 		consoleLog("You must pass the filename of an executable with which to create a process as the first argument.", 3, false, true);
 		help();
-		ReleaseMutex(oldCPUEmulatorMutex);
+		ReleaseMutex(oldCPUSimulatorMutex);
 		return -1;
 	}
 
@@ -545,18 +545,18 @@ int main(int argc, char** argv) {
 
 	if (argString == "--help") {
 		help();
-		ReleaseMutex(oldCPUEmulatorMutex);
+		ReleaseMutex(oldCPUSimulatorMutex);
 		return 0;
 	} else if (argString == "--dev-get-current-mhz") {
 		if (!getCurrentMhz(currentMhz)
 			|| !currentMhz) {
 			consoleLog("Failed to Get Current Rate", true, false, true);
-			ReleaseMutex(oldCPUEmulatorMutex);
+			ReleaseMutex(oldCPUSimulatorMutex);
 			return -1;
 		}
 
 		consoleLog(std::to_string(currentMhz).c_str(), false);
-		ReleaseMutex(oldCPUEmulatorMutex);
+		ReleaseMutex(oldCPUSimulatorMutex);
 		return 0;
 	}
 
@@ -576,18 +576,18 @@ int main(int argc, char** argv) {
 			if (!getCurrentMhz(currentMhz)
 				|| !currentMhz) {
 				consoleLog("Failed to Get Current Rate", true, false, true);
-				ReleaseMutex(oldCPUEmulatorMutex);
+				ReleaseMutex(oldCPUSimulatorMutex);
 				return -3;
 			}
 
 			consoleLog(std::to_string(currentMhz).c_str(), false);
-			ReleaseMutex(oldCPUEmulatorMutex);
+			ReleaseMutex(oldCPUSimulatorMutex);
 			return 0;
 		} else if (argString == "-t") {
 			if (!getCurrentMhz(currentMhz)
 				|| !currentMhz) {
 				consoleLog("Failed to Get Current Rate", true, false, true);
-				ReleaseMutex(oldCPUEmulatorMutex);
+				ReleaseMutex(oldCPUSimulatorMutex);
 				return -1;
 			}
 			if (i + 1 < argc) {
@@ -596,7 +596,7 @@ int main(int argc, char** argv) {
 				if (!targetMhz) {
 					consoleLog("The Target Rate must be a number.", true, false, true);
 					help();
-					ReleaseMutex(oldCPUEmulatorMutex);
+					ReleaseMutex(oldCPUSimulatorMutex);
 					return -1;
 				}
 
@@ -605,7 +605,7 @@ int main(int argc, char** argv) {
 					consoleLog(std::to_string(currentMhz).c_str(), false, false, true);
 					consoleLog(".", 3, false, true);
 					help();
-					ReleaseMutex(oldCPUEmulatorMutex);
+					ReleaseMutex(oldCPUSimulatorMutex);
 					return -1;
 				}
 
@@ -613,9 +613,9 @@ int main(int argc, char** argv) {
 			} else {
 				consoleLog("-t option requires one argument: the Target Rate (in MHz, from 1 to your CPU's clock speed of ", false, false, true);
 				consoleLog(std::to_string(currentMhz).c_str(), false, false, true);
-				consoleLog(") to emulate.", 3, false, true);
+				consoleLog(") to simulate.", 3, false, true);
 				help();
-				ReleaseMutex(oldCPUEmulatorMutex);
+				ReleaseMutex(oldCPUSimulatorMutex);
 				return -1;
 			}
 		} else if (argString == "-r") {
@@ -625,7 +625,7 @@ int main(int argc, char** argv) {
 				if (!refreshHz) {
 					consoleLog("The Refresh Rate cannot be zero.", 3, false, true);
 					help();
-					ReleaseMutex(oldCPUEmulatorMutex);
+					ReleaseMutex(oldCPUSimulatorMutex);
 					return -1;
 				}
 
@@ -633,7 +633,7 @@ int main(int argc, char** argv) {
 			} else {
 				consoleLog("-r option requires one argument: the Refresh Rate (in Hz, from 1 to 1000) at which to refresh.", 3, false, true);
 				help();
-				ReleaseMutex(oldCPUEmulatorMutex);
+				ReleaseMutex(oldCPUSimulatorMutex);
 				return -1;
 			}
 		} else if (argString == "--set-process-priority-high") {
@@ -652,27 +652,27 @@ int main(int argc, char** argv) {
 			mode = 2;
 		} else if (argString == "--help") {
 			help();
-			ReleaseMutex(oldCPUEmulatorMutex);
+			ReleaseMutex(oldCPUSimulatorMutex);
 			return 0;
 		} else {
 			consoleLog("Invalid Argument: ", false, false, true);
 			consoleLog(argv[i], 3, false, true);
 			help();
-			ReleaseMutex(oldCPUEmulatorMutex);
+			ReleaseMutex(oldCPUSimulatorMutex);
 			return -1;
 		}
 	}
 
 	if (args < 1) {
 		help();
-		ReleaseMutex(oldCPUEmulatorMutex);
+		ReleaseMutex(oldCPUSimulatorMutex);
 		return -1;
 	}
 
 	if (setProcessPriorityHigh) {
 		if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) {
 			consoleLog("Failed to Set Synced Process Priority", true, false, true);
-			ReleaseMutex(oldCPUEmulatorMutex);
+			ReleaseMutex(oldCPUSimulatorMutex);
 			return -1;
 		}
 	}
@@ -682,19 +682,19 @@ int main(int argc, char** argv) {
 	windowClassEx.cbSize = sizeof(WNDCLASSEX);
 	windowClassEx.lpfnWndProc = DefWindowProc;
 	windowClassEx.hInstance = hInstance;
-	windowClassEx.lpszClassName = "OLD_CPU_EMULATOR";
+	windowClassEx.lpszClassName = "OLD_CPU_SIMULATOR";
 	HWND hWnd = NULL;
 
 	if (!RegisterClassEx(&windowClassEx)) {
 		consoleLog("Failed to Register Window Class", true, false, true);
-		ReleaseMutex(oldCPUEmulatorMutex);
+		ReleaseMutex(oldCPUSimulatorMutex);
 		return -1;
 	} else {
-		hWnd = CreateWindowEx(WS_OVERLAPPED, windowClassEx.lpszClassName, "Old CPU Emulator", WS_CHILD, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, HWND_MESSAGE, NULL, hInstance, NULL);
+		hWnd = CreateWindowEx(WS_OVERLAPPED, windowClassEx.lpszClassName, "Old CPU Simulator", WS_CHILD, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, HWND_MESSAGE, NULL, hInstance, NULL);
 		
 		if (!hWnd) {
 			consoleLog("Failed to Create Message Only Window", true, false, true);
-			ReleaseMutex(oldCPUEmulatorMutex);
+			ReleaseMutex(oldCPUSimulatorMutex);
 			return -1;
 		}
 	}
@@ -714,14 +714,14 @@ int main(int argc, char** argv) {
 		|| syncedProcess == INVALID_HANDLE_VALUE
 		|| syncedProcessMainThread == INVALID_HANDLE_VALUE) {
 		consoleLog("Failed to Create Synced Process", true, false, true);
-		ReleaseMutex(oldCPUEmulatorMutex);
+		ReleaseMutex(oldCPUSimulatorMutex);
 		return -1;
 	}
 
 	if (setSyncedProcessAffinityOne) {
 		if (!setProcessAffinity(syncedProcess, 1)) {
 			consoleLog("Failed to Set Synced Process Affinity", true, false, true);
-			ReleaseMutex(oldCPUEmulatorMutex);
+			ReleaseMutex(oldCPUSimulatorMutex);
 
 			if (!terminateSyncedProcess(syncedProcess, syncedProcessMainThread, syncedProcessMainThreadOnly, hJob)) {
 				consoleLog("Failed to Terminate Synced Process", true, false, true);
@@ -740,7 +740,7 @@ int main(int argc, char** argv) {
 
 	if (!beginRefreshTimePeriod(refreshHz, refreshMs, suspendMs, resumeMs, ms, s, suspend, resume, refreshHzFloorFifteen)) {
 		consoleLog("Failed to Begin Refresh Time Period", true, false, true);
-		ReleaseMutex(oldCPUEmulatorMutex);
+		ReleaseMutex(oldCPUSimulatorMutex);
 
 		if (!terminateSyncedProcess(syncedProcess, syncedProcessMainThread, syncedProcessMainThreadOnly, hJob)) {
 			consoleLog("Failed to Terminate Synced Process", true, false, true);
@@ -776,7 +776,7 @@ int main(int argc, char** argv) {
 			consoleLog("Failed to End Refresh Time Period", true, false, true);
 		}
 
-		ReleaseMutex(oldCPUEmulatorMutex);
+		ReleaseMutex(oldCPUSimulatorMutex);
 
 		if (!terminateSyncedProcess(syncedProcess, syncedProcessMainThread, syncedProcessMainThreadOnly, hJob)) {
 			consoleLog("Failed to Terminate Synced Process", true, false, true);
@@ -788,7 +788,7 @@ int main(int argc, char** argv) {
 		message = {};
 
 		if (PeekMessage(&message, hWnd, 0, 0, PM_REMOVE)) {
-			if (message.message == UWM_EMULATE_OLD_CPUS_SYNC_PROCESS) {
+			if (message.message == UWM_SIMULATE_OLD_CPUS_SYNC_PROCESS) {
 				if (!syncProcess(hWnd,
 					syncedProcess,
 					syncedProcessMainThread,
@@ -808,7 +808,7 @@ int main(int argc, char** argv) {
 						consoleLog("Failed to End Refresh Time Period", true, false, true);
 					}
 
-					ReleaseMutex(oldCPUEmulatorMutex);
+					ReleaseMutex(oldCPUSimulatorMutex);
 
 					if (!terminateSyncedProcess(syncedProcess, syncedProcessMainThread, syncedProcessMainThreadOnly, hJob)) {
 						consoleLog("Failed to Terminate Synced Process", true, false, true);
@@ -823,7 +823,7 @@ int main(int argc, char** argv) {
 		consoleLog("Failed to End Refresh Time Period", true, false, true);
 	}
 
-	ReleaseMutex(oldCPUEmulatorMutex);
+	ReleaseMutex(oldCPUSimulatorMutex);
 	//terminateSyncedProcess(syncedProcess, syncedProcessMainThread, syncedProcessMainThreadOnly, hJob);
 	return 0;
 }

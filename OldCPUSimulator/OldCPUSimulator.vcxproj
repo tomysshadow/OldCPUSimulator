@@ -21,8 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{1DEE25DA-41EE-4EC1-890F-BE2D1BD02C9D}</ProjectGuid>
-    <RootNamespace>OldCPUEmulator</RootNamespace>
+    <RootNamespace>OldCPUSimulator</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <ProjectName>OldCPUSimulator</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -133,10 +134,10 @@
     <Text Include="..\README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="OldCPUEmulator.rc" />
+    <ResourceCompile Include="OldCPUSimulator.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Logo\OldCPUEmulator.ico" />
+    <Image Include="..\Logo\OldCPUSimulator.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
