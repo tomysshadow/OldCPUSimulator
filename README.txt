@@ -1,4 +1,4 @@
-Old CPU Simulator 1.6.6
+Old CPU Simulator 1.6.7
 By Anthony Kleine
 
 	This command line tool simulates running a process on a CPU with a
@@ -59,6 +59,3 @@ Usage: OldCPUSimulator -t targetRate [options] -sw software.exe
 	It must be given last, after all the options. It may
 	include command line arguments, which will be passed
 	to the software specified.
-	
-
-Notice: this tool was previously titled Old CPU Emulator. It was renamed because it is not an emulator.

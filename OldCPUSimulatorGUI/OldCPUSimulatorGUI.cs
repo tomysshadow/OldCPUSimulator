@@ -17,6 +17,9 @@ namespace OldCPUSimulatorGUI {
         }
 
         private void OldCPUSimulatorGUI_Load(object sender, EventArgs e) {
+            titleLabel.Text += " " + typeof(OldCPUSimulatorGUI).Assembly.GetName().Version;
+            Text = titleLabel.Text;
+
             try {
                 Directory.SetCurrentDirectory(Application.StartupPath);
             } catch {
@@ -141,6 +144,36 @@ namespace OldCPUSimulatorGUI {
             return true;
         }
 
+        // https://web.archive.org/web/20190109172835/https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/
+        private void GetValidArgument(ref string argument, bool force = false) {
+            if (force || argument == String.Empty || argument.IndexOfAny(new char[] { ' ', '\t', '\n', '\v', '\"' }) != -1) {
+                int backslashes = 0;
+                StringBuilder validArgument = new StringBuilder();
+
+                for (int i = 0; i < argument.Length; i++) {
+                    backslashes = 0;
+
+                    while (i != argument.Length && argument[i] == '\\') {
+                        backslashes++;
+                        i++;
+                    }
+
+                    if (i != argument.Length) {
+                        if (argument[i] == '"') {
+                            validArgument.Append('\\', backslashes + backslashes + 1);
+                        } else {
+                            validArgument.Append('\\', backslashes);
+                        }
+
+                        validArgument.Append(argument[i]);
+                    }
+                }
+
+                validArgument.Append('\\', backslashes + backslashes);
+                argument = "\"" + validArgument.ToString() + "\"";
+            }
+        }
+
         private void CreateOldCPUSimulatorProcess() {
             // create Arguments for the Old CPU Simulator Process Start Info
             StringBuilder oldCPUSimulatorProcessStartInfoArguments = new StringBuilder();
@@ -175,11 +208,12 @@ namespace OldCPUSimulatorGUI {
 
             try {
                 string fullPath = Path.GetFullPath(recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem));
+                string validArgument = fullPath;
+                GetValidArgument(ref validArgument);
 
                 // create the Old CPU Simulator Process Start Info
-                oldCPUSimulatorProcessStartInfoArguments.Append(" -sw \"");
-                oldCPUSimulatorProcessStartInfoArguments.Append(fullPath);
-                oldCPUSimulatorProcessStartInfoArguments.Append("\"");
+                oldCPUSimulatorProcessStartInfoArguments.Append(" -sw ");
+                oldCPUSimulatorProcessStartInfoArguments.Append(validArgument);
 
                 ProcessStartInfo oldCPUSimulatorProcessStartInfo = new ProcessStartInfo("OldCPUSimulator.exe", oldCPUSimulatorProcessStartInfoArguments.ToString()) {
                     UseShellExecute = false,
