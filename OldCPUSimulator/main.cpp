@@ -101,56 +101,56 @@ bool setProcessAffinity(HANDLE processHandle, byte affinity) {
 	return true;
 }
 
-bool getCommandLineArgument(std::string commandLine, std::string &commandLineArgument) {
+bool getArgumentFromCommandLine(std::string commandLine, std::string &argument) {
 	std::regex commandLineQuotes("^\\s*\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"? ?");
 	std::regex commandLineWords("^\\s*\\S+ ?");
 	std::smatch matchResults = {};
 	bool match = std::regex_search(commandLine, matchResults, commandLineQuotes);
 
 	if (match && matchResults.length() > 0) {
-		commandLineArgument = matchResults[0];
+		argument = matchResults[0];
 		return true;
 	} else {
 		matchResults = {};
 		match = std::regex_search(commandLine, matchResults, commandLineWords);
 
 		if (match && matchResults.length() > 0) {
-			commandLineArgument = matchResults[0];
+			argument = matchResults[0];
 			return true;
 		}
 	}
 	return false;
 }
 
-std::string getCommandLineArgumentRange(std::string commandLine, int begin, int end) {
-	std::vector<std::string>::iterator commandLineArgumentsIterator;
-	std::vector<std::string> commandLineArguments;
-	std::string commandLineArgument = "";
-	std::string commandLineArgumentRange = "";
+std::string getArgumentRangeFromCommandLine(std::string commandLine, int begin, int end) {
+	std::vector<std::string>::iterator argumentsIterator;
+	std::vector<std::string> arguments;
+	std::string argument = "";
+	std::string argumentRange = "";
 
-	while (getCommandLineArgument(commandLine, commandLineArgument)) {
-		commandLineArguments.push_back(commandLineArgument);
-		commandLine = commandLine.substr(commandLineArgument.length());
+	while (getArgumentFromCommandLine(commandLine, argument)) {
+		arguments.push_back(argument);
+		commandLine = commandLine.substr(argument.length());
 	}
 
 	int i = 0;
 
 	if (end < 0) {
-		end += commandLineArguments.size() + 1;
+		end += arguments.size() + 1;
 	}
 
-	for (commandLineArgumentsIterator = commandLineArguments.begin(); commandLineArgumentsIterator != commandLineArguments.end(); commandLineArgumentsIterator++) {
+	for (argumentsIterator = arguments.begin(); argumentsIterator != arguments.end(); argumentsIterator++) {
 		if (i >= end) {
 			break;
 		}
 
 		if (i >= begin) {
-			commandLineArgumentRange += *commandLineArgumentsIterator;
+			argumentRange += *argumentsIterator;
 		}
 
 		i++;
 	}
-	return commandLineArgumentRange;
+	return argumentRange;
 }
 
 bool createSyncedProcess(LPCSTR software, HANDLE &syncedProcessHandle, HANDLE &syncedProcessMainThreadHandle, DWORD &syncedProcessID, bool syncedProcessMainThreadOnly, HANDLE &jobHandle) {
@@ -654,7 +654,7 @@ int main(int argc, char** argv) {
 		return -2;
 	}
 
-	consoleLog("Old CPU Simulator 1.6.5");
+	consoleLog("Old CPU Simulator 1.6.7");
 	consoleLog("By Anthony Kleine", 2);
 
 	/*
@@ -777,7 +777,7 @@ int main(int argc, char** argv) {
 				return -1;
 			}
 		} else if (arg == "-sw" || arg == "--software") {
-			software = getCommandLineArgumentRange(GetCommandLine(), i + 1, -1);
+			software = getArgumentRangeFromCommandLine(GetCommandLine(), i + 1, -1);
 			requiredArgs++;
 			break;
 		} else if (arg == "--set-process-priority-high") {

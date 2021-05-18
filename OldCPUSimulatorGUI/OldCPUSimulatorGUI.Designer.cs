@@ -45,8 +45,8 @@
             this.refreshHzMinimumNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.refreshHzNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.refreshHzLabel = new System.Windows.Forms.Label();
-            this.targetMhzComboBox = new System.Windows.Forms.ComboBox();
             this.syncedProcessMainThreadOnlyCheckBox = new System.Windows.Forms.CheckBox();
+            this.targetMhzComboBox = new System.Windows.Forms.ComboBox();
             this.newButton = new System.Windows.Forms.Button();
             this.goButton = new System.Windows.Forms.Button();
             this.newOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -77,21 +77,21 @@
             // titleLabel
             // 
             this.titleLabel.AutoSize = true;
-            this.titleLabel.Font = new System.Drawing.Font("Trebuchet MS", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.titleLabel.Font = new System.Drawing.Font("Trebuchet MS", 14F, System.Drawing.FontStyle.Bold);
             this.titleLabel.Location = new System.Drawing.Point(12, 12);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(261, 27);
+            this.titleLabel.Size = new System.Drawing.Size(174, 24);
             this.titleLabel.TabIndex = 0;
-            this.titleLabel.Text = "Old CPU Simulator 1.6.6";
+            this.titleLabel.Text = "Old CPU Simulator";
             // 
             // subtitleLabel
             // 
             this.subtitleLabel.AutoSize = true;
-            this.subtitleLabel.Font = new System.Drawing.Font("Georgia", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.subtitleLabel.Font = new System.Drawing.Font("Georgia", 11F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))));
             this.subtitleLabel.ForeColor = System.Drawing.Color.DimGray;
             this.subtitleLabel.Location = new System.Drawing.Point(12, 44);
             this.subtitleLabel.Name = "subtitleLabel";
-            this.subtitleLabel.Size = new System.Drawing.Size(165, 18);
+            this.subtitleLabel.Size = new System.Drawing.Size(152, 18);
             this.subtitleLabel.TabIndex = 1;
             this.subtitleLabel.Text = "By Anthony Kleine";
             // 
@@ -258,6 +258,20 @@
             this.refreshHzLabel.Text = "Refresh Rate (Hz:)";
             this.helpToolTip.SetToolTip(this.refreshHzLabel, resources.GetString("refreshHzLabel.ToolTip"));
             // 
+            // syncedProcessMainThreadOnlyCheckBox
+            // 
+            this.syncedProcessMainThreadOnlyCheckBox.AutoSize = true;
+            this.syncedProcessMainThreadOnlyCheckBox.Checked = true;
+            this.syncedProcessMainThreadOnlyCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.syncedProcessMainThreadOnlyCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.syncedProcessMainThreadOnlyCheckBox.Location = new System.Drawing.Point(10, 85);
+            this.syncedProcessMainThreadOnlyCheckBox.Name = "syncedProcessMainThreadOnlyCheckBox";
+            this.syncedProcessMainThreadOnlyCheckBox.Size = new System.Drawing.Size(110, 30);
+            this.syncedProcessMainThreadOnlyCheckBox.TabIndex = 3;
+            this.syncedProcessMainThreadOnlyCheckBox.Text = "Synced Process\r\nMain Thread Only";
+            this.helpToolTip.SetToolTip(this.syncedProcessMainThreadOnlyCheckBox, resources.GetString("syncedProcessMainThreadOnlyCheckBox.ToolTip"));
+            this.syncedProcessMainThreadOnlyCheckBox.UseVisualStyleBackColor = true;
+            // 
             // targetMhzComboBox
             // 
             this.targetMhzComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -273,20 +287,6 @@
             this.helpToolTip.SetToolTip(this.targetMhzComboBox, "The Target Rate (in MHz, from 1 to your CPU\'s current clock speed)\r\nto simulate.");
             this.targetMhzComboBox.SelectedIndexChanged += new System.EventHandler(this.targetMhzComboBox_SelectedIndexChanged);
             this.targetMhzComboBox.TextUpdate += new System.EventHandler(this.targetMhzComboBox_TextUpdate);
-            // 
-            // syncedProcessMainThreadOnlyCheckBox
-            // 
-            this.syncedProcessMainThreadOnlyCheckBox.AutoSize = true;
-            this.syncedProcessMainThreadOnlyCheckBox.Checked = true;
-            this.syncedProcessMainThreadOnlyCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.syncedProcessMainThreadOnlyCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.syncedProcessMainThreadOnlyCheckBox.Location = new System.Drawing.Point(10, 85);
-            this.syncedProcessMainThreadOnlyCheckBox.Name = "syncedProcessMainThreadOnlyCheckBox";
-            this.syncedProcessMainThreadOnlyCheckBox.Size = new System.Drawing.Size(110, 30);
-            this.syncedProcessMainThreadOnlyCheckBox.TabIndex = 3;
-            this.syncedProcessMainThreadOnlyCheckBox.Text = "Synced Process\r\nMain Thread Only";
-            this.helpToolTip.SetToolTip(this.syncedProcessMainThreadOnlyCheckBox, resources.GetString("syncedProcessMainThreadOnlyCheckBox.ToolTip"));
-            this.syncedProcessMainThreadOnlyCheckBox.UseVisualStyleBackColor = true;
             // 
             // newButton
             // 

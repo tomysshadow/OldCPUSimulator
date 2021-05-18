@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TOMYSSHADOW")]
 [assembly: AssemblyProduct("OldCPUSimulatorGUI")]
-[assembly: AssemblyCopyright("Copyright © Anthony Kleine 2020")]
+[assembly: AssemblyCopyright("Copyright © Anthony Kleine 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.6.6.0")]
-[assembly: AssemblyFileVersion("1.6.6.0")]
+[assembly: AssemblyVersion("1.6.7.0")]
+[assembly: AssemblyFileVersion("1.6.7.0")]
 [assembly: NeutralResourcesLanguage("en")]
 
