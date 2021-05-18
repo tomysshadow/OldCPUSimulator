@@ -253,9 +253,9 @@
             this.refreshHzLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.refreshHzLabel.Location = new System.Drawing.Point(7, 20);
             this.refreshHzLabel.Name = "refreshHzLabel";
-            this.refreshHzLabel.Size = new System.Drawing.Size(95, 13);
+            this.refreshHzLabel.Size = new System.Drawing.Size(92, 13);
             this.refreshHzLabel.TabIndex = 0;
-            this.refreshHzLabel.Text = "Refresh Rate (Hz:)";
+            this.refreshHzLabel.Text = "Refresh Rate (Hz)";
             this.helpToolTip.SetToolTip(this.refreshHzLabel, resources.GetString("refreshHzLabel.ToolTip"));
             // 
             // syncedProcessMainThreadOnlyCheckBox
@@ -284,7 +284,7 @@
             this.targetMhzComboBox.Name = "targetMhzComboBox";
             this.targetMhzComboBox.Size = new System.Drawing.Size(260, 21);
             this.targetMhzComboBox.TabIndex = 8;
-            this.helpToolTip.SetToolTip(this.targetMhzComboBox, "The Target Rate (in MHz, from 1 to your CPU\'s current clock speed)\r\nto simulate.");
+            this.helpToolTip.SetToolTip(this.targetMhzComboBox, "The Target Rate (in MHz, from 1 to your CPU\'s clock speed)\r\nto simulate.");
             this.targetMhzComboBox.SelectedIndexChanged += new System.EventHandler(this.targetMhzComboBox_SelectedIndexChanged);
             this.targetMhzComboBox.TextUpdate += new System.EventHandler(this.targetMhzComboBox_TextUpdate);
             // 
@@ -318,10 +318,10 @@
             this.mhzLimitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.mhzLimitLabel.Location = new System.Drawing.Point(12, 215);
             this.mhzLimitLabel.Name = "mhzLimitLabel";
-            this.mhzLimitLabel.Size = new System.Drawing.Size(88, 13);
+            this.mhzLimitLabel.Size = new System.Drawing.Size(85, 13);
             this.mhzLimitLabel.TabIndex = 5;
-            this.mhzLimitLabel.Text = "Rate Limit (MHz:)";
-            this.helpToolTip.SetToolTip(this.mhzLimitLabel, "The Current Rate (in MHz, your CPU\'s current clock speed.)");
+            this.mhzLimitLabel.Text = "Rate Limit (MHz)";
+            this.helpToolTip.SetToolTip(this.mhzLimitLabel, "The Rate Limit (in MHz, your CPU\'s clock speed.)");
             // 
             // targetMhzLabel
             // 
@@ -329,9 +329,9 @@
             this.targetMhzLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.targetMhzLabel.Location = new System.Drawing.Point(12, 234);
             this.targetMhzLabel.Name = "targetMhzLabel";
-            this.targetMhzLabel.Size = new System.Drawing.Size(116, 13);
+            this.targetMhzLabel.Size = new System.Drawing.Size(112, 13);
             this.targetMhzLabel.TabIndex = 7;
-            this.targetMhzLabel.Text = "Target Rate (MHz:)";
+            this.targetMhzLabel.Text = "Target Rate (MHz)";
             // 
             // mhzLimitValueLabel
             // 
