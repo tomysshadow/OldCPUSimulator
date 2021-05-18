@@ -1,7 +1,6 @@
 C:\Users\Anthony\Documents\Visual Studio 2017\Projects\OldCPUSimulator\OldCPUSimulatorGUI\bin\Release\OldCPUSimulatorGUI.exe.config
 C:\Users\Anthony\Documents\Visual Studio 2017\Projects\OldCPUSimulator\OldCPUSimulatorGUI\bin\Release\OldCPUSimulatorGUI.exe
 C:\Users\Anthony\Documents\Visual Studio 2017\Projects\OldCPUSimulator\OldCPUSimulatorGUI\bin\Release\OldCPUSimulatorGUI.pdb
-C:\Users\Anthony\Documents\Visual Studio 2017\Projects\OldCPUSimulator\OldCPUSimulatorGUI\obj\Release\OldCPUSimulatorGUI.csprojAssemblyReference.cache
 C:\Users\Anthony\Documents\Visual Studio 2017\Projects\OldCPUSimulator\OldCPUSimulatorGUI\obj\Release\OldCPUSimulatorGUI.OldCPUSimulatorGUI.resources
 C:\Users\Anthony\Documents\Visual Studio 2017\Projects\OldCPUSimulator\OldCPUSimulatorGUI\obj\Release\OldCPUSimulatorGUI.Properties.Resources.resources
 C:\Users\Anthony\Documents\Visual Studio 2017\Projects\OldCPUSimulator\OldCPUSimulatorGUI\obj\Release\OldCPUSimulatorGUI.csproj.GenerateResource.cache
