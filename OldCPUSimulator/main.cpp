@@ -1,985 +1,242 @@
-#include "main.h"
-#include <vector>
+#include "shared.h"
+#include "ProcessSync.h"
 #include <string>
-#include <regex>
+#include <sstream>
 #include <windows.h>
-#include <atlbase.h>
-#include <math.h>
-#include <ntstatus.h>
-#include <TlHelp32.h>
-#include <PowrProf.h>
-#include <Shlwapi.h>
 
-void getOriginalNtDll(HMODULE &originalNtDll,
-	NTQUERYSYSTEMINFORMATION &originalNtQuerySystemInformation,
-	NTSUSPENDPROCESS &originalNtSuspendProcess,
-	NTRESUMEPROCESS &originalNtResumeProcess) {
-	consoleLog("Getting Original NtDll");
+#define MAIN_OUT 2
+#define MAIN_ERR true, false, true, __FILE__, __LINE__
 
-	originalNtDll = GetModuleHandle("ntdll.dll");
+void help() {
+	consoleLog("This command line tool simulates running a process on a CPU with a", true, true);
+	consoleLog("slower clock speed in order to make old games run at the correct speed", true, true);
+	consoleLog("or underclock CPU intensive processes like video encoding.", 3, true);
 
-	if (originalNtDll) {
-		originalNtQuerySystemInformation = (NTQUERYSYSTEMINFORMATION)GetProcAddress(originalNtDll, "NtQuerySystemInformation");
-		originalNtSuspendProcess = (NTSUSPENDPROCESS)GetProcAddress(originalNtDll, "NtSuspendProcess");
-		originalNtResumeProcess = (NTRESUMEPROCESS)GetProcAddress(originalNtDll, "NtResumeProcess");
-	}
-}
 
-bool getMhzLimit(ULONG &mhzLimit) {
-	//consoleLog("Getting Rate Limit");
+	consoleLog("Usage: OldCPUSimulator -t targetRate [options] -sw software.exe", 2);
 
-	SYSTEM_INFO systemInfo = {};
-	GetSystemInfo(&systemInfo);
-	const int PROCESSOR_POWER_INFORMATION_SIZE = sizeof(PROCESSOR_POWER_INFORMATION) * systemInfo.dwNumberOfProcessors;
-	PVOID processorPowerInformationOutputBufferPointer = new BYTE[PROCESSOR_POWER_INFORMATION_SIZE];
+	consoleLog("-t targetRate (or --target-rate targetRate)");
+	consoleLog("The Target Rate (in MHz, from 1 to your CPU's current clock speed)", true, true);
+	consoleLog("to simulate.", true, true);
+	consoleLog("This argument is required.", 2, true);
 
-	if (!processorPowerInformationOutputBufferPointer) {
-		consoleLog("Failed to Create Processor Power Information Output Buffer", true, false, true);
-		return false;
-	}
+	consoleLog("Try 233 to simulate an Intel Pentium II 233 MHz from the late 1990s.", true, true);
+	consoleLog("Try 350 to simulate an Intel Pentium II 350 MHz from the early 2000s.", 2, true);
 
-	// TODO: we assume all CPU cores have the same clock speed (it's not normal for anything else to be true right?)
-	if (CallNtPowerInformation(ProcessorInformation, NULL, NULL, processorPowerInformationOutputBufferPointer, PROCESSOR_POWER_INFORMATION_SIZE) != STATUS_SUCCESS) {
-		consoleLog("Failed to Call NtPowerInformation", true, false, true);
-		delete[] processorPowerInformationOutputBufferPointer;
-		processorPowerInformationOutputBufferPointer = NULL;
-		return false;
-	}
+	consoleLog("Go to http://intel.com/pressroom/kits/quickrefyr.htm", true, true);
+	consoleLog("for a quick reference of year to clock speed.", true, true);
+	consoleLog("Note that many of the measurements in said reference", true, true);
+	consoleLog("are in GHz. This tool uses MHz.", 2, true);
 
-	PPROCESSOR_POWER_INFORMATION processorPowerInformationPointer = (PPROCESSOR_POWER_INFORMATION)processorPowerInformationOutputBufferPointer;
+	consoleLog("-r refreshRate (or --refresh-rate refreshRate)");
+	consoleLog("The Refresh Rate (in Hz, from 1 to 1000) at which to refresh.", true, true);
+	consoleLog("This argument is not required.", 2, true);
 
-	mhzLimit = processorPowerInformationPointer->MhzLimit;
+	consoleLog("Effectively an accuracy meter.", true, true);
+	consoleLog("Lower numbers are more accurate but result in choppier playback.", true, true);
+	consoleLog("Higher numbers are less accurate but result in smoother playback.", true, true);
+	consoleLog("If not specified, Old CPU Simulator will default to the", true, true);
+	consoleLog("smoothest possible playback setting.", 2, true);
 
-	delete[] processorPowerInformationOutputBufferPointer;
-	processorPowerInformationOutputBufferPointer = NULL;
-	processorPowerInformationPointer = NULL;
-	return true;
-}
+	consoleLog("Try 60, 30 or 15 for gaming, 1 to 6 for video encoding.", 2, true);
 
-bool setProcessAffinity(HANDLE processHandle, byte affinity) {
-	consoleLog("Setting Process Affinity");
+	consoleLog("--set-process-priority-high");
+	consoleLog("Set the process priority of Old CPU Simulator to High,", true, true);
+	consoleLog("in order to potentially improve the accuracy of the simulation.", 2, true);
 
-	if (!processHandle || processHandle == INVALID_HANDLE_VALUE) {
-		consoleLog("processHandle cannot be NULL or INVALID_HANDLE_VALUE", true, false, true);
-		return false;
-	}
+	consoleLog("--set-synced-process-affinity-one");
+	consoleLog("Set the process affinity of the synced process", true, true);
+	consoleLog("to one, which may make the speed more consistent and prevent crashes.", true, true);
+	consoleLog("May not work with newer games.", 2, true);
 
-	// set synced processHandle's affinity
-	DWORD_PTR processAffinityMask = NULL;
-	DWORD_PTR systemAffinityMask = NULL;
+	consoleLog("--synced-process-main-thread-only");
+	consoleLog("Try enabling this if the process you're running", true, true);
+	consoleLog("seems to be barely affected by Old CPU Simulator,", true, true);
+	consoleLog("as it may increase accuracy on some Windows versions,", true, true);
+	consoleLog("as well as reduce stuttering.", true, true);
+	consoleLog("May cause errors with some games.", 2, true);
 
-	if (!GetProcessAffinityMask(processHandle, &processAffinityMask, &systemAffinityMask)) {
-		consoleLog("Failed to Get Process Affinity Mask", true, false, true);
-		processAffinityMask = NULL;
-		systemAffinityMask = NULL;
-		return false;
-	}
+	consoleLog("--refresh-rate-floor-fifteen");
+	consoleLog("Rounds Refresh Rate to the nearest multiple of 15 if applicable.", 2, true);
 
-	// loop through all the cores, leaving only one bit lit
-	BYTE processAffinityMaskLit = 0;
+	consoleLog("-sw software.exe (or --software software.exe)");
+	consoleLog("The software that will be created as the synced process.", true, true);
+	consoleLog("This argument is required.", 2, true);
 
-	for (BYTE i = 0; i < 32; i++) {
-		if (processAffinityMaskLit < affinity) {
-			if (processAffinityMask & (1 << i)) {
-				processAffinityMaskLit++;
-			}
-		} else {
-			// clear the bit
-			processAffinityMask &= ~(1 << i);
-		}
-	}
-
-	if (!SetProcessAffinityMask(processHandle, processAffinityMask)) {
-		consoleLog("Failed to Set Process Affinity Mask", true, false, true);
-		processAffinityMask = NULL;
-		systemAffinityMask = NULL;
-		return false;
-	}
-
-	processAffinityMask = NULL;
-	systemAffinityMask = NULL;
-	return true;
-}
-
-bool getArgumentFromCommandLine(std::string commandLine, std::string &argument) {
-	std::regex commandLineQuotes("^\\s*\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"? ?");
-	std::regex commandLineWords("^\\s*\\S+ ?");
-	std::smatch matchResults = {};
-	bool match = std::regex_search(commandLine, matchResults, commandLineQuotes);
-
-	if (match && matchResults.length() > 0) {
-		argument = matchResults[0];
-		return true;
-	} else {
-		matchResults = {};
-		match = std::regex_search(commandLine, matchResults, commandLineWords);
-
-		if (match && matchResults.length() > 0) {
-			argument = matchResults[0];
-			return true;
-		}
-	}
-	return false;
-}
-
-std::string getArgumentRangeFromCommandLine(std::string commandLine, int begin, int end) {
-	std::vector<std::string>::iterator argumentsIterator;
-	std::vector<std::string> arguments;
-	std::string argument = "";
-	std::string argumentRange = "";
-
-	while (getArgumentFromCommandLine(commandLine, argument)) {
-		arguments.push_back(argument);
-		commandLine = commandLine.substr(argument.length());
-	}
-
-	int i = 0;
-
-	if (end < 0) {
-		end += arguments.size() + 1;
-	}
-
-	for (argumentsIterator = arguments.begin(); argumentsIterator != arguments.end(); argumentsIterator++) {
-		if (i >= end) {
-			break;
-		}
-
-		if (i >= begin) {
-			argumentRange += *argumentsIterator;
-		}
-
-		i++;
-	}
-	return argumentRange;
-}
-
-bool createSyncedProcess(LPCSTR software, HANDLE &syncedProcessHandle, HANDLE &syncedProcessMainThreadHandle, DWORD &syncedProcessID, bool syncedProcessMainThreadOnly, HANDLE &jobHandle) {
-	consoleLog("Creating Synced Process");
-
-	if (!software) {
-		consoleLog("software cannot be NULL", true, false, true);
-		return false;
-	}
-
-	if (!strlen(software)) {
-		consoleLog("software cannot be EMPTY", true, false, true);
-		return false;
-	}
-
-	BOOL processIsInJob = false;
-
-	if (!IsProcessInJob(GetCurrentProcess(), NULL, &processIsInJob)) {
-		consoleLog("Failed to Test If Process Is In Job", true, false, true);
-		return false;
-	}
-
-	JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobobjectExtendedLimitInformation = {};
-
-	if (processIsInJob) {
-		// if process is in job we need to check if it's the required job
-		if (!QueryInformationJobObject(NULL, JobObjectExtendedLimitInformation, &jobobjectExtendedLimitInformation, sizeof(jobobjectExtendedLimitInformation), NULL)) {
-			consoleLog("Failed to Query Job Object Information", true, false, true);
-			return false;
-		}
-
-		if (!(jobobjectExtendedLimitInformation.BasicLimitInformation.LimitFlags & JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE)) {
-			// if we are not already setup to kill on job close
-			// then we aren't in the required job
-			processIsInJob = false;
-		}
-	} 
-	
-	if (!processIsInJob) {
-		// we create a job so that if either the processHandle or the synced processHandle ends
-		// for whatever reason, we don't sync the processHandle anymore
-		jobHandle = CreateJobObject(NULL, NULL);
-
-		if (!jobHandle || jobHandle == INVALID_HANDLE_VALUE) {
-			consoleLog("Failed to Create Job Object", true, false, true);
-			return false;
-		}
-
-		// this is how we kill both processes if either ends
-		jobobjectExtendedLimitInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
-
-		if (!SetInformationJobObject(jobHandle, JobObjectExtendedLimitInformation, &jobobjectExtendedLimitInformation, sizeof(jobobjectExtendedLimitInformation))) {
-			consoleLog("Failed to Set Job Object Information", true, false, true);
-			return false;
-		}
-
-		// assign the current processHandle to the job object
-		// we assign the synced processHandle later
-		if (!AssignProcessToJobObject(jobHandle, GetCurrentProcess())) {
-			consoleLog("Failed to Assign Current Process to Job Object", true, false, true);
-			return false;
-		}
-	}
-
-	/*
-	int argc = 0;
-	LPWSTR* argv = CommandLineToArgvW(CA2W(software), &argc);
-
-	if (!argv || argc < 1) {
-		consoleLog("Failed to Get Command Line Arguments", true, false, true);
-		return false;
-	}
-
-	// this is where we create the synced processHandle and get a handle to it and its main thread, as well as its ID
-	LPSTR fullPathName = new CHAR[MAX_PATH];
-
-	if (!fullPathName) {
-		consoleLog("Failed to Allocate fullPathName", true, false, true);
-		return false;
-	}
-
-	if (!GetFullPathName(CW2A(argv[0]), MAX_PATH - 1, fullPathName, NULL)) {
-		consoleLog("Failed to Get Full Path Name", true, false, true);
-		delete[] fullPathName;
-		fullPathName = NULL;
-		return false;
-	}
-
-	while (!PathIsDirectory(fullPathName)) {
-		if (!PathRemoveFileSpec(fullPathName)) {
-			consoleLog("Failed to Remove Path File Spec", true, false, true);
-			delete[] fullPathName;
-			fullPathName = NULL;
-			return false;
-		}
-	}
-
-	if (!SetCurrentDirectory(fullPathName)) {
-		consoleLog("Failed to Set Current Directory", true, false, true);
-		delete[] fullPathName;
-		fullPathName = NULL;
-		return false;
-	}
-
-	delete[] fullPathName;
-	fullPathName = NULL;
-	*/
-
-	STARTUPINFO syncedProcessStartupInformation;
-	PROCESS_INFORMATION syncedProcessStartedInformation;
-
-	// default settings for these arguments
-	ZeroMemory(&syncedProcessStartupInformation, sizeof(syncedProcessStartupInformation));
-	ZeroMemory(&syncedProcessStartedInformation, sizeof(syncedProcessStartedInformation));
-
-	// the cb needs to match the size
-	syncedProcessStartupInformation.cb = sizeof(syncedProcessStartupInformation);
-
-	// create the processHandle, fail if we can't
-	if (!CreateProcess(NULL, (LPSTR)software, NULL, NULL, TRUE, 0, NULL, NULL, &syncedProcessStartupInformation, &syncedProcessStartedInformation)
-		|| !syncedProcessStartedInformation.hProcess
-		|| syncedProcessStartedInformation.hProcess == INVALID_HANDLE_VALUE
-		|| !syncedProcessStartedInformation.hThread
-		|| syncedProcessStartedInformation.hThread == INVALID_HANDLE_VALUE) {
-		consoleLog("Failed to Create Process", true, false, true);
-		return false;
-	}
-
-	// get the handles and the ID
-	syncedProcessHandle = syncedProcessStartedInformation.hProcess;
-	syncedProcessMainThreadHandle = syncedProcessStartedInformation.hThread;
-	syncedProcessID = syncedProcessStartedInformation.dwProcessId;
-
-	// assign the synced processHandle to the job object
-	// we've now set up the job processHandle
-	// commented because Windows does this for us automatically
-	/*
-	if (!AssignProcessToJobObject(jobHandle, syncedProcessHandle)) {
-		consoleLog("Failed to Assign Process To Job Object", true, false, true);
-		return false;
-	}
-	*/
-	return true;
-}
-
-bool terminateSyncedProcess(HANDLE &syncedProcessHandle, HANDLE &syncedProcessMainThreadHandle, bool syncedProcessMainThreadOnly, HANDLE &jobHandle) {
-	consoleLog("Terminating Synced Process");
-
-	if (syncedProcessMainThreadOnly) {
-		if (syncedProcessMainThreadHandle && syncedProcessMainThreadHandle != INVALID_HANDLE_VALUE) {
-			if (!CloseHandle(syncedProcessMainThreadHandle)) {
-				consoleLog("Failed to Close Process Main Thread Handle", true, false, true);
-				return false;
-			}
-
-			syncedProcessMainThreadHandle = NULL;
-		}
-	}
-
-	// if not already closed
-	if (syncedProcessHandle && syncedProcessHandle != INVALID_HANDLE_VALUE) {
-		if (!TerminateProcess(syncedProcessHandle, -1)) {
-			consoleLog("Failed to Terminate Process", true, false, true);
-			return false;
-		}
-
-		syncedProcessHandle = NULL;
-	}
-
-	if (jobHandle && jobHandle != INVALID_HANDLE_VALUE) {
-		CloseHandle(jobHandle);
-		jobHandle = NULL;
-	}
-	return true;
-}
-
-bool openSyncedProcessThread(DWORD syncedProcessThreadID, HANDLE &syncedProcessThreadHandle) {
-	//consoleLog("Opening Synced Process Thread");
-
-	// open the synced processHandle's thread
-	// we don't bail if it fails
-	// it's a very real possibility that it could fail
-	// and we need to be able to just ignore it
-	syncedProcessThreadHandle = OpenThread(THREAD_SUSPEND_RESUME, FALSE, syncedProcessThreadID);
-
-	if (!syncedProcessThreadHandle || syncedProcessThreadHandle == INVALID_HANDLE_VALUE) {
-		consoleLog("Failed to Open Process Thread", true, false, true);
-		return false;
-	}
-	return true;
-}
-
-bool closeSyncedProcessThread(HANDLE &syncedProcessThreadHandle) {
-	//consoleLog("Closing Synced Process Thread");
-
-	if (syncedProcessThreadHandle && syncedProcessThreadHandle != INVALID_HANDLE_VALUE) {
-		if (!CloseHandle(syncedProcessThreadHandle)) {
-			consoleLog("Failed to Close Process Thread Handle", true, false, true);
-			return false;
-		}
-
-		syncedProcessThreadHandle = NULL;
-	}
-	return true;
-}
-
-bool beginRefreshTimePeriod(UINT &refreshHz, UINT &refreshMs, UINT &suspendMs, UINT &resumeMs, UINT &ms, UINT &s, DOUBLE suspend, DOUBLE resume, bool refreshHzFloorFifteen) {
-	consoleLog("Beginning Refresh Time Period");
-
-	TIMECAPS devCaps;
-
-	if (timeGetDevCaps(&devCaps, sizeof(TIMECAPS)) != TIMERR_NOERROR) {
-		consoleLog("Failed to Get Time Dev Caps", true, false, true);
-		return false;
-	}
-
-	// one millisecond (approximately)
-	ms = clamp(ms, devCaps.wPeriodMin, devCaps.wPeriodMax);
-	// one second (approximately)
-	s = clamp(s, devCaps.wPeriodMin, devCaps.wPeriodMax);
-	// if we're suspended 3 / 4
-	// and resumed 1 / 4
-	// we'll be suspended a minimum of 3 Ms
-	// and resumed a minimum of 1 Ms
-	// (3 / 4) / (1 / 4) = 3 Ms
-	// 3 Ms + 1 Ms = 4 Ms, our minRefreshMs
-	DOUBLE minRefreshMs = ((DOUBLE)(max(suspend, resume)) / (DOUBLE)(min(suspend, resume)) * (DOUBLE)ms) + (DOUBLE)ms;
-	DOUBLE maxRefreshHz = (DOUBLE)s / (DOUBLE)minRefreshMs;
-	refreshHz = clamp(min(refreshHz, maxRefreshHz), ms, s);
-
-	// we do this after in case the Refresh Rate before was well above the maximum
-	if (refreshHzFloorFifteen) {
-		refreshHz = clamp(min(((refreshHz + 8) / 15) * 15, maxRefreshHz), ms, s);
-	}
-
-	refreshMs = clamp((DOUBLE)s / (DOUBLE)refreshHz, ceil(minRefreshMs), s);
-
-	// should never in any circumstance be lower than ms
-	suspendMs = max(suspend * refreshMs, ms);
-	resumeMs = max(resume * refreshMs, ms);
-
-	// if suspendMs is divisible by resumeMs or vice versa
-	if (!(suspendMs % resumeMs) || !(resumeMs % suspendMs)) {
-		// set precision to highest value that will work for both suspend/resume time
-		if (timeBeginPeriod(min(suspendMs, resumeMs)) != TIMERR_NOERROR) {
-			consoleLog("Failed to Begin Time Period", true, false, true);
-			return false;
-		}
-	} else {
-		// well, everything is divisible by one
-		if (timeBeginPeriod(ms) != TIMERR_NOERROR) {
-			consoleLog("Failed to Begin Time Period", true, false, true);
-			return false;
-		}
-	}
-	return true;
-}
-
-bool endRefreshTimePeriod(UINT &suspendMs, UINT &resumeMs, UINT ms) {
-	consoleLog("Ending Refresh Time Period");
-
-	// find same value as before
-	if (!(suspendMs % resumeMs) || !(resumeMs % suspendMs)) {
-		if (timeEndPeriod(min(suspendMs, resumeMs)) != TIMERR_NOERROR) {
-			consoleLog("Failed to End Time Period", true, false, true);
-			return false;
-		}
-	} else {
-		if (timeEndPeriod(ms) != TIMERR_NOERROR) {
-			consoleLog("Failed to End Time Period", true, false, true);
-			return false;
-		}
-	}
-	return true;
-}
-
-void CALLBACK OneShotTimer(UINT, UINT, DWORD dwUser, DWORD, DWORD) {
-	// posts the message to incite the timer
-	// you're not supposed to call anything other than PostMessage in these callbacks
-	PostMessage((HWND)dwUser, UWM_SIMULATE_OLD_CPUS_SYNC_PROCESS, NULL, NULL);
-}
-
-bool syncProcess(HWND messageOnlyWindowHandle,
-				 HANDLE syncedProcessHandle,
-				 HANDLE syncedProcessMainThreadHandle,
-				 DWORD syncedProcessID,
-				 std::vector<HANDLE> &syncedProcessThreadHandles,
-				 bool syncedProcessMainThreadOnly,
-				 bool &suspended,
-				 char mode,
-				 UINT suspendMs,
-				 UINT resumeMs,
-				 NTQUERYSYSTEMINFORMATION originalNtQuerySystemInformation,
-				 NTSUSPENDPROCESS originalNtSuspendProcess,
-				 NTRESUMEPROCESS originalNtResumeProcess) {
-	//consoleLog("Syncing Process");
-	std::vector<HANDLE>::iterator syncedProcessThreadHandlesIterator;
-
-	if (!suspended) {
-		suspended = true;
-
-		if (!syncedProcessMainThreadOnly) {
-			if (mode > 0) {
-				// ensure this is safe first
-				if (mode > 1) {
-					// take a snapshot of all processes currently running's snapshots
-					// say hello to our main bottleneck
-					// thankfully, we'll probably only ever need to
-					// use it on Windows ME or lower
-					HANDLE syncedProcessThreadSnapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
-
-					if (!syncedProcessThreadSnapshotHandle || syncedProcessThreadSnapshotHandle == INVALID_HANDLE_VALUE) {
-						consoleLog("Failed to Create Synced Process Thread Snapshot", true, false, true);
-						return false;
-					}
-
-					// allows us to walk along the threads
-					THREADENTRY32 syncedProcessThreadWalker;
-					syncedProcessThreadWalker.dwSize = sizeof(THREADENTRY32);
-
-					if (!Thread32First(syncedProcessThreadSnapshotHandle, &syncedProcessThreadWalker)) {
-						consoleLog("Failed to Close Synced Process Thread Snapshot Handle", true, false, true);
-						CloseHandle(syncedProcessThreadSnapshotHandle);
-						syncedProcessThreadSnapshotHandle = NULL;
-						return false;
-					}
-
-					do {
-						if (syncedProcessThreadWalker.th32OwnerProcessID == syncedProcessID) {
-							HANDLE syncedProcessThread = NULL;
-
-							if (openSyncedProcessThread(syncedProcessThreadWalker.th32ThreadID, syncedProcessThread)) {
-								syncedProcessThreadHandles.push_back(syncedProcessThread);
-							}
-						}
-					} while (Thread32Next(syncedProcessThreadSnapshotHandle, &syncedProcessThreadWalker));
-
-					// clean up, clean up, everybody everywhere
-					if (!CloseHandle(syncedProcessThreadSnapshotHandle)) {
-						consoleLog("Failed to Close Synced Process Thread Snapshot Handle", true, false, true);
-						return false;
-					}
-
-					syncedProcessThreadSnapshotHandle = NULL;
-				} else {
-					// we'll need these in a bit
-					const int SYSTEM_PROCESS_INFORMATION_SIZE = sizeof(__SYSTEM_PROCESS_INFORMATION);
-					const int SYSTEM_THREAD_INFORMATION_SIZE = sizeof(SYSTEM_THREAD_INFORMATION);
-					// first we'll allocate a buffer a single page in length
-					unsigned long systemProcessInformationOutputBufferPointerSize = 0x10000;
-					// create the buffer of that size
-					LPVOID systemProcessInformationOutputBufferPointer = new BYTE[systemProcessInformationOutputBufferPointerSize];
-
-					if (!systemProcessInformationOutputBufferPointer) {
-						consoleLog("Failed to Create System Process Information Output Buffer", true, false, true);
-						return false;
-					}
-
-					NTSTATUS NtStatus = originalNtQuerySystemInformation(SystemProcessInformation, systemProcessInformationOutputBufferPointer, systemProcessInformationOutputBufferPointerSize, NULL);
-					
-					// if the buffer wasn't large enough
-					while (NtStatus == STATUS_INFO_LENGTH_MISMATCH) {
-						// double the size
-						systemProcessInformationOutputBufferPointerSize += systemProcessInformationOutputBufferPointerSize;
-						delete[] systemProcessInformationOutputBufferPointer;
-						systemProcessInformationOutputBufferPointer = new BYTE[systemProcessInformationOutputBufferPointerSize];
-
-						if (!systemProcessInformationOutputBufferPointer) {
-							consoleLog("Failed to Create System Process Information Output Buffer", true, false, true);
-							return false;
-						}
-
-						NtStatus = originalNtQuerySystemInformation(SystemProcessInformation, systemProcessInformationOutputBufferPointer, systemProcessInformationOutputBufferPointerSize, NULL);
-					}
-
-					// check it worked
-					if (NtStatus != STATUS_SUCCESS) {
-						consoleLog("Failed to Query System Information", true, false, true);
-						delete[] systemProcessInformationOutputBufferPointer;
-						systemProcessInformationOutputBufferPointer = NULL;
-						return false;
-					} else {
-						// cast it
-						__PSYSTEM_PROCESS_INFORMATION systemProcessInformationPointer = (__PSYSTEM_PROCESS_INFORMATION)systemProcessInformationOutputBufferPointer;
-						
-						// then we'll loop through every processHandle
-						while (systemProcessInformationPointer) {
-							// if the processHandle's ID matches the synced processHandle ID
-							if ((DWORD)systemProcessInformationPointer->UniqueProcessId == syncedProcessID) {
-								// we'll be reading its thread information
-								PSYSTEM_THREAD_INFORMATION systemThreadInformationPointer = (PSYSTEM_THREAD_INFORMATION)((LPBYTE)systemProcessInformationPointer + SYSTEM_PROCESS_INFORMATION_SIZE);
-								
-								// for each thread of the processHandle
-								for (ULONG i = 0; i < systemProcessInformationPointer->NumberOfThreads; i++) {
-									// go to next thread
-									HANDLE syncedProcessThread = NULL;
-
-									if (openSyncedProcessThread((DWORD)systemThreadInformationPointer->ClientId.UniqueThread, syncedProcessThread)) {
-										syncedProcessThreadHandles.push_back(syncedProcessThread);
-									}
-
-									systemThreadInformationPointer++;
-								}
-
-								// syncedProcessThreadHandles now contains all the threads for the processHandle
-								delete[] systemProcessInformationOutputBufferPointer;
-								systemProcessInformationOutputBufferPointer = NULL;
-								systemProcessInformationPointer = NULL;
-								systemThreadInformationPointer = NULL;
-								break;
-							}
-							if (!systemProcessInformationPointer->NextEntryOffset) {
-								// there is no next processHandle and we didn't loop through any threads
-								consoleLog("Failed to Go To Synced Process System Process Information", true, false, true);
-								delete[] systemProcessInformationOutputBufferPointer;
-								systemProcessInformationOutputBufferPointer = NULL;
-								systemProcessInformationPointer = NULL;
-								return false;
-							} else {
-								// go to next processHandle
-								systemProcessInformationPointer = (__PSYSTEM_PROCESS_INFORMATION)((LPBYTE)systemProcessInformationPointer + systemProcessInformationPointer->NextEntryOffset);
-							}
-						}
-					}
-				}
-
-				// SuspendThread already handles the situation in which the thread was already suspended
-				// we don't close the handles here because we need to resume them too
-				for (syncedProcessThreadHandlesIterator = syncedProcessThreadHandles.begin(); syncedProcessThreadHandlesIterator != syncedProcessThreadHandles.end(); syncedProcessThreadHandlesIterator++) {
-					if (*syncedProcessThreadHandlesIterator && *syncedProcessThreadHandlesIterator != INVALID_HANDLE_VALUE) {
-						SuspendThread(*syncedProcessThreadHandlesIterator);
-					}
-				}
-			} else {
-				if (syncedProcessHandle && syncedProcessHandle != INVALID_HANDLE_VALUE) {
-					originalNtSuspendProcess(syncedProcessHandle);
-				}
-			}
-		} else {
-			if (syncedProcessMainThreadHandle && syncedProcessMainThreadHandle != INVALID_HANDLE_VALUE) {
-				SuspendThread(syncedProcessMainThreadHandle);
-			}
-		}
-
-		// set the timeout for the next time to run this function
-		if (!timeSetEvent(suspendMs, 0, OneShotTimer, (DWORD)messageOnlyWindowHandle, TIME_ONESHOT)) {
-			consoleLog("Failed to Set Time Event after Suspending Synced Process", true, false, true);
-			return false;
-		}
-	} else {
-		suspended = false;
-
-		if (!syncedProcessMainThreadOnly) {
-			// slower fallback in case the undocumented functions don't exist
-			if (mode > 0) {
-				// PLEASE FOR THE LOVE OF ALL THAT IS GOOD BE CAREFUL MODIFYING THESE LOOPS!!!
-				// now we close the threads, backwards so it's in the same order
-				// it's alright if we can't resume the thread
-				// we'll just do it on the next loop
-				syncedProcessThreadHandlesIterator = syncedProcessThreadHandles.end();
-
-				while (syncedProcessThreadHandlesIterator != syncedProcessThreadHandles.begin()) {
-					// this cannot be a for loop because this must happen AFTER the condition
-					syncedProcessThreadHandlesIterator--;
-
-					if (*syncedProcessThreadHandlesIterator && *syncedProcessThreadHandlesIterator != INVALID_HANDLE_VALUE) {
-						ResumeThread(*syncedProcessThreadHandlesIterator);
-						closeSyncedProcessThread(*syncedProcessThreadHandlesIterator);
-					}
-				}
-
-				for (syncedProcessThreadHandlesIterator = syncedProcessThreadHandles.begin(); syncedProcessThreadHandlesIterator != syncedProcessThreadHandles.end(); syncedProcessThreadHandlesIterator++) {
-					if (!*syncedProcessThreadHandlesIterator || *syncedProcessThreadHandlesIterator == INVALID_HANDLE_VALUE) {
-						syncedProcessThreadHandles.erase(syncedProcessThreadHandlesIterator--);
-					}
-				}
-			} else {
-				if (syncedProcessHandle && syncedProcessHandle != INVALID_HANDLE_VALUE) {
-					originalNtResumeProcess(syncedProcessHandle);
-				}
-			}
-		} else {
-			if (syncedProcessMainThreadHandle && syncedProcessMainThreadHandle != INVALID_HANDLE_VALUE) {
-				ResumeThread(syncedProcessMainThreadHandle);
-			}
-		}
-
-		if (!timeSetEvent(resumeMs, 0, OneShotTimer, (DWORD)messageOnlyWindowHandle, TIME_ONESHOT)) {
-			consoleLog("Failed to Set Time Event After Resuming Synced Process", true, false, true);
-			return false;
-		}
-	}
-	return true;
+	consoleLog("It must be given last, after all the options. It may", true, true);
+	consoleLog("include command line arguments, which will be passed", true, true);
+	consoleLog("to the software specified.", 2, true);
 }
 
 int main(int argc, char** argv) {
-	HANDLE oldCPUSimulatorMutexHandle = CreateMutex(NULL, FALSE, "Old CPU Simulator");
+	HANDLE applicationMutex = CreateMutex(NULL, TRUE, "Old CPU Simulator");
 
 	if (GetLastError() == ERROR_ALREADY_EXISTS) {
-		//consoleLog("You cannot run multiple instances of Old CPU Simulator.", true, false, true);
+		if (applicationMutex && applicationMutex != INVALID_HANDLE_VALUE) {
+			if (!CloseHandle(applicationMutex)) {
+				consoleLog("Failed to Close Handle", MAIN_ERR);
+				return -2;
+			}
+
+			applicationMutex = NULL;
+		}
 		return -2;
 	}
 
-	consoleLog("Old CPU Simulator 1.6.7");
+	consoleLog("Old CPU Simulator 2.0.0");
 	consoleLog("By Anthony Kleine", 2);
 
-	/*
-	if (argc < 2) {
-		consoleLog("You must pass the filename of an executable with which to create a processHandle as the first argument.", 3, false, true);
+	// the number of required arguments
+	// including the executable name, even if we don't use it
+	const int MIN_ARGC = 1;
+
+	int result = -1;
+
+	if (argc < MIN_ARGC) {
 		help();
-		ReleaseMutex(oldCPUSimulatorMutexHandle);
-		return -1;
-	}
-	*/
-
-	std::string arg = "";
-	ULONG mhzLimit = 0;
-
-	if (argc > 1) {
-		arg = std::string(argv[1]);
-
-		std::for_each(arg.begin(), arg.end(), [](char &argChar) {
-			argChar = tolower(argChar);
-		});
-
-		if (arg == "--help") {
-			help();
-			ReleaseMutex(oldCPUSimulatorMutexHandle);
-			return 0;
-		} else if (arg == "--dev-get-mhz-limit") {
-			if (!getMhzLimit(mhzLimit)
-				|| !mhzLimit) {
-				consoleLog("Failed to Get Rate Limit", true, false, true);
-				ReleaseMutex(oldCPUSimulatorMutexHandle);
-				return -1;
-			}
-
-			consoleLog(std::to_string(mhzLimit).c_str(), false);
-			ReleaseMutex(oldCPUSimulatorMutexHandle);
-			return 0;
-		}
+		goto error2;
 	}
 
-	int requiredArgs = 0;
-	UINT refreshHz = 1000;
-	ULONG targetMhz = 233;
-	std::string software = "";
-	bool setProcessPriorityHigh = false;
-	bool setSyncedProcessAffinityOne = false;
-	bool syncedProcessMainThreadOnly = false;
-	bool refreshHzFloorFifteen = false;
-	char mode = -1;
+	{
+		const int MIN_ARGS_REQUIRED = 2;
 
-	for (int i = 1; i < argc; ++i) {
-		arg = std::string(argv[i]);
+		std::string arg = "";
+		int argc2 = argc - 1;
+		int argsRequired = 0;
 
-		std::for_each(arg.begin(), arg.end(), [](char &argChar) {
-			argChar = tolower(argChar);
-		});
+		bool setProcessPriorityHigh = false;
+		bool setSyncedProcessAffinityOne = false;
+		bool syncedProcessMainThreadOnly = false;
+		bool refreshHzFloorFifteen = false;
 
-		if (arg == "--dev-get-mhz-limit") {
-			if (!getMhzLimit(mhzLimit)
-				|| !mhzLimit) {
-				consoleLog("Failed to Get Rate Limit", true, false, true);
-				ReleaseMutex(oldCPUSimulatorMutexHandle);
-				return -3;
-			}
+		std::string software = "";
 
-			consoleLog(std::to_string(mhzLimit).c_str(), false);
-			ReleaseMutex(oldCPUSimulatorMutexHandle);
-			return 0;
-		} else if (arg == "-t") {
-			if (!getMhzLimit(mhzLimit)
-				|| !mhzLimit) {
-				consoleLog("Failed to Get Rate Limit", true, false, true);
-				ReleaseMutex(oldCPUSimulatorMutexHandle);
-				return -1;
-			}
+		SYNC_MODE syncMode = SYNC_MODE_SUSPEND_PROCESS;
+		ULONG mhzLimit = 0;
+		ULONG targetMhz = 233;
+		UINT refreshHz = 1000;
 
-			if (i + 1 < argc) {
-				targetMhz = strtol(argv[++i], NULL, 10);
+		for (int i = MIN_ARGC; i < argc; i++) {
+			arg = std::string(argv[i]);
 
-				if (!targetMhz) {
-					consoleLog("The Target Rate must be a number.", true, false, true);
-					help();
-					ReleaseMutex(oldCPUSimulatorMutexHandle);
-					return -1;
-				}
-
-				if (mhzLimit <= targetMhz) {
-					consoleLog("The Target Rate cannot exceed or equal the Rate Limit of ", false, false, true);
-					consoleLog(std::to_string(mhzLimit).c_str(), false, false, true);
-					consoleLog(".", 3, false, true);
-					help();
-					ReleaseMutex(oldCPUSimulatorMutexHandle);
-					return -1;
-				}
-
-				requiredArgs++;
-			} else {
-				consoleLog("-t option requires one argument: the Target Rate (in MHz, from 1 to your CPU's clock speed of ", false, false, true);
-				consoleLog(std::to_string(mhzLimit).c_str(), false, false, true);
-				consoleLog(") to simulate.", 3, false, true);
+			if (arg == "-h" || arg == "--help") {
 				help();
-				ReleaseMutex(oldCPUSimulatorMutexHandle);
-				return -1;
-			}
-		} else if (arg == "-r") {
-			if (i + 1 < argc) {
-				refreshHz = atoi(argv[++i]);
-
-				if (!refreshHz) {
-					consoleLog("The Refresh Rate cannot be zero.", 3, false, true);
-					help();
-					ReleaseMutex(oldCPUSimulatorMutexHandle);
-					return -1;
+				result = 0;
+				goto error2;
+			} else if (arg == "--set-process-priority-high") {
+				setProcessPriorityHigh = true;
+			} else if (arg == "--set-synced-process-affinity-one") {
+				setSyncedProcessAffinityOne = true;
+			} else if (arg == "--synced-process-main-thread-only") {
+				syncedProcessMainThreadOnly = true;
+			} else if (arg == "--refresh-rate-floor-fifteen") {
+				refreshHzFloorFifteen = true;
+			} else if (arg == "-sw" || arg == "--software") {
+				software = getArgumentRangeFromCommandLine(GetCommandLine(), i + 1, -1);
+				argsRequired++;
+				break;
+			} else if (arg == "--dev-force-sync-mode-suspend-process") {
+				syncMode = SYNC_MODE_SUSPEND_PROCESS;
+			} else if (arg == "--dev-force-sync-mode-query-system-information") {
+				syncMode = SYNC_MODE_QUERY_SYSTEM_INFORMATION;
+			} else if (arg == "--dev-force-sync-mode-toolhelp-snapshot") {
+				syncMode = SYNC_MODE_TOOLHELP_SNAPSHOT;
+			} else if (arg == "--dev-get-mhz-limit") {
+				if (!getMhzLimit(mhzLimit)
+					|| !mhzLimit) {
+					consoleLog("Failed to Get Rate Limit", MAIN_ERR);
+					result = -3;
+					goto error2;
 				}
 
-				//requiredArgs++;
+				consoleLog(std::to_string(mhzLimit).c_str(), false);
+				result = 0;
+				goto error2;
 			} else {
-				consoleLog("-r option requires one argument: the Refresh Rate (in Hz, from 1 to 1000) at which to refresh.", 3, false, true);
-				help();
-				ReleaseMutex(oldCPUSimulatorMutexHandle);
-				return -1;
-			}
-		} else if (arg == "-sw" || arg == "--software") {
-			software = getArgumentRangeFromCommandLine(GetCommandLine(), i + 1, -1);
-			requiredArgs++;
-			break;
-		} else if (arg == "--set-process-priority-high") {
-			setProcessPriorityHigh = true;
-		} else if (arg == "--set-synced-process-affinity-one") {
-			setSyncedProcessAffinityOne = true;
-		} else if (arg == "--synced-process-main-thread-only") {
-			syncedProcessMainThreadOnly = true;
-		} else if (arg == "--refresh-rate-floor-fifteen") {
-			refreshHzFloorFifteen = true;
-		} else if (arg == "--dev-force-mode-0") {
-			mode = 0;
-		} else if (arg == "--dev-force-mode-1") {
-			mode = 1;
-		} else if (arg == "--dev-force-mode-2") {
-			mode = 2;
-		} else if (arg == "--help") {
-			help();
-			ReleaseMutex(oldCPUSimulatorMutexHandle);
-			return 0;
-		} else {
-			consoleLog("Invalid Argument: ", false, false, true);
-			consoleLog(argv[i], 3, false, true);
-			help();
-			ReleaseMutex(oldCPUSimulatorMutexHandle);
-			return -1;
-		}
-	}
+				if (i < argc2) {
+					if (arg == "-t" || arg == "--target-rate") {
+						if (!getMhzLimit(mhzLimit)
+							|| !mhzLimit) {
+							consoleLog("Failed to Get Rate Limit", MAIN_ERR);
+							result = -3;
+							goto error2;
+						}
 
-	if (requiredArgs < 2) {
-		help();
-		ReleaseMutex(oldCPUSimulatorMutexHandle);
-		return -1;
-	}
+						targetMhz = strtol(argv[++i], NULL, 10);
 
-	if (setProcessPriorityHigh) {
-		if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)) {
-			consoleLog("Failed to Set Synced Process Priority", true, false, true);
-			ReleaseMutex(oldCPUSimulatorMutexHandle);
-			return -1;
-		}
-	}
+						if (!targetMhz) {
+							consoleLog("Target Rate must be a number", 2);
+							help();
+							goto error2;
+						}
 
-	// create message only window
-	HMODULE moduleHandle = GetModuleHandle(NULL);
-	WNDCLASSEX windowClassEx = {};
-	windowClassEx.cbSize = sizeof(WNDCLASSEX);
-	windowClassEx.lpfnWndProc = DefWindowProc;
-	windowClassEx.hInstance = moduleHandle;
-	windowClassEx.lpszClassName = "OLD_CPU_SIMULATOR";
-	HWND messageOnlyWindowHandle = NULL;
+						if (mhzLimit <= targetMhz) {
+							std::ostringstream oStringStream;
+							oStringStream << "Target Rate must not exceed or equal the Rate Limit of " << mhzLimit;
 
-	if (!RegisterClassEx(&windowClassEx)) {
-		consoleLog("Failed to Register Window Class", true, false, true);
-		ReleaseMutex(oldCPUSimulatorMutexHandle);
-		return -1;
-	} else {
-		messageOnlyWindowHandle = CreateWindowEx(WS_OVERLAPPED, windowClassEx.lpszClassName, "Old CPU Simulator", WS_CHILD, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, HWND_MESSAGE, NULL, moduleHandle, NULL);
-		
-		if (!messageOnlyWindowHandle) {
-			consoleLog("Failed to Create Message Only Window", true, false, true);
-			ReleaseMutex(oldCPUSimulatorMutexHandle);
-			return -1;
-		}
-	}
+							consoleLog(oStringStream.str().c_str(), 2);
+							help();
+							goto error2;
+						}
 
-	HMODULE originalNtDll = NULL;
-	NTQUERYSYSTEMINFORMATION originalNtQuerySystemInformation = NULL;
-	NTSUSPENDPROCESS originalNtSuspendProcess = NULL;
-	NTRESUMEPROCESS originalNtResumeProcess = NULL;
-	getOriginalNtDll(originalNtDll, originalNtQuerySystemInformation, originalNtSuspendProcess, originalNtResumeProcess);
+						argsRequired++;
+					} else if (arg == "-r" || arg == "--refresh-rate") {
+						refreshHz = strtol(argv[++i], NULL, 10);
 
-	DWORD syncedProcessID = 0;
-	HANDLE syncedProcessHandle = NULL;
-	HANDLE syncedProcessMainThreadHandle = NULL;
-	HANDLE jobHandle = NULL;
+						if (!refreshHz) {
+							consoleLog("Refresh Rate must not be zero", 2);
+							help();
+							goto error2;
+						}
 
-	if (!createSyncedProcess(software.c_str(), syncedProcessHandle, syncedProcessMainThreadHandle, syncedProcessID, syncedProcessMainThreadOnly, jobHandle)
-		|| !syncedProcessHandle
-		|| syncedProcessHandle == INVALID_HANDLE_VALUE
-		|| !syncedProcessMainThreadHandle
-		|| syncedProcessMainThreadHandle == INVALID_HANDLE_VALUE) {
-		consoleLog("Failed to Create Synced Process", true, false, true);
-		ReleaseMutex(oldCPUSimulatorMutexHandle);
-		return -1;
-	}
-
-	if (!syncedProcessMainThreadOnly) {
-		if (!CloseHandle(syncedProcessMainThreadHandle)) {
-			consoleLog("Failed to Close Process Main Thread Handle", true, false, true);
-			return -1;
-		}
-
-		syncedProcessMainThreadHandle = NULL;
-	}
-
-	if (setSyncedProcessAffinityOne) {
-		if (!setProcessAffinity(syncedProcessHandle, 1)) {
-			consoleLog("Failed to Set Synced Process Affinity", true, false, true);
-			ReleaseMutex(oldCPUSimulatorMutexHandle);
-
-			if (!terminateSyncedProcess(syncedProcessHandle, syncedProcessMainThreadHandle, syncedProcessMainThreadOnly, jobHandle)) {
-				consoleLog("Failed to Terminate Synced Process", true, false, true);
-			}
-			return -1;
-		}
-	}
-
-	UINT refreshMs = 0;
-	UINT suspendMs = 0;
-	UINT resumeMs = 0;
-	UINT ms = 1;
-	UINT s = 1000;
-	DOUBLE suspend = ((DOUBLE)(mhzLimit - targetMhz) / (DOUBLE)mhzLimit);
-	DOUBLE resume = ((DOUBLE)targetMhz / (DOUBLE)mhzLimit);
-
-	if (!beginRefreshTimePeriod(refreshHz, refreshMs, suspendMs, resumeMs, ms, s, suspend, resume, refreshHzFloorFifteen)) {
-		consoleLog("Failed to Begin Refresh Time Period", true, false, true);
-		ReleaseMutex(oldCPUSimulatorMutexHandle);
-
-		if (!terminateSyncedProcess(syncedProcessHandle, syncedProcessMainThreadHandle, syncedProcessMainThreadOnly, jobHandle)) {
-			consoleLog("Failed to Terminate Synced Process", true, false, true);
-		}
-		return -1;
-	}
-
-	// determine mode if relevant
-	if (!syncedProcessMainThreadOnly) {
-		if (mode == -1) {
-			if (!originalNtSuspendProcess || !originalNtResumeProcess) {
-				if (!originalNtQuerySystemInformation) {
-					mode = 2;
-				} else {
-					mode = 1;
-				}
-			} else {
-				mode = 0;
-			}
-		}
-	}
-
-	std::vector<HANDLE> syncedProcessThreads = {};
-	bool suspended = false;
-
-	MSG message = {};
-
-	// incite the timer that will begin syncing the processHandle
-	if (!timeSetEvent(resumeMs, 0, OneShotTimer, (DWORD)messageOnlyWindowHandle, TIME_ONESHOT)) {
-		consoleLog("Failed to Set Time Event Before Syncing Synced Process", true, false, true);
-
-		if (!endRefreshTimePeriod(suspendMs, resumeMs, ms)) {
-			consoleLog("Failed to End Refresh Time Period", true, false, true);
-		}
-
-		ReleaseMutex(oldCPUSimulatorMutexHandle);
-
-		if (!terminateSyncedProcess(syncedProcessHandle, syncedProcessMainThreadHandle, syncedProcessMainThreadOnly, jobHandle)) {
-			consoleLog("Failed to Terminate Synced Process", true, false, true);
-		}
-		return -1;
-	}
-	// while the processHandle is active
-	while (WaitForSingleObject(syncedProcessHandle, 0) == WAIT_TIMEOUT) {
-		message = {};
-
-		if (PeekMessage(&message, messageOnlyWindowHandle, 0, 0, PM_REMOVE)) {
-			if (message.message == UWM_SIMULATE_OLD_CPUS_SYNC_PROCESS) {
-				if (!syncProcess(messageOnlyWindowHandle,
-					syncedProcessHandle,
-					syncedProcessMainThreadHandle,
-					syncedProcessID,
-					syncedProcessThreads,
-					syncedProcessMainThreadOnly,
-					suspended,
-					mode,
-					suspendMs,
-					resumeMs,
-					originalNtQuerySystemInformation,
-					originalNtSuspendProcess,
-					originalNtResumeProcess)) {
-					consoleLog("Failed to Sync Synced Process", true, false, true);
-
-					if (!endRefreshTimePeriod(suspendMs, resumeMs, ms)) {
-						consoleLog("Failed to End Refresh Time Period", true, false, true);
+						//argsRequired++;
 					}
-
-					ReleaseMutex(oldCPUSimulatorMutexHandle);
-
-					if (!terminateSyncedProcess(syncedProcessHandle, syncedProcessMainThreadHandle, syncedProcessMainThreadOnly, jobHandle)) {
-						consoleLog("Failed to Terminate Synced Process", true, false, true);
-					}
-					return -1;
 				}
 			}
 		}
-	}
 
-	if (!endRefreshTimePeriod(suspendMs, resumeMs, ms)) {
-		consoleLog("Failed to End Refresh Time Period", true, false, true);
-	}
+		if (argsRequired < MIN_ARGS_REQUIRED) {
+			help();
+			goto error2;
+		}
 
-	ReleaseMutex(oldCPUSimulatorMutexHandle);
-	//terminateSyncedProcess(syncedProcessHandle, syncedProcessMainThreadHandle, syncedProcessMainThreadOnly, jobHandle);
-	return 0;
+		{
+			ProcessSync processSync(setProcessPriorityHigh, syncedProcessMainThreadOnly, setSyncedProcessAffinityOne, refreshHzFloorFifteen);
+
+			if (!processSync.open(software)) {
+				consoleLog("Failed to Open Process Sync", MAIN_ERR);
+				goto error2;
+			}
+
+			if (!processSync.run(syncMode, mhzLimit, targetMhz, refreshHz)) {
+				consoleLog("Failed to Run Process Sync", MAIN_ERR);
+				goto error3;
+			}
+
+			result = 0;
+			error3:
+			if (!processSync.close()) {
+				consoleLog("Failed to Close Process Sync", MAIN_ERR);
+				result = -1;
+				goto error2;
+			}
+		}
+	}
+	error2:
+	if (applicationMutex && applicationMutex != INVALID_HANDLE_VALUE) {
+		if (!ReleaseMutex(applicationMutex)) {
+			consoleLog("Failed to Release Mutex", MAIN_ERR);
+			result = -2;
+		}
+
+		if (!CloseHandle(applicationMutex)) {
+			consoleLog("Failed to Close Handle", MAIN_ERR);
+			result = -2;
+			goto error;
+		}
+
+		applicationMutex = NULL;
+	}
+	error:
+	return result;
 }

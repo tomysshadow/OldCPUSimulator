@@ -59,5 +59,68 @@ namespace OldCPUSimulatorGUI.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The CPU speed could not be determined..
+        /// </summary>
+        internal static string CPUSpeedNotDetermined {
+            get {
+                return ResourceManager.GetString("CPUSpeedNotDetermined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must not run multiple instances of Old CPU Simulator..
+        /// </summary>
+        internal static string NoMultipleInstances {
+            get {
+                return ResourceManager.GetString("NoMultipleInstances", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The old CPU could not be simulated..
+        /// </summary>
+        internal static string OldCPUNotSimulated {
+            get {
+                return ResourceManager.GetString("OldCPUNotSimulated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Old CPU Simulator Process failed to be created..
+        /// </summary>
+        internal static string OldCPUSimulatorProcessFailedCreate {
+            get {
+                return ResourceManager.GetString("OldCPUSimulatorProcessFailedCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Target Rate must not be zero..
+        /// </summary>
+        internal static string TargetRateNotZero {
+            get {
+                return ResourceManager.GetString("TargetRateNotZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Target Rate must not be greater than or equal to the Rate Limit of {0:D}..
+        /// </summary>
+        internal static string TargetRateRateLimit {
+            get {
+                return ResourceManager.GetString("TargetRateRateLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Target Rate must be a valid number..
+        /// </summary>
+        internal static string TargetRateValidNumber {
+            get {
+                return ResourceManager.GetString("TargetRateValidNumber", resourceCulture);
+            }
+        }
     }
 }

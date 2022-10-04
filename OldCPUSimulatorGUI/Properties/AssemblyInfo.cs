@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OldCPUSimulatorGUI")]
+[assembly: AssemblyTitle("Old CPU Simulator GUI")]
 [assembly: AssemblyDescription("This GUI tool simulates running a process on a CPU with a slower clock speed in order to make old games run at the correct speed or underclock CPU intensive processes like video encoding.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TOMYSSHADOW")]
 [assembly: AssemblyProduct("OldCPUSimulatorGUI")]
-[assembly: AssemblyCopyright("Copyright © Anthony Kleine 2021")]
+[assembly: AssemblyCopyright("Copyright © Anthony Kleine 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.6.7.0")]
-[assembly: AssemblyFileVersion("1.6.7.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
 [assembly: NeutralResourcesLanguage("en")]
 

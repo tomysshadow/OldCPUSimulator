@@ -28,6 +28,7 @@ namespace OldCPUSimulatorGUI {
 
             targetMhzComboBox.SelectedIndex = 0;
             FloorRefreshRateFifteen();
+
             recentFilesListBox.Items.Insert(0, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString0);
             recentFilesListBox.Items.Insert(1, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString1);
             recentFilesListBox.Items.Insert(2, Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString2);
@@ -46,14 +47,14 @@ namespace OldCPUSimulatorGUI {
                 return true;
             }
 
-            if (keyData == (Keys.G)) {
+            if (keyData == Keys.G) {
                 Go();
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private bool GetMhzLimit(out long mhzLimit) {
+        private bool GetMhzLimit(out ulong mhzLimit) {
             mhzLimit = 0;
 
             // create the Get Rate Limit Process to get the Rate Limit
@@ -85,28 +86,26 @@ namespace OldCPUSimulatorGUI {
                     oldCPUSimulatorProcessStandardOutput = oldCPUSimulatorProcess.StandardOutput.ReadToEnd();
                 }
 
-                if (oldCPUSimulatorProcess.ExitCode != 0 || !long.TryParse(oldCPUSimulatorProcessStandardOutput.Split('\n').Last(), out mhzLimit)) {
-                    MessageBox.Show("Failed to Get Rate Limit");
+                if (oldCPUSimulatorProcess.ExitCode != 0 || !ulong.TryParse(oldCPUSimulatorProcessStandardOutput.Split('\n').Last(), out mhzLimit)) {
+                    MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined);
                     return false;
                 }
 
                 // set the Rate Limit Value Label's Text to the Rate Limit String
                 mhzLimitValueLabel.Text = mhzLimit.ToString();
             } catch {
-                MessageBox.Show("Failed to Get Rate Limit");
+                MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined);
                 return false;
             }
             return true;
         }
 
         private bool GetMhzLimit() {
-            long mhzLimit = 0;
-            return GetMhzLimit(out mhzLimit);
+            return GetMhzLimit(out ulong mhzLimit);
         }
 
-        private bool GetMhz(out long targetMhz, out long mhzLimit) {
+        private bool GetMhz(out ulong targetMhz, out ulong mhzLimit) {
             targetMhz = 0;
-            mhzLimit = 0;
 
             if (!GetMhzLimit(out mhzLimit)) {
                 Application.Exit();
@@ -121,22 +120,25 @@ namespace OldCPUSimulatorGUI {
                 case 1:
                 targetMhz = 350;
                 break;
+                case 2:
+                targetMhz = 933;
+                break;
                 default:
-                if (!long.TryParse(targetMhzComboBox.Text, out targetMhz)) {
-                    MessageBox.Show("The Target Rate must be a number.");
+                if (!ulong.TryParse(targetMhzComboBox.Text, out targetMhz)) {
+                    MessageBox.Show(Properties.Resources.TargetRateValidNumber);
                     //targetMhzComboBox.Text = (mhzLimit - 1).ToString();
                     return false;
                 }
                 break;
             }
 
-            if (targetMhz < 1) {
-                MessageBox.Show("The Target Rate cannot be less than one.");
+            if (targetMhz == 0) {
+                MessageBox.Show(Properties.Resources.TargetRateNotZero);
                 return false;
             }
 
             if (mhzLimit <= targetMhz) {
-                MessageBox.Show("The Target Rate cannot exceed or equal the Rate Limit of " + mhzLimitValueLabel.Text + ".");
+                MessageBox.Show(String.Format(Properties.Resources.TargetRateRateLimit, mhzLimit));
                 //targetMhzComboBox.SelectedIndex = 2;
                 //targetMhzComboBox.Text = mhzLimitValueLabel.Text;
                 return false;
@@ -178,10 +180,7 @@ namespace OldCPUSimulatorGUI {
             // create Arguments for the Old CPU Simulator Process Start Info
             StringBuilder oldCPUSimulatorProcessStartInfoArguments = new StringBuilder();
 
-            long targetMhz = 0;
-            long mhzLimit = 0;
-
-            if (!GetMhz(out targetMhz, out mhzLimit)) {
+            if (!GetMhz(out ulong targetMhz, out ulong mhzLimit)) {
                 return;
             }
 
@@ -266,21 +265,18 @@ namespace OldCPUSimulatorGUI {
                     }
                     break;
                     case -2:
-                    MessageBox.Show("You cannot run multiple instances of Old CPU Simulator.");
+                    MessageBox.Show(Properties.Resources.NoMultipleInstances);
                     break;
                     case -3:
-                    MessageBox.Show("Failed to Create New String");
-                    break;
-                    case -4:
-                    MessageBox.Show("Failed to Set String");
+                    MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined);
                     break;
                     default:
-                    MessageBox.Show("Failed to Simulate Old CPU");
+                    MessageBox.Show(Properties.Resources.OldCPUNotSimulated);
                     break;
                 }
             } catch {
                 Show();
-                MessageBox.Show("Failed to Create Old CPU Simulator Process");
+                MessageBox.Show(Properties.Resources.OldCPUSimulatorProcessFailedCreate);
             }
         }
 
@@ -301,15 +297,12 @@ namespace OldCPUSimulatorGUI {
         }
 
         void FloorRefreshRateFifteen() {
-            long mhzLimit = 0;
-            long targetMhz = 0;
-
-            if (!GetMhz(out targetMhz, out mhzLimit)) {
+            if (!GetMhz(out ulong targetMhz, out ulong mhzLimit)) {
                 return;
             }
 
-            double suspend = ((double)(mhzLimit - targetMhz) / (double)mhzLimit);
-            double resume = ((double)targetMhz / (double)mhzLimit);
+            double suspend = (double)(mhzLimit - targetMhz) / mhzLimit;
+            double resume = (double)targetMhz / mhzLimit;
 
             refreshHzNumericUpDown.Increment = 1;
             refreshHzNumericUpDown.Minimum = 1;
@@ -321,18 +314,18 @@ namespace OldCPUSimulatorGUI {
             // and resumed a minimum of 1 Ms
             // (3 / 4) / (1 / 4) = 3 Ms
             // 3 Ms + 1 Ms = 4 Ms, our minRefreshMs
-            double minRefreshMs = ((double)(Math.Max(suspend, resume)) / (double)(Math.Min(suspend, resume)) * (double)refreshHzNumericUpDown.Minimum) + (double)refreshHzNumericUpDown.Minimum;
-            double maxRefreshHz = (double)refreshHzNumericUpDown.Maximum / Math.Ceiling(minRefreshMs);
-            refreshHzNumericUpDown.Value = MathUtils.clamp(Math.Min((uint)refreshHzNumericUpDown.Value, (uint)maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
-            refreshHzNumericUpDown.Maximum = Math.Max((uint)maxRefreshHz, refreshHzNumericUpDown.Minimum);
+            double minRefreshMs = (Math.Max(suspend, resume) / Math.Min(suspend, resume) * (double)refreshHzNumericUpDown.Minimum) + (double)refreshHzNumericUpDown.Minimum;
+            double maxRefreshHz = (minRefreshMs > 0) ? ((double)refreshHzNumericUpDown.Maximum / Math.Ceiling(minRefreshMs)) : (double)refreshHzNumericUpDown.Maximum;
+            refreshHzNumericUpDown.Value = MathUtils.clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
 
             // we do this after in case the Refresh Rate before was well above the maximum
             if (refreshRateFloorFifteenCheckBox.Checked) {
                 refreshHzNumericUpDown.Minimum = 15;
                 refreshHzNumericUpDown.Increment = 15;
-                refreshHzNumericUpDown.Value = MathUtils.clamp((uint)Math.Floor(refreshHzNumericUpDown.Value / 15) * 15, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
-                refreshHzNumericUpDown.Maximum = MathUtils.clamp((uint)Math.Floor(refreshHzNumericUpDown.Maximum / 15) * 15, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+                refreshHzNumericUpDown.Value = MathUtils.clamp((uint)Math.Min((double)Math.Floor(refreshHzNumericUpDown.Value / 15) * 15, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
             }
+
+            refreshHzNumericUpDown.Maximum = refreshHzNumericUpDown.Value;
 
             ShowRefreshRateMinimumMaximum();
         }
@@ -352,6 +345,7 @@ namespace OldCPUSimulatorGUI {
 
                 recentFilesListBox.Items.Insert(0, newOpenFileDialog.FileName);
                 recentFilesListBox.SelectedIndex = 0;
+
                 Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString0 = recentFilesListBox.Items[0].ToString();
                 Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString1 = recentFilesListBox.Items[1].ToString();
                 Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString2 = recentFilesListBox.Items[2].ToString();
@@ -363,6 +357,7 @@ namespace OldCPUSimulatorGUI {
                 Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString8 = recentFilesListBox.Items[8].ToString();
                 Properties.Settings.Default.oldCPUSimulatorSaveDataRecentFilesListBoxItemString9 = recentFilesListBox.Items[9].ToString();
                 Properties.Settings.Default.Save();
+
                 CreateOldCPUSimulatorProcess();
             }
         }
