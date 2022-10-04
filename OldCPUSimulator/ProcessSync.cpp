@@ -346,34 +346,34 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 	consoleLog("Running Process Sync", PROCESS_SYNC_OUT);
 
 	if (!mhzLimit) {
-		consoleLog("mhzLimit must not be zero", PROCESS_SYNC_ERR);
+		consoleLog("Rate Limit must not be zero", PROCESS_SYNC_ERR);
 		return false;
 	}
 
 	if (!targetMhz) {
-		consoleLog("targetMhz must not be zero", PROCESS_SYNC_ERR);
+		consoleLog("Target Rate must not be zero", PROCESS_SYNC_ERR);
 		return false;
 	}
 
 	if (!refreshHz) {
-		consoleLog("refreshHz must not be zero", PROCESS_SYNC_ERR);
+		consoleLog("Refresh Rate must not be zero", PROCESS_SYNC_ERR);
 		return false;
 	}
 
 	if (!syncedProcess) {
-		consoleLog("syncedProcess must not be NULL", PROCESS_SYNC_ERR);
+		consoleLog("Synced Process must not be NULL", PROCESS_SYNC_ERR);
 		return false;
 	}
 
 	if (!syncedThread) {
-		consoleLog("syncedThread must not be NULL", PROCESS_SYNC_ERR);
+		consoleLog("Synced Thread must not be NULL", PROCESS_SYNC_ERR);
 		return false;
 	}
 
-	if (targetMhz > mhzLimit) {
+	if (targetMhz >= mhzLimit) {
 		//consoleLog("targetMhz must be less than mhzLimit", PROCESS_SYNC_ERR);
 		//return false;
-		consoleLog("Ignoring Sync Mode: targetMhz is less than mhzLimit", PROCESS_SYNC_OUT);
+		consoleLog("Ignoring Sync Mode: Target Rate is greater than or equal to Rate Limit", PROCESS_SYNC_OUT);
 
 		if (WaitForSingleObject(syncedProcess, INFINITE) != WAIT_OBJECT_0) {
 			consoleLog("Failed to Wait For Single Object", PROCESS_SYNC_ERR);
