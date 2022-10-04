@@ -324,8 +324,10 @@ bool ProcessSync::close() {
 	error2:
 	if (syncedProcess) {
 		if (!TerminateProcess(syncedProcess, 0)) {
-			consoleLog("Failed to Terminate Process", PROCESS_SYNC_ERR);
-			result = false;
+			if (GetLastError() != ERROR_ACCESS_DENIED) {
+				consoleLog("Failed to Terminate Process", PROCESS_SYNC_ERR);
+				result = false;
+			}
 		}
 
 		if (!CloseHandle(syncedProcess)) {

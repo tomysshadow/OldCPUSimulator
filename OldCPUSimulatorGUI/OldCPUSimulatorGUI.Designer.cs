@@ -155,6 +155,8 @@
             // setProcessPriorityHighCheckBox
             // 
             this.setProcessPriorityHighCheckBox.AutoSize = true;
+            this.setProcessPriorityHighCheckBox.Checked = true;
+            this.setProcessPriorityHighCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.setProcessPriorityHighCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.setProcessPriorityHighCheckBox.Location = new System.Drawing.Point(10, 43);
             this.setProcessPriorityHighCheckBox.Name = "setProcessPriorityHighCheckBox";
