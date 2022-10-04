@@ -177,13 +177,12 @@ namespace OldCPUSimulatorGUI {
         }
 
         private void CreateOldCPUSimulatorProcess() {
-            // create Arguments for the Old CPU Simulator Process Start Info
-            StringBuilder oldCPUSimulatorProcessStartInfoArguments = new StringBuilder();
-
-            if (!GetMhz(out ulong targetMhz, out ulong mhzLimit)) {
+            if (!FloorRefreshRateFifteen(out ulong targetMhz, out ulong mhzLimit)) {
                 return;
             }
 
+            // create Arguments for the Old CPU Simulator Process Start Info
+            StringBuilder oldCPUSimulatorProcessStartInfoArguments = new StringBuilder();
             oldCPUSimulatorProcessStartInfoArguments.Append(" -t ");
             oldCPUSimulatorProcessStartInfoArguments.Append(targetMhz);
             oldCPUSimulatorProcessStartInfoArguments.Append(" -r ");
@@ -304,9 +303,9 @@ namespace OldCPUSimulatorGUI {
             }
         }
 
-        void FloorRefreshRateFifteen() {
-            if (!GetMhz(out ulong targetMhz, out ulong mhzLimit)) {
-                return;
+        bool FloorRefreshRateFifteen(out ulong targetMhz, out ulong mhzLimit) {
+            if (!GetMhz(out targetMhz, out mhzLimit)) {
+                return false;
             }
 
             double suspend = (double)(mhzLimit - targetMhz) / mhzLimit;
@@ -324,18 +323,26 @@ namespace OldCPUSimulatorGUI {
             // 3 Ms + 1 Ms = 4 Ms, our minRefreshMs
             double minRefreshMs = (Math.Max(suspend, resume) / Math.Min(suspend, resume) * (double)refreshHzNumericUpDown.Minimum) + (double)refreshHzNumericUpDown.Minimum;
             double maxRefreshHz = (minRefreshMs > 0) ? ((double)refreshHzNumericUpDown.Maximum / Math.Ceiling(minRefreshMs)) : (double)refreshHzNumericUpDown.Maximum;
-            refreshHzNumericUpDown.Value = MathUtils.clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+
+            refreshHzNumericUpDown.Value = MathUtils.clamp((uint)Math.Min((double)refreshHzNumericUpDown.Value, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+            refreshHzNumericUpDown.Maximum = MathUtils.clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
 
             // we do this after in case the Refresh Rate before was well above the maximum
             if (refreshRateFloorFifteenCheckBox.Checked) {
+                maxRefreshHz = Math.Floor(maxRefreshHz / 15) * 15;
+
                 refreshHzNumericUpDown.Minimum = 15;
                 refreshHzNumericUpDown.Increment = 15;
                 refreshHzNumericUpDown.Value = MathUtils.clamp((uint)Math.Min((double)Math.Floor(refreshHzNumericUpDown.Value / 15) * 15, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+                refreshHzNumericUpDown.Maximum = MathUtils.clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
             }
 
-            refreshHzNumericUpDown.Maximum = refreshHzNumericUpDown.Value;
-
             ShowRefreshRateMinimumMaximum();
+            return true;
+        }
+
+        void FloorRefreshRateFifteen() {
+            FloorRefreshRateFifteen(out ulong targetMhz, out ulong mhzLimit);
         }
 
         private void New() {

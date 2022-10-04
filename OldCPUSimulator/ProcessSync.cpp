@@ -474,6 +474,7 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 
 	// we do this after in case the Refresh Rate before was well above the maximum
 	if (refreshHzFloorFifteen) {
+		maxRefreshHz = floor(maxRefreshHz / 15) * 15;
 		refreshHz = clamp((UINT)min(floor(refreshHz / 15) * 15, maxRefreshHz), ms, s);
 	}
 
