@@ -373,6 +373,8 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 	if (targetMhz > mhzLimit) {
 		//consoleLog("targetMhz must be less than mhzLimit", PROCESS_SYNC_ERR);
 		//return false;
+		consoleLog("Ignoring Sync Mode: targetMhz is less than mhzLimit", PROCESS_SYNC_OUT);
+
 		if (WaitForSingleObject(syncedProcess, INFINITE) != WAIT_OBJECT_0) {
 			consoleLog("Failed to Wait For Single Object", PROCESS_SYNC_ERR);
 			return false;
