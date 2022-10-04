@@ -281,7 +281,8 @@
             this.targetMhzComboBox.Items.AddRange(new object[] {
             "Intel Pentium 233 MHz (late 1990s)",
             "Intel Pentium II 350 MHz (early 2000s)",
-            "Intel Pentium III 933 MHz (mid 2000s)"});
+            "Intel Pentium III 933 MHz (mid 2000s)",
+            "Custom Target Rate..."});
             this.targetMhzComboBox.Location = new System.Drawing.Point(12, 250);
             this.targetMhzComboBox.Name = "targetMhzComboBox";
             this.targetMhzComboBox.Size = new System.Drawing.Size(260, 21);
