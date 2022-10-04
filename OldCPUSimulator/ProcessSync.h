@@ -287,7 +287,7 @@ class ProcessSync {
 		return false;
 	}
 
-	inline bool ProcessSync::_toolhelpSnapshot(HANDLE snapshot) {
+	inline bool ProcessSync::_toolhelpSnapshot_snapshotHandle(HANDLE snapshot) {
 		THREADENTRY32 threadEntry = {};
 		threadEntry.dwSize = sizeof(threadEntry);
 
@@ -350,7 +350,7 @@ class ProcessSync {
 		}
 
 		__try {
-			return _toolhelpSnapshot(snapshot);
+			return _toolhelpSnapshot_snapshotHandle(snapshot);
 		} __finally {
 			if (!CloseHandle(snapshot)) {
 				throw "Failed to Close Handle";

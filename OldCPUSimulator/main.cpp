@@ -29,7 +29,7 @@ void help() {
 	consoleLog("are in GHz. This tool uses MHz.", 2, true);
 
 	consoleLog("-r refreshRate (or --refresh-rate refreshRate)");
-	consoleLog("The Refresh Rate (in Hz, from 1 to 1000) at which to refresh.", true, true);
+	consoleLog("The Refresh Rate (in Hz) at which to refresh.", true, true);
 	consoleLog("This argument is not required.", 2, true);
 
 	consoleLog("Effectively an accuracy meter.", true, true);

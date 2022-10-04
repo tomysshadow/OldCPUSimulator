@@ -361,12 +361,12 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 	}
 
 	if (!syncedProcess) {
-		consoleLog("Synced Process must not be NULL", PROCESS_SYNC_ERR);
+		consoleLog("syncedProcess must not be NULL", PROCESS_SYNC_ERR);
 		return false;
 	}
 
 	if (!syncedThread) {
-		consoleLog("Synced Thread must not be NULL", PROCESS_SYNC_ERR);
+		consoleLog("syncedThread must not be NULL", PROCESS_SYNC_ERR);
 		return false;
 	}
 

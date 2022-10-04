@@ -23,7 +23,7 @@ Usage: OldCPUSimulator -t targetRate [options] -sw software.exe
 	are in GHz. This tool uses MHz.
 
 -r refreshRate (or --refresh-rate refreshRate)
-	The Refresh Rate (in Hz, from 1 to 1000) at which to refresh.
+	The Refresh Rate (in Hz) at which to refresh.
 	This argument is not required.
 	
 	Effectively an accuracy meter.

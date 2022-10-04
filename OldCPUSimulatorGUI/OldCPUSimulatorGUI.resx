@@ -143,7 +143,7 @@ smoothest possible playback setting.
 Try 60, 30 or 15 for gaming, 1 to 6 for video encoding.</value>
   </data>
   <data name="refreshHzNumericUpDown.ToolTip" xml:space="preserve">
-    <value>The Refresh Rate (in Hz, from 1 to 1000) at which to refresh.
+    <value>The Refresh Rate (in Hz) at which to refresh.
 
 Effectively an accuracy meter.
 Lower numbers are more accurate but result in choppier playback.
@@ -154,7 +154,7 @@ smoothest possible playback setting.
 Try 60, 30 or 15 for gaming, 1 to 6 for video encoding.</value>
   </data>
   <data name="refreshHzLabel.ToolTip" xml:space="preserve">
-    <value>The Refresh Rate (in Hz, from 1 to 1000) at which to refresh.
+    <value>The Refresh Rate (in Hz) at which to refresh.
 
 Effectively an accuracy meter.
 Lower numbers are more accurate but result in choppier playback.
@@ -162,8 +162,7 @@ Higher numbers are less accurate but result in smoother playback.
 If not specified, Old CPU Simulator will default to the
 smoothest possible playback setting.
 
-Try 60, 30 or 15 for gaming, 1 to 6 for video encoding.
-</value>
+Try 60, 30 or 15 for gaming, 1 to 6 for video encoding.</value>
   </data>
   <data name="syncedProcessMainThreadOnlyCheckBox.ToolTip" xml:space="preserve">
     <value>Try enabling this if the process you're running
