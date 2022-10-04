@@ -344,7 +344,7 @@
             this.mhzLimitValueLabel.Size = new System.Drawing.Size(100, 13);
             this.mhzLimitValueLabel.TabIndex = 6;
             this.mhzLimitValueLabel.Text = "mhzLimitValueLabel";
-            this.helpToolTip.SetToolTip(this.mhzLimitValueLabel, "The Rate Limit (in MHz, your CPU\'s current clock speed.)");
+            this.helpToolTip.SetToolTip(this.mhzLimitValueLabel, "The Rate Limit (in MHz, your CPU\'s clock speed.)");
             // 
             // helpToolTip
             // 
