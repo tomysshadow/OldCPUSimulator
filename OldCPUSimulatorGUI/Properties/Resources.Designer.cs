@@ -61,7 +61,7 @@ namespace OldCPUSimulatorGUI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The CPU speed could not be determined..
+        ///   Looks up a localized string similar to The CPU&apos;s clock speed could not be determined..
         /// </summary>
         internal static string CPUSpeedNotDetermined {
             get {

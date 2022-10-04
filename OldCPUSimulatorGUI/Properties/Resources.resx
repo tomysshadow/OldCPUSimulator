@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CPUSpeedNotDetermined" xml:space="preserve">
-    <value>The CPU speed could not be determined.</value>
+    <value>The CPU's clock speed could not be determined.</value>
   </data>
   <data name="NoMultipleInstances" xml:space="preserve">
     <value>You must not run multiple instances of Old CPU Simulator.</value>
