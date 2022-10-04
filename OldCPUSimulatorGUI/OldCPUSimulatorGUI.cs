@@ -206,7 +206,15 @@ namespace OldCPUSimulatorGUI {
             }
 
             try {
-                string fullPath = Path.GetFullPath(recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem));
+                string fullPath = recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem);
+
+                if (String.IsNullOrEmpty(fullPath)) {
+                    MessageBox.Show(Properties.Resources.SelectFileFirst);
+                    return;
+                }
+
+                fullPath = Path.GetFullPath(fullPath);
+
                 string validArgument = fullPath;
                 GetValidArgument(ref validArgument);
 

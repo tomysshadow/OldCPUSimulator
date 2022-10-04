@@ -97,6 +97,15 @@ namespace OldCPUSimulatorGUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must select a file first (or click New.).
+        /// </summary>
+        internal static string SelectFileFirst {
+            get {
+                return ResourceManager.GetString("SelectFileFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Target Rate must not be zero..
         /// </summary>
         internal static string TargetRateNotZero {

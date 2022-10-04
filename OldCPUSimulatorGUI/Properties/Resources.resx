@@ -129,6 +129,9 @@
   <data name="OldCPUSimulatorProcessFailedCreate" xml:space="preserve">
     <value>The Old CPU Simulator Process failed to be created.</value>
   </data>
+  <data name="SelectFileFirst" xml:space="preserve">
+    <value>You must select a file first (or click New.)</value>
+  </data>
   <data name="TargetRateNotZero" xml:space="preserve">
     <value>The Target Rate must not be zero.</value>
   </data>

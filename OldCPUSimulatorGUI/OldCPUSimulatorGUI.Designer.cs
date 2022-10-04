@@ -339,10 +339,10 @@
             this.mhzLimitValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.mhzLimitValueLabel.Location = new System.Drawing.Point(145, 215);
             this.mhzLimitValueLabel.Name = "mhzLimitValueLabel";
-            this.mhzLimitValueLabel.Size = new System.Drawing.Size(116, 13);
+            this.mhzLimitValueLabel.Size = new System.Drawing.Size(100, 13);
             this.mhzLimitValueLabel.TabIndex = 6;
-            this.mhzLimitValueLabel.Text = "currentRateValueLabel";
-            this.helpToolTip.SetToolTip(this.mhzLimitValueLabel, "The Current Rate (in MHz, your CPU\'s current clock speed.)");
+            this.mhzLimitValueLabel.Text = "mhzLimitValueLabel";
+            this.helpToolTip.SetToolTip(this.mhzLimitValueLabel, "The Rate Limit (in MHz, your CPU\'s current clock speed.)");
             // 
             // helpToolTip
             // 
