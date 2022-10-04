@@ -343,6 +343,8 @@ bool ProcessSync::close() {
 }
 
 bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT refreshHz) {
+	consoleLog("Running Process Sync", PROCESS_SYNC_OUT);
+
 	if (!mhzLimit) {
 		consoleLog("mhzLimit must not be zero", PROCESS_SYNC_ERR);
 		return false;
@@ -350,11 +352,6 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 
 	if (!targetMhz) {
 		consoleLog("targetMhz must not be zero", PROCESS_SYNC_ERR);
-		return false;
-	}
-
-	if (targetMhz > mhzLimit) {
-		consoleLog("targetMhz must be less than mhzLimit", PROCESS_SYNC_ERR);
 		return false;
 	}
 
@@ -371,6 +368,16 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 	if (!syncedThread) {
 		consoleLog("syncedThread must not be NULL", PROCESS_SYNC_ERR);
 		return false;
+	}
+
+	if (targetMhz > mhzLimit) {
+		//consoleLog("targetMhz must be less than mhzLimit", PROCESS_SYNC_ERR);
+		//return false;
+		if (WaitForSingleObject(syncedProcess, INFINITE) != WAIT_OBJECT_0) {
+			consoleLog("Failed to Wait For Single Object", PROCESS_SYNC_ERR);
+			return false;
+		}
+		return true;
 	}
 
 	double suspend = (double)(mhzLimit - targetMhz) / mhzLimit;

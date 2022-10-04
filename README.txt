@@ -40,7 +40,8 @@ Usage: OldCPUSimulator -t targetRate [options] -sw software.exe
 
 --set-synced-process-affinity-one
 	Set the process affinity of the synced process
-	to one, which may make the speed more consistent and prevent crashes.
+	to one, which may make the speed more consistent
+	and prevent crashes.
 	May not work with newer games.
 
 --synced-process-main-thread-only

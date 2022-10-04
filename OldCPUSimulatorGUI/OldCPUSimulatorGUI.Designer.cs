@@ -149,7 +149,7 @@
             this.setSyncedProcessAffinityOneCheckBox.TabIndex = 2;
             this.setSyncedProcessAffinityOneCheckBox.Text = "Set Synced Process\r\nAffinity to One";
             this.helpToolTip.SetToolTip(this.setSyncedProcessAffinityOneCheckBox, "Set the process affinity of the synced process\r\nto one, which may make the speed " +
-        "more consistent and prevent crashes.\r\nMay not work with newer games.");
+        "more consistent\r\nand prevent crashes.\r\nMay not work with newer games.");
             this.setSyncedProcessAffinityOneCheckBox.UseVisualStyleBackColor = true;
             // 
             // setProcessPriorityHighCheckBox

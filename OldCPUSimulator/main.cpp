@@ -46,7 +46,8 @@ void help() {
 
 	consoleLog("--set-synced-process-affinity-one");
 	consoleLog("Set the process affinity of the synced process", true, true);
-	consoleLog("to one, which may make the speed more consistent and prevent crashes.", true, true);
+	consoleLog("to one, which may make the speed more consistent", true, true);
+	consoleLog("and prevent crashes.", true, true);
 	consoleLog("May not work with newer games.", 2, true);
 
 	consoleLog("--synced-process-main-thread-only");
@@ -170,6 +171,7 @@ int main(int argc, char** argv) {
 							goto error2;
 						}
 
+						/*
 						if (mhzLimit <= targetMhz) {
 							std::ostringstream oStringStream;
 							oStringStream << "Target Rate must not exceed or equal the Rate Limit of " << mhzLimit;
@@ -178,6 +180,7 @@ int main(int argc, char** argv) {
 							help();
 							goto error2;
 						}
+						*/
 
 						argsRequired++;
 					} else if (arg == "-r" || arg == "--refresh-rate") {
