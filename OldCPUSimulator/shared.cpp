@@ -176,8 +176,8 @@ bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setP
 }
 
 bool getArgumentFromCommandLine(std::string commandLine, std::string &argument) {
-	std::regex commandLineQuotes("^\\s*\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"? ?");
-	std::regex commandLineWords("^\\s*\\S+ ?");
+	std::regex commandLineQuotes("^\\s*\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"?\\s*");
+	std::regex commandLineWords("^\\s*\\S+\\s*");
 	std::smatch matchResults = {};
 	bool match = std::regex_search(commandLine, matchResults, commandLineQuotes);
 
