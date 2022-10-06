@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
 						targetMhz = strtol(argv[++i], NULL, 10);
 
 						if (!targetMhz) {
-							consoleLog("Target Rate must be a number", 2);
+							consoleLog("Target Rate must not be a valid non-zero number", 2);
 							help();
 							goto error2;
 						}
@@ -187,7 +187,7 @@ int main(int argc, char** argv) {
 						refreshHz = strtol(argv[++i], NULL, 10);
 
 						if (!refreshHz) {
-							consoleLog("Refresh Rate must not be zero", 2);
+							consoleLog("Refresh Rate must not be a valid non-zero number", 2);
 							help();
 							goto error2;
 						}

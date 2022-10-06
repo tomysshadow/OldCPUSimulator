@@ -22,8 +22,6 @@ class ProcessSync {
 	bool setSyncedProcessAffinityOne = false;
 	bool refreshHzFloorFifteen = false;
 
-	SIZE_T pageSize = 0;
-
 	DWORD syncedProcessID = 0;
 	DWORD syncedThreadID = 0;
 
@@ -62,7 +60,7 @@ class ProcessSync {
 	NtResumeProcessProc ntResumeProcess = NULL;
 	NtQuerySystemInformationProc ntQuerySystemInformation = NULL;
 	
-	inline bool ProcessSync::wait(/*UINT &extraMs, UINT waitMs*/) {
+	inline bool ProcessSync::wait(UINT timerID/*, UINT &extraMs, UINT waitMs*/) {
 		/*
 		MSG message = {};
 
@@ -70,8 +68,16 @@ class ProcessSync {
 			return false;
 		}
 		*/
-		if (WaitForSingleObject(timeEvent, INFINITE) != WAIT_OBJECT_0) {
+		if (!timerID) {
 			return false;
+		}
+
+		if (WaitForSingleObject(timeEvent, s) != WAIT_OBJECT_0) {
+			if (timeKillEvent(timerID) != TIMERR_NOERROR) {
+				if (!ResetEvent(timeEvent)) {
+					return false;
+				}
+			}
 		}
 		return true;
 		//extra = (extraMs > waitMs) ? (double)extraMs / waitMs : 1.0;
@@ -81,20 +87,12 @@ class ProcessSync {
 
 	inline bool ProcessSync::suspendWait() {
 		//resumeExtraMs = timeGetTime() - resumeExtraMs;
-
-		if (!timeSetEvent(suspendWaitMs/*clamp(round(extra * suspendWaitMs), ms, s)*/, 0, (LPTIMECALLBACK)timeEvent, 0, TIME_ONESHOT | TIME_CALLBACK_EVENT_SET)) {
-			return false;
-		}
-		return wait(/*suspendExtraMs, suspendWaitMs*/);
+		return wait(timeSetEvent(suspendWaitMs/*clamp(round(extra * suspendWaitMs), ms, s)*/, 0, (LPTIMECALLBACK)timeEvent, 0, TIME_ONESHOT | TIME_CALLBACK_EVENT_SET)/*, suspendExtraMs, suspendWaitMs*/);
 	}
 
 	inline bool ProcessSync::resumeWait() {
 		//suspendExtraMs = timeGetTime() - suspendExtraMs;
-
-		if (!timeSetEvent(resumeWaitMs/*clamp(round(extra * resumeWaitMs), ms, s)*/, 0, (LPTIMECALLBACK)timeEvent, 0, TIME_ONESHOT | TIME_CALLBACK_EVENT_SET)) {
-			return false;
-		}
-		return wait(/*resumeExtraMs, resumeWaitMs*/);
+		return wait(timeSetEvent(resumeWaitMs/*clamp(round(extra * resumeWaitMs), ms, s)*/, 0, (LPTIMECALLBACK)timeEvent, 0, TIME_ONESHOT | TIME_CALLBACK_EVENT_SET)/*, resumeExtraMs, resumeWaitMs*/);
 	}
 
 	// returns true if the thread is nonsignaled
@@ -181,6 +179,15 @@ class ProcessSync {
 	}
 
 	inline void ProcessSync::allocateSystemInformation() {
+		SYSTEM_INFO systemInfo = {};
+		GetSystemInfo(&systemInfo);
+
+		SIZE_T pageSize = systemInfo.dwPageSize;
+
+		if (!pageSize) {
+			throw "Failed to Get Page Size";
+		}
+
 		if (systemInformation) {
 			if (systemInformationSize == pageSize) {
 				return;
@@ -208,7 +215,7 @@ class ProcessSync {
 			delete[] systemInformation;
 			systemInformation = NULL;
 
-			systemInformationSize += pageSize;
+			systemInformationSize += systemInformationSize;
 			systemInformation = new BYTE[systemInformationSize];
 
 			if (!systemInformation) {
@@ -245,6 +252,10 @@ class ProcessSync {
 		do {
 			if ((DWORD)systemProcessInformationPointer->UniqueProcessId == syncedProcessID) {
 				systemThreadInformationPointer = (PSYSTEM_THREAD_INFORMATION)(systemProcessInformationPointer + 1);
+
+				if (!systemThreadInformationPointer) {
+					throw "systemThreadInformationPointer must not be NULL";
+				}
 
 				for (ULONG i = 0; i < systemProcessInformationPointer->NumberOfThreads; i++) {
 					threadID = (DWORD)systemThreadInformationPointer->ClientId.UniqueThread;

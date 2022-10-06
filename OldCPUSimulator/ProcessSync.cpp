@@ -73,8 +73,6 @@ bool ProcessSync::duplicate(const ProcessSync &processSync) {
 	setSyncedProcessAffinityOne = processSync.setSyncedProcessAffinityOne;
 	refreshHzFloorFifteen = processSync.refreshHzFloorFifteen;
 
-	pageSize = processSync.pageSize;
-
 	syncedProcess = processSync.syncedProcess;
 	syncedThread = processSync.syncedThread;
 
@@ -133,15 +131,6 @@ bool ProcessSync::duplicate(const ProcessSync &processSync) {
 }
 
 ProcessSync::ProcessSync(bool setProcessPriorityHigh, bool syncedProcessMainThreadOnly, bool setSyncedProcessAffinityOne, bool refreshHzFloorFifteen) : setProcessPriorityHigh(setProcessPriorityHigh), syncedProcessMainThreadOnly(syncedProcessMainThreadOnly), setSyncedProcessAffinityOne(setSyncedProcessAffinityOne), refreshHzFloorFifteen(refreshHzFloorFifteen) {
-	SYSTEM_INFO systemInfo = {};
-	GetSystemInfo(&systemInfo);
-	
-	pageSize = systemInfo.dwPageSize;
-
-	if (!pageSize) {
-		throw "Failed to Get Page Size";
-	}
-
 	HMODULE kernel32ModuleHandle = LoadLibrary("KERNEL32.DLL");
 
 	if (kernel32ModuleHandle) {
