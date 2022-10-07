@@ -324,8 +324,8 @@ namespace OldCPUSimulatorGUI {
             double minRefreshMs = (Math.Max(suspend, resume) / Math.Min(suspend, resume) * (double)refreshHzNumericUpDown.Minimum) + (double)refreshHzNumericUpDown.Minimum;
             double maxRefreshHz = (minRefreshMs > 0) ? ((double)refreshHzNumericUpDown.Maximum / Math.Ceiling(minRefreshMs)) : (double)refreshHzNumericUpDown.Maximum;
 
-            refreshHzNumericUpDown.Value = MathUtils.clamp((uint)Math.Min((double)refreshHzNumericUpDown.Value, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
-            refreshHzNumericUpDown.Maximum = MathUtils.clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+            refreshHzNumericUpDown.Value = MathUtils.Clamp((uint)Math.Min((double)refreshHzNumericUpDown.Value, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+            refreshHzNumericUpDown.Maximum = MathUtils.Clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
 
             // we do this after in case the Refresh Rate before was well above the maximum
             if (refreshRateFloorFifteenCheckBox.Checked) {
@@ -333,8 +333,8 @@ namespace OldCPUSimulatorGUI {
 
                 refreshHzNumericUpDown.Minimum = 15;
                 refreshHzNumericUpDown.Increment = 15;
-                refreshHzNumericUpDown.Value = MathUtils.clamp((uint)Math.Min((double)Math.Floor(refreshHzNumericUpDown.Value / 15) * 15, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
-                refreshHzNumericUpDown.Maximum = MathUtils.clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+                refreshHzNumericUpDown.Value = MathUtils.Clamp((uint)Math.Min((double)Math.Floor(refreshHzNumericUpDown.Value / 15) * 15, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+                refreshHzNumericUpDown.Maximum = MathUtils.Clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
             }
 
             ShowRefreshRateMinimumMaximum();

@@ -12,40 +12,30 @@ void ProcessSync::destroy() {
 	if (syncedProcess) {
 		if (!CloseHandle(syncedProcess)) {
 			consoleLog("Failed to Close Handle", PROCESS_SYNC_ERR);
-			goto error4;
+			goto error3;
 		}
 
 		syncedProcess = NULL;
 	}
 
-	error4:
+	error3:
 	if (syncedThread) {
 		if (!CloseHandle(syncedThread)) {
 			consoleLog("Failed to Close Handle", PROCESS_SYNC_ERR);
-			goto error3;
+			goto error2;
 		}
 
 		syncedThread = NULL;
 	}
 
-	error3:
+	error2:
 	if (jobObject && jobObject != INVALID_HANDLE_VALUE) {
 		if (!CloseHandle(jobObject)) {
-			consoleLog("Failed to Close Handle", PROCESS_SYNC_ERR);
-			goto error2;
-		}
-
-		jobObject = NULL;
-	}
-
-	error2:
-	if (timeEvent && timeEvent != INVALID_HANDLE_VALUE) {
-		if (!CloseHandle(timeEvent)) {
 			consoleLog("Failed to Close Handle", PROCESS_SYNC_ERR);
 			goto error;
 		}
 
-		timeEvent = NULL;
+		jobObject = NULL;
 	}
 
 	error:
@@ -66,30 +56,27 @@ bool ProcessSync::duplicate(const ProcessSync &processSync) {
 	//consoleLog("Duplicating Process Sync", PROCESS_SYNC_OUT);
 	opened = processSync.opened;
 
-	suspended = processSync.suspended;
-
 	setProcessPriorityHigh = processSync.setProcessPriorityHigh;
 	syncedProcessMainThreadOnly = processSync.syncedProcessMainThreadOnly;
 	setSyncedProcessAffinityOne = processSync.setSyncedProcessAffinityOne;
 	refreshHzFloorFifteen = processSync.refreshHzFloorFifteen;
+
+	syncedProcessID = processSync.syncedProcessID;
+	syncedThreadID = processSync.syncedThreadID;
 
 	syncedProcess = processSync.syncedProcess;
 	syncedThread = processSync.syncedThread;
 
 	jobObject = processSync.jobObject;
 
+	suspended = processSync.suspended;
+
+	suspendedThreadIDsVector = processSync.suspendedThreadIDsVector;
+	suspendedThreadIDsMap = processSync.suspendedThreadIDsMap;
+
+	resumedThreadsVector = processSync.resumedThreadsVector;
+
 	setProcessInformation = processSync.setProcessInformation;
-
-	timeEvent = processSync.timeEvent;
-
-	//extra = processSync.extra;
-
-	ms = processSync.ms;
-	s = processSync.s;
-	//suspendExtraMs = processSync.suspendExtraMs;
-	//resumeExtraMs = processSync.resumeExtraMs;
-	suspendWaitMs = processSync.suspendWaitMs;
-	resumeWaitMs = processSync.resumeWaitMs;
 
 	systemInformationSize = processSync.systemInformationSize;
 
@@ -105,29 +92,12 @@ bool ProcessSync::duplicate(const ProcessSync &processSync) {
 			consoleLog("Failed to Allocate systemInformation", PROCESS_SYNC_ERR);
 			return false;
 		}
-
-		if (memcpy_s(systemInformation, systemInformationSize, processSync.systemInformation, systemInformationSize)) {
-			consoleLog("Failed to Copy Memory", PROCESS_SYNC_ERR);
-			goto error;
-		}
 	}
-
-	suspendedThreadsVector = processSync.suspendedThreadsVector;
-	suspendedThreadsMap = processSync.suspendedThreadsMap;
-
-	resumedThreadsVector = processSync.resumedThreadsVector;
 	
 	ntSuspendProcess = processSync.ntSuspendProcess;
 	ntResumeProcess = processSync.ntResumeProcess;
 	ntQuerySystemInformation = processSync.ntQuerySystemInformation;
 	return true;
-	error:
-	if (systemInformation) {
-		delete[] systemInformation;
-		systemInformation = NULL;
-		systemInformationSize = 0;
-	}
-	return false;
 }
 
 ProcessSync::ProcessSync(bool setProcessPriorityHigh, bool syncedProcessMainThreadOnly, bool setSyncedProcessAffinityOne, bool refreshHzFloorFifteen) : setProcessPriorityHigh(setProcessPriorityHigh), syncedProcessMainThreadOnly(syncedProcessMainThreadOnly), setSyncedProcessAffinityOne(setSyncedProcessAffinityOne), refreshHzFloorFifteen(refreshHzFloorFifteen) {
@@ -433,7 +403,7 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 	}
 	*/
 
-	timeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	HANDLE timeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	if (!timeEvent || timeEvent == INVALID_HANDLE_VALUE) {
 		consoleLog("Failed to Create Event", PROCESS_SYNC_ERR);
@@ -451,9 +421,9 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 	}
 
 	// one millisecond (approximately)
-	ms = clamp(1, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
+	UINT ms = clamp(1, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
 	// one second (approximately)
-	s = clamp(1000, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
+	UINT s = clamp(1000, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
 
 	if (!ms || !s || s < ms) {
 		consoleLog("Invalid Time Dev Caps", PROCESS_SYNC_ERR);
@@ -478,11 +448,11 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 
 	UINT refreshMs = clamp(s / refreshHz, (UINT)ceil(minRefreshMs), s);
 
-	// should never in any circumstance be lower than ms
-	suspendWaitMs = (UINT)max(round(suspend * refreshMs), ms);
-	resumeWaitMs = (UINT)max(round(resume * refreshMs), ms);
+	// should never in any circumstance be lower than ms or higher than s
+	UINT suspendMs = clamp((UINT)round(suspend * refreshMs), ms, s);
+	UINT resumeMs = clamp((UINT)round(resume * refreshMs), ms, s);
 
-	UINT gcdMs = gcd(suspendWaitMs, resumeWaitMs);
+	UINT gcdMs = gcd(suspendMs, resumeMs);
 
 	// set precision to highest value that will work for both suspend/resume wait time
 	if (timeBeginPeriod(gcdMs) != TIMERR_NOERROR) {
@@ -499,8 +469,8 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 		if (suspendThread()) {
 			if (suspended) {
 				for (;;) {
-					if (!suspendWait()) {
-						consoleLog("Failed to Suspend Wait Process Sync", PROCESS_SYNC_ERR);
+					if (!wait(suspendMs, refreshMs, timeEvent)) {
+						consoleLog("Failed to Wait Process Sync", PROCESS_SYNC_ERR);
 						goto error3;
 					}
 
@@ -510,8 +480,8 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 						break;
 					}
 
-					if (!resumeWait()) {
-						consoleLog("Failed to Resume Wait Process Sync", PROCESS_SYNC_ERR);
+					if (!wait(resumeMs, refreshMs, timeEvent)) {
+						consoleLog("Failed to Wait Process Sync", PROCESS_SYNC_ERR);
 						goto error3;
 					}
 
@@ -533,8 +503,8 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 			if (suspendProcess()) {
 				if (suspended) {
 					for (;;) {
-						if (!suspendWait()) {
-							consoleLog("Failed to Suspend Wait Process Sync", PROCESS_SYNC_ERR);
+						if (!wait(suspendMs, refreshMs, timeEvent)) {
+							consoleLog("Failed to Wait Process Sync", PROCESS_SYNC_ERR);
 							goto error3;
 						}
 
@@ -543,8 +513,8 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 							break;
 						}
 
-						if (!resumeWait()) {
-							consoleLog("Failed to Resume Wait Process Sync", PROCESS_SYNC_ERR);
+						if (!wait(resumeMs, refreshMs, timeEvent)) {
+							consoleLog("Failed to Wait Process Sync", PROCESS_SYNC_ERR);
 							goto error3;
 						}
 
@@ -578,19 +548,19 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 				allocateSystemInformation();
 
 				if (querySystemInformation()) {
-					if (suspendedThreadsVector.empty()) {
+					if (suspendedThreadIDsVector.empty()) {
 						syncMode = SYNC_MODE_TOOLHELP_SNAPSHOT;
 					} else {
 						for (;;) {
-							if (!suspendWait()) {
-								consoleLog("Failed to Suspend Wait Process Sync", PROCESS_SYNC_ERR);
+							if (!wait(suspendMs, refreshMs, timeEvent)) {
+								consoleLog("Failed to Wait Process Sync", PROCESS_SYNC_ERR);
 								goto error4;
 							}
 
 							resumeThreads();
 
-							if (!resumeWait()) {
-								consoleLog("Failed to Resume Wait Process Sync", PROCESS_SYNC_ERR);
+							if (!wait(resumeMs, refreshMs, timeEvent)) {
+								consoleLog("Failed to Wait Process Sync", PROCESS_SYNC_ERR);
 								goto error4;
 							}
 
@@ -615,20 +585,20 @@ bool ProcessSync::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT 
 
 		try {
 			if (toolhelpSnapshot()) {
-				if (suspendedThreadsVector.empty()) {
+				if (suspendedThreadIDsVector.empty()) {
 					consoleLog("No Sync Mode", PROCESS_SYNC_ERR);
 					goto error4;
 				} else {
 					for (;;) {
-						if (!suspendWait()) {
-							consoleLog("Failed to Suspend Wait Process Sync", PROCESS_SYNC_ERR);
+						if (!wait(suspendMs, refreshMs, timeEvent)) {
+							consoleLog("Failed to Wait Process Sync", PROCESS_SYNC_ERR);
 							goto error4;
 						}
 
 						resumeThreads();
 
-						if (!resumeWait()) {
-							consoleLog("Failed to Resume Wait Process Sync", PROCESS_SYNC_ERR);
+						if (!wait(resumeMs, refreshMs, timeEvent)) {
+							consoleLog("Failed to Wait Process Sync", PROCESS_SYNC_ERR);
 							goto error4;
 						}
 
