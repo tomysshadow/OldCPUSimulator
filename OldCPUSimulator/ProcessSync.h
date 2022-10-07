@@ -222,10 +222,10 @@ class ProcessSync {
 		DWORD threadID = 0;
 		HANDLE thread = NULL;
 
-		SUSPENDED_THREAD_IDS_VECTOR _suspendedThreadsVector = suspendedThreadIDsVector;
+		SUSPENDED_THREAD_IDS_VECTOR _suspendedThreadIDsVector = suspendedThreadIDsVector;
 		suspendedThreadIDsVector = {};
 
-		SUSPENDED_THREAD_IDS_MAP::iterator suspendedThreadsMapIterator = {};
+		SUSPENDED_THREAD_IDS_MAP::iterator suspendedThreadIDsMapIterator = {};
 
 		do {
 			if ((DWORD)systemProcessInformationPointer->UniqueProcessId == syncedProcessID) {
@@ -238,9 +238,9 @@ class ProcessSync {
 				for (ULONG i = 0; i < systemProcessInformationPointer->NumberOfThreads; i++) {
 					threadID = (DWORD)systemThreadInformationPointer->ClientId.UniqueThread;
 
-					suspendedThreadsMapIterator = suspendedThreadIDsMap.find(threadID);
+					suspendedThreadIDsMapIterator = suspendedThreadIDsMap.find(threadID);
 
-					if (suspendedThreadsMapIterator == suspendedThreadIDsMap.end()) {
+					if (suspendedThreadIDsMapIterator == suspendedThreadIDsMap.end()) {
 						thread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, threadID);
 
 						if (thread
@@ -252,7 +252,7 @@ class ProcessSync {
 					systemThreadInformationPointer++;
 				}
 
-				suspendedThreadIDsVector.insert(suspendedThreadIDsVector.end(), _suspendedThreadsVector.begin(), _suspendedThreadsVector.end());
+				suspendedThreadIDsVector.insert(suspendedThreadIDsVector.end(), _suspendedThreadIDsVector.begin(), _suspendedThreadIDsVector.end());
 
 				systemProcessInformationPointer = NULL;
 				systemThreadInformationPointer = NULL;
@@ -294,18 +294,18 @@ class ProcessSync {
 		DWORD threadID = 0;
 		HANDLE thread = NULL;
 
-		SUSPENDED_THREAD_IDS_VECTOR _suspendedThreadsVector = suspendedThreadIDsVector;
+		SUSPENDED_THREAD_IDS_VECTOR _suspendedThreadIDsVector = suspendedThreadIDsVector;
 		suspendedThreadIDsVector = {};
 
-		SUSPENDED_THREAD_IDS_MAP::iterator suspendedThreadsMapIterator = {};
+		SUSPENDED_THREAD_IDS_MAP::iterator suspendedThreadIDsMapIterator = {};
 
 		do {
 			if (threadEntry.th32OwnerProcessID == syncedProcessID) {
 				threadID = threadEntry.th32ThreadID;
 
-				suspendedThreadsMapIterator = suspendedThreadIDsMap.find(threadID);
+				suspendedThreadIDsMapIterator = suspendedThreadIDsMap.find(threadID);
 
-				if (suspendedThreadsMapIterator == suspendedThreadIDsMap.end()) {
+				if (suspendedThreadIDsMapIterator == suspendedThreadIDsMap.end()) {
 					thread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, threadID);
 
 					if (thread
@@ -317,7 +317,7 @@ class ProcessSync {
 			}
 		} while (Thread32Next(snapshot, &threadEntry));
 
-		suspendedThreadIDsVector.insert(suspendedThreadIDsVector.end(), _suspendedThreadsVector.begin(), _suspendedThreadsVector.end());
+		suspendedThreadIDsVector.insert(suspendedThreadIDsVector.end(), _suspendedThreadIDsVector.begin(), _suspendedThreadIDsVector.end());
 
 		lastError = GetLastError();
 
@@ -375,18 +375,18 @@ class ProcessSync {
 
 		// we have to loop in the reverse order we suspended the threads
 		// we can't use reverse_iterator because we need to erase elements mid-loop
-		SUSPENDED_THREAD_IDS_VECTOR::iterator suspendedThreadsVectorIterator = suspendedThreadIDsVector.end();
-		SUSPENDED_THREAD_IDS_MAP::iterator suspendedThreadsMapIterator = {};
+		SUSPENDED_THREAD_IDS_VECTOR::iterator suspendedThreadIDsVectorIterator = suspendedThreadIDsVector.end();
+		SUSPENDED_THREAD_IDS_MAP::iterator suspendedThreadIDsMapIterator = {};
 
-		while (suspendedThreadsVectorIterator != suspendedThreadIDsVector.begin()) {
-			threadID = *--suspendedThreadsVectorIterator;
+		while (suspendedThreadIDsVectorIterator != suspendedThreadIDsVector.begin()) {
+			threadID = *--suspendedThreadIDsVectorIterator;
 
-			suspendedThreadsMapIterator = suspendedThreadIDsMap.find(threadID);
+			suspendedThreadIDsMapIterator = suspendedThreadIDsMap.find(threadID);
 
-			if (suspendedThreadsMapIterator == suspendedThreadIDsMap.end()) {
-				suspendedThreadsVectorIterator = suspendedThreadIDsVector.erase(suspendedThreadsVectorIterator);
+			if (suspendedThreadIDsMapIterator == suspendedThreadIDsMap.end()) {
+				suspendedThreadIDsVectorIterator = suspendedThreadIDsVector.erase(suspendedThreadIDsVectorIterator);
 			} else {
-				thread = suspendedThreadsMapIterator->second;
+				thread = suspendedThreadIDsMapIterator->second;
 
 				if (thread) {
 					if (ResumeThread(thread) == -1
@@ -399,8 +399,8 @@ class ProcessSync {
 					}
 				}
 
-				suspendedThreadsVectorIterator = suspendedThreadIDsVector.erase(suspendedThreadsVectorIterator);
-				suspendedThreadIDsMap.erase(suspendedThreadsMapIterator);
+				suspendedThreadIDsVectorIterator = suspendedThreadIDsVector.erase(suspendedThreadIDsVectorIterator);
+				suspendedThreadIDsMap.erase(suspendedThreadIDsMapIterator);
 			}
 		}
 	}
