@@ -10,7 +10,7 @@ namespace OldCPUSimulatorGUI
 	{
 		public static uint clamp(uint number, uint min, uint max)
 		{
-			return Math.Min(Math.Max(min, number), max);
+			return Math.Min(max, Math.Max(min, number));
 		}
 	}
 	static class Program
