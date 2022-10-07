@@ -126,12 +126,12 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="shared.cpp" />
-    <ClCompile Include="ProcessSync.cpp" />
+    <ClCompile Include="OldCPUSimulator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="shared.h" />
-    <ClInclude Include="ProcessSync.h" />
+    <ClInclude Include="OldCPUSimulator.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\README.txt" />

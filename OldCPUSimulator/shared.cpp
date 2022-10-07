@@ -176,44 +176,55 @@ bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setP
 }
 
 bool getArgumentFromCommandLine(std::string commandLine, std::string &argument) {
-	std::regex commandLineQuotes("^\\s*\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"?\\\\?\\s*");
-	std::regex commandLineWords("^\\s*\\S+\\s*");
 	std::smatch matchResults = {};
-	bool match = std::regex_search(commandLine, matchResults, commandLineQuotes);
 
-	if (match && matchResults.length() > 0) {
-		argument = matchResults[0];
-		return true;
-	} else {
-		matchResults = {};
-		match = std::regex_search(commandLine, matchResults, commandLineWords);
+	{
+		std::regex commandLineQuotes("^\\s*\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*[\"\\\\]?\\s?(?:\\s*$)?");
 
-		if (match && matchResults.length() > 0) {
+		if (std::regex_search(commandLine, matchResults, commandLineQuotes)
+			&& matchResults.length() > 0) {
 			argument = matchResults[0];
-			return true;
+
+			if (!argument.empty()) {
+				return true;
+			}
+		}
+	}
+
+	matchResults = {};
+
+	{
+		std::regex commandLineWords("^\\s*\\S+\\s?(?:\\s*$)?");
+
+		if (std::regex_search(commandLine, matchResults, commandLineWords)
+			&& matchResults.length() > 0) {
+			argument = matchResults[0];
+
+			if (!argument.empty()) {
+				return true;
+			}
 		}
 	}
 	return false;
 }
 
 std::string getArgumentRangeFromCommandLine(std::string commandLine, int begin, int end) {
-	std::vector<std::string>::iterator argumentsIterator;
-	std::vector<std::string> arguments;
-	std::string argument = "";
 	std::string argumentRange = "";
+	std::string argument = "";
+	std::vector<std::string> arguments = {};
 
 	while (getArgumentFromCommandLine(commandLine, argument)) {
 		arguments.push_back(argument);
 		commandLine = commandLine.substr(argument.length());
 	}
 
-	int i = 0;
-
 	if (end < 0) {
 		end += arguments.size() + 1;
 	}
 
-	for (argumentsIterator = arguments.begin(); argumentsIterator != arguments.end(); argumentsIterator++) {
+	int i = 0;
+
+	for (std::vector<std::string>::iterator argumentsIterator = arguments.begin(); argumentsIterator != arguments.end(); argumentsIterator++) {
 		if (i >= end) {
 			break;
 		}

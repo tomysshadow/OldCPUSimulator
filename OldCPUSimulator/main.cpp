@@ -1,5 +1,5 @@
 #include "shared.h"
-#include "ProcessSync.h"
+#include "OldCPUSimulator.h"
 #include <string>
 #include <sstream>
 #include <windows.h>
@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
 		return -2;
 	}
 
-	consoleLog("Old CPU Simulator 2.0.0");
+	consoleLog("Old CPU Simulator 2.1.0");
 	consoleLog("By Anthony Kleine", 2);
 
 	// the number of required arguments
@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
 			} else if (arg == "--refresh-rate-floor-fifteen") {
 				refreshHzFloorFifteen = true;
 			} else if (arg == "-sw" || arg == "--software") {
-				software = getArgumentRangeFromCommandLine(GetCommandLine(), i + 1, -1);
+				software = getArgumentRangeFromCommandLine(GetCommandLine(), i + 1);
 				argsRequired++;
 				break;
 			} else if (arg == "--dev-force-sync-mode-suspend-process") {
@@ -204,22 +204,22 @@ int main(int argc, char** argv) {
 		}
 
 		{
-			ProcessSync processSync(setProcessPriorityHigh, syncedProcessMainThreadOnly, setSyncedProcessAffinityOne, refreshHzFloorFifteen);
+			OldCPUSimulator oldCPUSimulator(setProcessPriorityHigh, syncedProcessMainThreadOnly, setSyncedProcessAffinityOne, refreshHzFloorFifteen);
 
-			if (!processSync.open(software)) {
-				consoleLog("Failed to Open Process Sync", MAIN_ERR);
+			if (!oldCPUSimulator.open(software)) {
+				consoleLog("Failed to Open Old CPU Simulator", MAIN_ERR);
 				goto error2;
 			}
 
-			if (!processSync.run(syncMode, mhzLimit, targetMhz, refreshHz)) {
-				consoleLog("Failed to Run Process Sync", MAIN_ERR);
+			if (!oldCPUSimulator.run(syncMode, mhzLimit, targetMhz, refreshHz)) {
+				consoleLog("Failed to Run Old CPU Simulator", MAIN_ERR);
 				goto error3;
 			}
 
 			result = 0;
 			error3:
-			if (!processSync.close()) {
-				consoleLog("Failed to Close Process Sync", MAIN_ERR);
+			if (!oldCPUSimulator.close()) {
+				consoleLog("Failed to Close Old CPU Simulator", MAIN_ERR);
 				result = -1;
 				goto error2;
 			}

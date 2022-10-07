@@ -127,4 +127,4 @@ bool getMhzLimit(ULONG &mhzLimit);
 bool setProcessAffinity(HANDLE process, DWORD affinity);
 bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setProcessInformation);
 bool getArgumentFromCommandLine(std::string commandLine, std::string &argument);
-std::string getArgumentRangeFromCommandLine(std::string commandLine, int begin, int end);
+std::string getArgumentRangeFromCommandLine(std::string commandLine, int begin = 0, int end = -1);

@@ -8,10 +8,10 @@
 #include <ntstatus.h>
 #include <TlHelp32.h>
 
-class ProcessSync {
+class OldCPUSimulator {
 	private:
 	void destroy();
-	bool duplicate(const ProcessSync &processSync);
+	bool duplicate(const OldCPUSimulator &oldCPUSimulator);
 
 	bool opened = false;
 
@@ -49,7 +49,7 @@ class ProcessSync {
 	NtResumeProcessProc ntResumeProcess = NULL;
 	NtQuerySystemInformationProc ntQuerySystemInformation = NULL;
 	
-	inline bool ProcessSync::wait(UINT waitMs, UINT refreshMs, HANDLE timeEvent) {
+	inline bool OldCPUSimulator::wait(UINT waitMs, UINT refreshMs, HANDLE timeEvent) {
 		UINT timerID = timeSetEvent(waitMs, 0, (LPTIMECALLBACK)timeEvent, 0, TIME_ONESHOT | TIME_CALLBACK_EVENT_SET);
 		
 		if (!timerID) {
@@ -76,7 +76,7 @@ class ProcessSync {
 	// returns true if the thread is nonsignaled
 	// returns false if the thread has been terminated
 	// suspended is set to true if the thread gets suspended, false otherwise
-	inline bool ProcessSync::suspendThread() {
+	inline bool OldCPUSimulator::suspendThread() {
 		if (suspended) {
 			// the thread is already suspended, it needs to be resumed instead
 			return true;
@@ -96,7 +96,7 @@ class ProcessSync {
 		return false;
 	}
 
-	inline bool ProcessSync::resumeThread() {
+	inline bool OldCPUSimulator::resumeThread() {
 		if (!suspended) {
 			// the thread is already resumed, it needs to be suspended instead
 			return true;
@@ -116,7 +116,7 @@ class ProcessSync {
 		return false;
 	}
 
-	inline bool ProcessSync::suspendProcess() {
+	inline bool OldCPUSimulator::suspendProcess() {
 		if (suspended) {
 			// the process is already suspended, it needs to be resumed instead
 			return true;
@@ -136,7 +136,7 @@ class ProcessSync {
 		return false;
 	}
 
-	inline bool ProcessSync::resumeProcess() {
+	inline bool OldCPUSimulator::resumeProcess() {
 		if (!suspended) {
 			// the process is already resumed, it needs to be suspended instead
 			return true;
@@ -156,7 +156,7 @@ class ProcessSync {
 		return false;
 	}
 
-	inline void ProcessSync::allocateSystemInformation() {
+	inline void OldCPUSimulator::allocateSystemInformation() {
 		SYSTEM_INFO systemInfo = {};
 		GetSystemInfo(&systemInfo);
 
@@ -184,7 +184,7 @@ class ProcessSync {
 		}
 	}
 
-	inline bool ProcessSync::querySystemInformation() {
+	inline bool OldCPUSimulator::querySystemInformation() {
 		ULONG returnSize = 0;
 		NTSTATUS ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation, systemInformationSize, &returnSize);
 
@@ -276,7 +276,7 @@ class ProcessSync {
 		return false;
 	}
 
-	inline bool ProcessSync::_toolhelpSnapshot_snapshotHandle(HANDLE snapshot) {
+	inline bool OldCPUSimulator::_toolhelpSnapshot_snapshotHandle(HANDLE snapshot) {
 		THREADENTRY32 threadEntry = {};
 		threadEntry.dwSize = sizeof(threadEntry);
 
@@ -331,7 +331,7 @@ class ProcessSync {
 		return true;
 	}
 
-	inline bool ProcessSync::toolhelpSnapshot() {
+	inline bool OldCPUSimulator::toolhelpSnapshot() {
 		HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
 
 		if (!snapshot || snapshot == INVALID_HANDLE_VALUE) {
@@ -350,7 +350,7 @@ class ProcessSync {
 		return false;
 	}
 
-	inline void ProcessSync::closeResumedThreads() {
+	inline void OldCPUSimulator::closeResumedThreads() {
 		HANDLE thread = NULL;
 
 		RESUMED_THREADS_VECTOR::iterator resumedThreadsVectorIterator = resumedThreadsVector.begin();
@@ -367,7 +367,7 @@ class ProcessSync {
 		}
 	}
 
-	inline void ProcessSync::resumeThreads() {
+	inline void OldCPUSimulator::resumeThreads() {
 		closeResumedThreads();
 
 		DWORD threadID = 0;
@@ -404,11 +404,12 @@ class ProcessSync {
 			}
 		}
 	}
+
 	public:
-	ProcessSync(bool setProcessPriorityHigh, bool syncedProcessMainThreadOnly, bool setSyncedProcessAffinityOne, bool refreshHzFloorFifteen);
-	~ProcessSync();
-	ProcessSync(const ProcessSync &processSync);
-	ProcessSync &operator=(const ProcessSync &processSync);
+	OldCPUSimulator(bool setProcessPriorityHigh, bool syncedProcessMainThreadOnly, bool setSyncedProcessAffinityOne, bool refreshHzFloorFifteen);
+	~OldCPUSimulator();
+	OldCPUSimulator(const OldCPUSimulator &oldCPUSimulator);
+	OldCPUSimulator &operator=(const OldCPUSimulator &oldCPUSimulator);
 	bool open(std::string commandLine);
 	bool close();
 	bool run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT refreshHz);
