@@ -180,7 +180,7 @@ std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, 
 
 	{
 		std::smatch matches = {};
-		std::regex commandLineArguments("^\\s*(?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*[\"\\\\]?|(?:[^\"\\\\\\s]+|\\\\\\S)+\\\\?|\\s+$)+\\s?");
+		std::regex commandLineArguments("^\\s*(?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"?|(?:[^\"\\\\\\s]+|\\\\\\S)+|\\\\|\\s+$)+\\s?");
 
 		while (std::regex_search(commandLine, matches, commandLineArguments)
 			&& matches.length() > 0) {
