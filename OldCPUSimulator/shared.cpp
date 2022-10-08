@@ -175,65 +175,38 @@ bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setP
 	return true;
 }
 
-bool getArgumentFromCommandLine(std::string commandLine, std::string &argument) {
-	std::smatch matchResults = {};
-
-	{
-		std::regex commandLineQuotes("^\\s*\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*[\"\\\\]?\\s?(?:\\s*$)?");
-
-		if (std::regex_search(commandLine, matchResults, commandLineQuotes)
-			&& matchResults.length() > 0) {
-			argument = matchResults[0];
-
-			if (!argument.empty()) {
-				return true;
-			}
-		}
-	}
-
-	matchResults = {};
-
-	{
-		std::regex commandLineWords("^\\s*\\S+\\s?(?:\\s*$)?");
-
-		if (std::regex_search(commandLine, matchResults, commandLineWords)
-			&& matchResults.length() > 0) {
-			argument = matchResults[0];
-
-			if (!argument.empty()) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-std::string getArgumentRangeFromCommandLine(std::string commandLine, int begin, int end) {
-	std::string argumentRange = "";
-	std::string argument = "";
+std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, int end) {
 	std::vector<std::string> arguments = {};
 
-	while (getArgumentFromCommandLine(commandLine, argument)) {
-		arguments.push_back(argument);
-		commandLine = commandLine.substr(argument.length());
+	{
+		std::smatch matches = {};
+		std::regex commandLineArguments("^\\s*(?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*[\"\\\\]?|(?:[^\"\\\\\\s]+|\\\\\\S)+\\\\?|\\s+$)+\\s?");
+
+		while (std::regex_search(commandLine, matches, commandLineArguments)
+			&& matches.length() > 0) {
+			arguments.push_back(matches[0]);
+			commandLine = matches.suffix();
+		}
 	}
+
+	std::vector<std::string>::size_type argumentsSize = arguments.size() + 1;
+
+	if (begin < 0) {
+		begin += argumentsSize;
+	}
+
+	begin = max(0, begin);
 
 	if (end < 0) {
-		end += arguments.size() + 1;
+		end += argumentsSize;
 	}
 
-	int i = 0;
+	end = min(--argumentsSize, end);
 
-	for (std::vector<std::string>::iterator argumentsIterator = arguments.begin(); argumentsIterator != arguments.end(); argumentsIterator++) {
-		if (i >= end) {
-			break;
-		}
+	std::string argumentSlice = "";
 
-		if (i >= begin) {
-			argumentRange += *argumentsIterator;
-		}
-
-		i++;
+	for (int i = begin; i < end; i++) {
+		argumentSlice += arguments[i];
 	}
-	return argumentRange;
+	return argumentSlice;
 }

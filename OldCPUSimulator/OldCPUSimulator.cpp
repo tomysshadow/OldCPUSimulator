@@ -424,8 +424,10 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, U
 	UINT ms = clamp(1, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
 	// one second (approximately)
 	UINT s = clamp(1000, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
+	// two seconds (we should never hit this)
+	UINT s2 = max(2000, s + s);
 
-	if (!ms || !s || s < ms) {
+	if (!ms || !s || !s2 || s < ms || s2 < s) {
 		consoleLog("Invalid Time Dev Caps", OLD_CPU_SIMULATOR_ERR);
 		goto error2;
 	}
@@ -469,7 +471,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, U
 		if (suspendThread()) {
 			if (suspended) {
 				for (;;) {
-					if (!wait(suspendMs, refreshMs, timeEvent)) {
+					if (!wait(suspendMs, s2, timeEvent)) {
 						consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
 						goto error3;
 					}
@@ -480,7 +482,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, U
 						break;
 					}
 
-					if (!wait(resumeMs, refreshMs, timeEvent)) {
+					if (!wait(resumeMs, s2, timeEvent)) {
 						consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
 						goto error3;
 					}
@@ -503,7 +505,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, U
 			if (suspendProcess()) {
 				if (suspended) {
 					for (;;) {
-						if (!wait(suspendMs, refreshMs, timeEvent)) {
+						if (!wait(suspendMs, s2, timeEvent)) {
 							consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
 							goto error3;
 						}
@@ -513,7 +515,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, U
 							break;
 						}
 
-						if (!wait(resumeMs, refreshMs, timeEvent)) {
+						if (!wait(resumeMs, s2, timeEvent)) {
 							consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
 							goto error3;
 						}
@@ -552,14 +554,14 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, U
 						syncMode = SYNC_MODE_TOOLHELP_SNAPSHOT;
 					} else {
 						for (;;) {
-							if (!wait(suspendMs, refreshMs, timeEvent)) {
+							if (!wait(suspendMs, s2, timeEvent)) {
 								consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
 								goto error4;
 							}
 
 							resumeThreads();
 
-							if (!wait(resumeMs, refreshMs, timeEvent)) {
+							if (!wait(resumeMs, s2, timeEvent)) {
 								consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
 								goto error4;
 							}
@@ -590,14 +592,14 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, U
 					goto error4;
 				} else {
 					for (;;) {
-						if (!wait(suspendMs, refreshMs, timeEvent)) {
+						if (!wait(suspendMs, s2, timeEvent)) {
 							consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
 							goto error4;
 						}
 
 						resumeThreads();
 
-						if (!wait(resumeMs, refreshMs, timeEvent)) {
+						if (!wait(resumeMs, s2, timeEvent)) {
 							consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
 							goto error4;
 						}

@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
 			} else if (arg == "--refresh-rate-floor-fifteen") {
 				refreshHzFloorFifteen = true;
 			} else if (arg == "-sw" || arg == "--software") {
-				software = getArgumentRangeFromCommandLine(GetCommandLine(), i + 1);
+				software = getArgumentSliceFromCommandLine(GetCommandLine(), i + 1);
 				argsRequired++;
 				break;
 			} else if (arg == "--dev-force-sync-mode-suspend-process") {

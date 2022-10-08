@@ -49,14 +49,14 @@ class OldCPUSimulator {
 	NtResumeProcessProc ntResumeProcess = NULL;
 	NtQuerySystemInformationProc ntQuerySystemInformation = NULL;
 	
-	inline bool OldCPUSimulator::wait(UINT waitMs, UINT refreshMs, HANDLE timeEvent) {
+	inline bool OldCPUSimulator::wait(UINT waitMs, UINT s2, HANDLE timeEvent) {
 		UINT timerID = timeSetEvent(waitMs, 0, (LPTIMECALLBACK)timeEvent, 0, TIME_ONESHOT | TIME_CALLBACK_EVENT_SET);
 		
 		if (!timerID) {
 			return false;
 		}
 
-		if (WaitForSingleObject(timeEvent, refreshMs) != WAIT_OBJECT_0) {
+		if (WaitForSingleObject(timeEvent, s2) != WAIT_OBJECT_0) {
 			// if killing the time event succeeds,
 			// we successfully prevent it from going off
 			// so the event still isn't signaled
