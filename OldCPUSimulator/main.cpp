@@ -20,8 +20,9 @@ void help() {
 	consoleLog("to simulate.", true, true);
 	consoleLog("This argument is required.", 2, true);
 
-	consoleLog("Try 233 to simulate an Intel Pentium II 233 MHz from the late 1990s.", true, true);
-	consoleLog("Try 350 to simulate an Intel Pentium II 350 MHz from the early 2000s.", 2, true);
+	consoleLog("Try 233 to simulate an Intel Pentium 233 MHz from the late 1990s.", true, true);
+	consoleLog("Try 350 to simulate an Intel Pentium II 350 MHz from the early 2000s.", true, true);
+	consoleLog("Try 933 to simulate an Intel Pentium III 933 MHz from the mid 2000s.", 2, true);
 
 	consoleLog("Go to http://intel.com/pressroom/kits/quickrefyr.htm", true, true);
 	consoleLog("for a quick reference of year to clock speed.", true, true);
