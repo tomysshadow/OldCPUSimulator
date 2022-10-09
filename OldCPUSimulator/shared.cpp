@@ -132,15 +132,16 @@ bool setProcessAffinity(HANDLE process, DWORD affinity) {
 	processAffinityMask = 0;
 	DWORD_PTR processAffinity = 0;
 
-	for (DWORD_PTR i = 1; i; i <<= 1) {
+	for (DWORD_PTR i = 1; i && processAffinity < affinity; i <<= 1) {
 		if (systemAffinityMask & i) {
 			processAffinityMask |= i;
 			processAffinity++;
-
-			if (processAffinity == affinity) {
-				break;
-			}
 		}
+	}
+
+	if (processAffinity != affinity) {
+		consoleLog("Invalid Affinity", SHARED_ERR);
+		return false;
 	}
 
 	if (!SetProcessAffinityMask(process, processAffinityMask)) {
