@@ -106,20 +106,20 @@ namespace OldCPUSimulatorGUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Target Rate must not be greater than or equal to the Max Rate of {0:D}..
+        /// </summary>
+        internal static string TargetRateMaxRate {
+            get {
+                return ResourceManager.GetString("TargetRateMaxRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Target Rate must not be zero..
         /// </summary>
         internal static string TargetRateNotZero {
             get {
                 return ResourceManager.GetString("TargetRateNotZero", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Target Rate must not be greater than or equal to the Rate Limit of {0:D}..
-        /// </summary>
-        internal static string TargetRateRateLimit {
-            get {
-                return ResourceManager.GetString("TargetRateRateLimit", resourceCulture);
             }
         }
         

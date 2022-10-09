@@ -301,11 +301,11 @@ bool OldCPUSimulator::close() {
 	return result;
 }
 
-bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT refreshHz) {
+bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UINT refreshHz) {
 	consoleLog("Running Old CPU Simulator", OLD_CPU_SIMULATOR_OUT);
 
-	if (!mhzLimit) {
-		consoleLog("Rate Limit must not be zero", OLD_CPU_SIMULATOR_ERR);
+	if (!maxMhz) {
+		consoleLog("Max Rate must not be zero", OLD_CPU_SIMULATOR_ERR);
 		return false;
 	}
 
@@ -329,10 +329,10 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, U
 		return false;
 	}
 
-	if (targetMhz >= mhzLimit) {
-		//consoleLog("targetMhz must be less than mhzLimit", OLD_CPU_SIMULATOR_ERR);
+	if (targetMhz >= maxMhz) {
+		//consoleLog("targetMhz must be less than maxMhz", OLD_CPU_SIMULATOR_ERR);
 		//return false;
-		consoleLog("Ignoring Sync Mode: Target Rate is greater than or equal to Rate Limit", OLD_CPU_SIMULATOR_OUT);
+		consoleLog("Ignoring Sync Mode: Target Rate is greater than or equal to Max Rate", OLD_CPU_SIMULATOR_OUT);
 
 		if (WaitForSingleObject(syncedProcess, INFINITE) != WAIT_OBJECT_0) {
 			consoleLog("Failed to Wait For Single Object", OLD_CPU_SIMULATOR_ERR);
@@ -341,14 +341,14 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, U
 		return true;
 	}
 
-	double suspend = (double)(mhzLimit - targetMhz) / mhzLimit;
+	double suspend = (double)(maxMhz - targetMhz) / maxMhz;
 
 	if (suspend <= 0) {
 		consoleLog("suspend must not be less than or equal to zero", OLD_CPU_SIMULATOR_ERR);
 		return false;
 	}
 
-	double resume = (double)targetMhz / mhzLimit;
+	double resume = (double)targetMhz / maxMhz;
 
 	if (resume <= 0) {
 		consoleLog("resume must not be less than or equal to zero", OLD_CPU_SIMULATOR_ERR);

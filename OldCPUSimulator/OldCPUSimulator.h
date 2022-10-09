@@ -412,5 +412,5 @@ class OldCPUSimulator {
 	OldCPUSimulator &operator=(const OldCPUSimulator &oldCPUSimulator);
 	bool open(std::string commandLine);
 	bool close();
-	bool run(SYNC_MODE syncMode, ULONG mhzLimit, ULONG targetMhz, UINT refreshHz);
+	bool run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UINT refreshHz);
 };

@@ -70,15 +70,15 @@ void consoleLog(const char* str, short newline, short tab, bool err, const char*
 	}
 }
 
-bool getMhzLimit(ULONG &mhzLimit) {
-	//consoleLog("Getting Rate Limit", SHARED_OUT);
+bool getMaxMhz(ULONG &maxMhz) {
+	//consoleLog("Getting Max Rate", SHARED_OUT);
 
-	mhzLimit = 0;
+	maxMhz = 0;
 
 	SYSTEM_INFO systemInfo = {};
 	GetSystemInfo(&systemInfo);
 
-	size_t PROCESSOR_POWER_INFORMATION_SIZE = sizeof(PROCESSOR_POWER_INFORMATION) * systemInfo.dwNumberOfProcessors;
+	ULONG PROCESSOR_POWER_INFORMATION_SIZE = sizeof(PROCESSOR_POWER_INFORMATION) * systemInfo.dwNumberOfProcessors;
 	PVOID outputBuffer = new BYTE[PROCESSOR_POWER_INFORMATION_SIZE];
 
 	if (!outputBuffer) {
@@ -95,8 +95,13 @@ bool getMhzLimit(ULONG &mhzLimit) {
 
 	PPROCESSOR_POWER_INFORMATION processorPowerInformationPointer = (PPROCESSOR_POWER_INFORMATION)outputBuffer;
 
+	if (!processorPowerInformationPointer) {
+		consoleLog("processorPowerInformationPointer must not be NULL", SHARED_ERR);
+		goto error;
+	}
+
 	for (DWORD i = 0; i < systemInfo.dwNumberOfProcessors; i++) {
-		mhzLimit = max(processorPowerInformationPointer->MhzLimit ? processorPowerInformationPointer->MhzLimit : processorPowerInformationPointer->MaxMhz, mhzLimit);
+		maxMhz = processorPowerInformationPointer->MaxMhz;
 		processorPowerInformationPointer++;
 	}
 

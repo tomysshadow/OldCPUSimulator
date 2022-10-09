@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
 		std::string software = "";
 
 		SYNC_MODE syncMode = SYNC_MODE_SUSPEND_PROCESS;
-		ULONG mhzLimit = 0;
+		ULONG maxMhz = 0;
 		ULONG targetMhz = 233;
 		UINT refreshHz = 1000;
 
@@ -142,23 +142,23 @@ int main(int argc, char** argv) {
 				syncMode = SYNC_MODE_QUERY_SYSTEM_INFORMATION;
 			} else if (arg == "--dev-force-sync-mode-toolhelp-snapshot") {
 				syncMode = SYNC_MODE_TOOLHELP_SNAPSHOT;
-			} else if (arg == "--dev-get-mhz-limit") {
-				if (!getMhzLimit(mhzLimit)
-					|| !mhzLimit) {
-					consoleLog("Failed to Get Rate Limit", MAIN_ERR);
+			} else if (arg == "--dev-get-max-mhz") {
+				if (!getMaxMhz(maxMhz)
+					|| !maxMhz) {
+					consoleLog("Failed to Get Max Rate", MAIN_ERR);
 					result = -3;
 					goto error2;
 				}
 
-				consoleLog(std::to_string(mhzLimit).c_str(), false);
+				consoleLog(std::to_string(maxMhz).c_str(), false);
 				result = 0;
 				goto error2;
 			} else {
 				if (i < argc2) {
 					if (arg == "-t" || arg == "--target-rate") {
-						if (!getMhzLimit(mhzLimit)
-							|| !mhzLimit) {
-							consoleLog("Failed to Get Rate Limit", MAIN_ERR);
+						if (!getMaxMhz(maxMhz)
+							|| !maxMhz) {
+							consoleLog("Failed to Get Max Rate", MAIN_ERR);
 							result = -3;
 							goto error2;
 						}
@@ -172,9 +172,9 @@ int main(int argc, char** argv) {
 						}
 
 						/*
-						if (mhzLimit <= targetMhz) {
+						if (maxMhz <= targetMhz) {
 							std::ostringstream oStringStream;
-							oStringStream << "Target Rate must not exceed or equal the Rate Limit of " << mhzLimit;
+							oStringStream << "Target Rate must not exceed or equal the Max Rate of " << maxMhz;
 
 							consoleLog(oStringStream.str().c_str(), 2);
 							help();
@@ -211,7 +211,7 @@ int main(int argc, char** argv) {
 				goto error2;
 			}
 
-			if (!oldCPUSimulator.run(syncMode, mhzLimit, targetMhz, refreshHz)) {
+			if (!oldCPUSimulator.run(syncMode, maxMhz, targetMhz, refreshHz)) {
 				consoleLog("Failed to Run Old CPU Simulator", MAIN_ERR);
 				goto error3;
 			}

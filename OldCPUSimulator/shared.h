@@ -123,7 +123,7 @@ inline UINT gcd(UINT a, UINT b) {
 }
 
 void consoleLog(const char* str = 0, short newline = true, short tab = false, bool err = false, const char* file = 0, unsigned int line = 0);
-bool getMhzLimit(ULONG &mhzLimit);
+bool getMaxMhz(ULONG &maxMhz);
 bool setProcessAffinity(HANDLE process, DWORD affinity);
 bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setProcessInformation);
 std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin = 0, int end = -1);

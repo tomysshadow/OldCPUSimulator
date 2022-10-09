@@ -50,9 +50,9 @@
             this.newButton = new System.Windows.Forms.Button();
             this.goButton = new System.Windows.Forms.Button();
             this.newOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.mhzLimitLabel = new System.Windows.Forms.Label();
+            this.maxMhzLabel = new System.Windows.Forms.Label();
             this.targetMhzLabel = new System.Windows.Forms.Label();
-            this.mhzLimitValueLabel = new System.Windows.Forms.Label();
+            this.maxMhzValueLabel = new System.Windows.Forms.Label();
             this.helpToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.recentFilesGroupBox.SuspendLayout();
             this.optionsGroupBox.SuspendLayout();
@@ -315,16 +315,16 @@
             // 
             this.newOpenFileDialog.Filter = "Executable Files (*.exe)|*.exe|All Files (*.*)|*.*";
             // 
-            // mhzLimitLabel
+            // maxMhzLabel
             // 
-            this.mhzLimitLabel.AutoSize = true;
-            this.mhzLimitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mhzLimitLabel.Location = new System.Drawing.Point(12, 215);
-            this.mhzLimitLabel.Name = "mhzLimitLabel";
-            this.mhzLimitLabel.Size = new System.Drawing.Size(85, 13);
-            this.mhzLimitLabel.TabIndex = 5;
-            this.mhzLimitLabel.Text = "Rate Limit (MHz)";
-            this.helpToolTip.SetToolTip(this.mhzLimitLabel, "The Rate Limit (in MHz, your CPU\'s clock speed.)");
+            this.maxMhzLabel.AutoSize = true;
+            this.maxMhzLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.maxMhzLabel.Location = new System.Drawing.Point(12, 215);
+            this.maxMhzLabel.Name = "maxMhzLabel";
+            this.maxMhzLabel.Size = new System.Drawing.Size(84, 13);
+            this.maxMhzLabel.TabIndex = 5;
+            this.maxMhzLabel.Text = "Max Rate (MHz)";
+            this.helpToolTip.SetToolTip(this.maxMhzLabel, "The Max Rate (in MHz, your CPU\'s clock speed.)");
             // 
             // targetMhzLabel
             // 
@@ -336,16 +336,16 @@
             this.targetMhzLabel.TabIndex = 7;
             this.targetMhzLabel.Text = "Target Rate (MHz)";
             // 
-            // mhzLimitValueLabel
+            // maxMhzValueLabel
             // 
-            this.mhzLimitValueLabel.AutoSize = true;
-            this.mhzLimitValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.mhzLimitValueLabel.Location = new System.Drawing.Point(145, 215);
-            this.mhzLimitValueLabel.Name = "mhzLimitValueLabel";
-            this.mhzLimitValueLabel.Size = new System.Drawing.Size(100, 13);
-            this.mhzLimitValueLabel.TabIndex = 6;
-            this.mhzLimitValueLabel.Text = "mhzLimitValueLabel";
-            this.helpToolTip.SetToolTip(this.mhzLimitValueLabel, "The Rate Limit (in MHz, your CPU\'s clock speed.)");
+            this.maxMhzValueLabel.AutoSize = true;
+            this.maxMhzValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.maxMhzValueLabel.Location = new System.Drawing.Point(145, 215);
+            this.maxMhzValueLabel.Name = "maxMhzValueLabel";
+            this.maxMhzValueLabel.Size = new System.Drawing.Size(99, 13);
+            this.maxMhzValueLabel.TabIndex = 6;
+            this.maxMhzValueLabel.Text = "maxMhzValueLabel";
+            this.helpToolTip.SetToolTip(this.maxMhzValueLabel, "The Max Rate (in MHz, your CPU\'s clock speed.)");
             // 
             // helpToolTip
             // 
@@ -361,9 +361,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 423);
-            this.Controls.Add(this.mhzLimitValueLabel);
+            this.Controls.Add(this.maxMhzValueLabel);
             this.Controls.Add(this.targetMhzLabel);
-            this.Controls.Add(this.mhzLimitLabel);
+            this.Controls.Add(this.maxMhzLabel);
             this.Controls.Add(this.goButton);
             this.Controls.Add(this.newButton);
             this.Controls.Add(this.optionsGroupBox);
@@ -409,9 +409,9 @@
 		private System.Windows.Forms.Button goButton;
 		private System.Windows.Forms.NumericUpDown refreshHzNumericUpDown;
 		private System.Windows.Forms.OpenFileDialog newOpenFileDialog;
-		private System.Windows.Forms.Label mhzLimitLabel;
+		private System.Windows.Forms.Label maxMhzLabel;
 		private System.Windows.Forms.Label targetMhzLabel;
-		private System.Windows.Forms.Label mhzLimitValueLabel;
+		private System.Windows.Forms.Label maxMhzValueLabel;
         private System.Windows.Forms.GroupBox refreshHzMaximumGroupBox;
         private System.Windows.Forms.NumericUpDown refreshHzMaximumNumericUpDown;
         private System.Windows.Forms.GroupBox refreshHzMinimumGroupBox;
