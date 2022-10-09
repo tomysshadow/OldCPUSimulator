@@ -101,7 +101,7 @@ bool getMaxMhz(ULONG &maxMhz) {
 	}
 
 	for (DWORD i = 0; i < systemInfo.dwNumberOfProcessors; i++) {
-		maxMhz = processorPowerInformationPointer->MaxMhz;
+		maxMhz = max(processorPowerInformationPointer->MaxMhz, maxMhz);
 		processorPowerInformationPointer++;
 	}
 
