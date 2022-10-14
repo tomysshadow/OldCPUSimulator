@@ -50,7 +50,7 @@ class OldCPUSimulator {
 	NtQuerySystemInformationProc ntQuerySystemInformation = NULL;
 	
 	inline bool OldCPUSimulator::wait(UINT waitMs, UINT s2, HANDLE timeEvent) {
-		UINT timerID = timeSetEvent(waitMs, 0, (LPTIMECALLBACK)timeEvent, 0, TIME_ONESHOT | TIME_CALLBACK_EVENT_SET);
+		UINT timerID = timeSetEvent(waitMs, 0, (LPTIMECALLBACK)timeEvent, 0, TIME_ONESHOT | TIME_CALLBACK_EVENT_SET | TIME_KILL_SYNCHRONOUS);
 		
 		if (!timerID) {
 			return false;

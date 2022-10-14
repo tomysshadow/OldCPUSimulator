@@ -207,7 +207,7 @@ std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, 
 		end += argumentsSize;
 	}
 
-	end = min(argumentsSize - 1, end);
+	end = min((int)argumentsSize - 1, end);
 
 	std::string argumentSlice = "";
 
