@@ -1,4 +1,4 @@
-Old CPU Simulator 2.1.0
+Old CPU Simulator 2.1.1
 By Anthony Kleine
 
 	This command line tool simulates running a process on a CPU with a
@@ -34,24 +34,24 @@ Usage: OldCPUSimulator -t targetRate [options] -sw software.exe
 	
 	Try 60, 30 or 15 for gaming, 1 to 6 for video encoding.
 
---set-process-priority-high
+-ph (or --set-process-priority-high)
 	Set the process priority of Old CPU Simulator to High,
 	in order to potentially improve the accuracy of the simulation.
 
---set-synced-process-affinity-one
+-a1 (or --set-synced-process-affinity-one)
 	Set the process affinity of the synced process
 	to one, which may make the speed more consistent
 	and prevent crashes.
 	May not work with newer games.
 
---synced-process-main-thread-only
+-mt (or --synced-process-main-thread-only)
 	Try enabling this if the process you're running
 	seems to be barely affected by Old CPU Simulator,
 	as it may increase accuracy on some Windows versions,
 	as well as reduce stuttering.
 	May cause errors with some games.
 
---refresh-rate-floor-fifteen
+-rf (or --refresh-rate-floor-fifteen)
 	Rounds Refresh Rate to the nearest multiple of 15 if applicable.
 
 -sw software.exe (or --software software.exe)

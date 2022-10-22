@@ -41,24 +41,24 @@ void help() {
 
 	consoleLog("Try 60, 30 or 15 for gaming, 1 to 6 for video encoding.", 2, true);
 
-	consoleLog("--set-process-priority-high");
+	consoleLog("-ph (or --set-process-priority-high)");
 	consoleLog("Set the process priority of Old CPU Simulator to High,", true, true);
 	consoleLog("in order to potentially improve the accuracy of the simulation.", 2, true);
 
-	consoleLog("--set-synced-process-affinity-one");
+	consoleLog("-a1 (or --set-synced-process-affinity-one)");
 	consoleLog("Set the process affinity of the synced process", true, true);
 	consoleLog("to one, which may make the speed more consistent", true, true);
 	consoleLog("and prevent crashes.", true, true);
 	consoleLog("May not work with newer games.", 2, true);
 
-	consoleLog("--synced-process-main-thread-only");
+	consoleLog("-mt (or --synced-process-main-thread-only)");
 	consoleLog("Try enabling this if the process you're running", true, true);
 	consoleLog("seems to be barely affected by Old CPU Simulator,", true, true);
 	consoleLog("as it may increase accuracy on some Windows versions,", true, true);
 	consoleLog("as well as reduce stuttering.", true, true);
 	consoleLog("May cause errors with some games.", 2, true);
 
-	consoleLog("--refresh-rate-floor-fifteen");
+	consoleLog("-rf (or --refresh-rate-floor-fifteen)");
 	consoleLog("Rounds Refresh Rate to the nearest multiple of 15 if applicable.", 2, true);
 
 	consoleLog("-sw software.exe (or --software software.exe)");
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
 		return -2;
 	}
 
-	consoleLog("Old CPU Simulator 2.1.0");
+	consoleLog("Old CPU Simulator 2.1.1");
 	consoleLog("By Anthony Kleine", 2);
 
 	// the number of required arguments
@@ -125,13 +125,13 @@ int main(int argc, char** argv) {
 				help();
 				result = 0;
 				goto error2;
-			} else if (arg == "--set-process-priority-high") {
+			} else if (arg == "-ph" || arg == "--set-process-priority-high") {
 				setProcessPriorityHigh = true;
-			} else if (arg == "--set-synced-process-affinity-one") {
+			} else if (arg == "-a1" || arg == "--set-synced-process-affinity-one") {
 				setSyncedProcessAffinityOne = true;
-			} else if (arg == "--synced-process-main-thread-only") {
+			} else if (arg == "-mt" || arg == "--synced-process-main-thread-only") {
 				syncedProcessMainThreadOnly = true;
-			} else if (arg == "--refresh-rate-floor-fifteen") {
+			} else if (arg == "-rf" || arg == "--refresh-rate-floor-fifteen") {
 				refreshHzFloorFifteen = true;
 			} else if (arg == "-sw" || arg == "--software") {
 				software = getArgumentSliceFromCommandLine(GetCommandLine(), i + 1);
@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
 						targetMhz = strtol(argv[++i], NULL, 10);
 
 						if (!targetMhz) {
-							consoleLog("Target Rate must not be a valid non-zero number", 2);
+							consoleLog("Target Rate must be a valid non-zero number", 2);
 							help();
 							goto error2;
 						}
@@ -188,7 +188,7 @@ int main(int argc, char** argv) {
 						refreshHz = strtol(argv[++i], NULL, 10);
 
 						if (!refreshHz) {
-							consoleLog("Refresh Rate must not be a valid non-zero number", 2);
+							consoleLog("Refresh Rate must be a valid non-zero number", 2);
 							help();
 							goto error2;
 						}

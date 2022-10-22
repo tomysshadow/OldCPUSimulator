@@ -189,19 +189,19 @@ namespace OldCPUSimulatorGUI {
             oldCPUSimulatorProcessStartInfoArguments.Append(refreshHzNumericUpDown.Value);
 
             if (setProcessPriorityHighCheckBox.Checked) {
-                oldCPUSimulatorProcessStartInfoArguments.Append(" --set-process-priority-high");
+                oldCPUSimulatorProcessStartInfoArguments.Append(" -ph");
             }
 
             if (setSyncedProcessAffinityOneCheckBox.Checked) {
-                oldCPUSimulatorProcessStartInfoArguments.Append(" --set-synced-process-affinity-one");
+                oldCPUSimulatorProcessStartInfoArguments.Append(" -a1");
             }
 
             if (syncedProcessMainThreadOnlyCheckBox.Checked) {
-                oldCPUSimulatorProcessStartInfoArguments.Append(" --synced-process-main-thread-only");
+                oldCPUSimulatorProcessStartInfoArguments.Append(" -mt");
             }
 
             if (refreshRateFloorFifteenCheckBox.Checked) {
-                oldCPUSimulatorProcessStartInfoArguments.Append(" --refresh-rate-floor-fifteen");
+                oldCPUSimulatorProcessStartInfoArguments.Append(" -rf");
             }
 
             try {
