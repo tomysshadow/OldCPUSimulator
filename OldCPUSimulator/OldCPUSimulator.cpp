@@ -151,53 +151,26 @@ bool OldCPUSimulator::open(std::string commandLine) {
 		return true;
 	}
 
-	HANDLE currentProcess = GetCurrentProcess();
-	BOOL processIsInJob = FALSE;
+	bool result = false;
 
-	if (!IsProcessInJob(currentProcess, NULL, &processIsInJob)) {
-		consoleLog("Failed to Test Process Is In Job", OLD_CPU_SIMULATOR_ERR);
+	// we create a job so that if either the processHandle or the synced processHandle ends
+	// for whatever reason, we don't sync the processHandle anymore
+	jobObject = CreateJobObject(NULL, NULL);
+
+	if (!jobObject || jobObject == INVALID_HANDLE_VALUE) {
+		consoleLog("Failed to Create Job Object", OLD_CPU_SIMULATOR_ERR);
 		return false;
 	}
 
+	// this is how we kill both processes if either ends
 	JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobObjectInformation = {};
+	jobObjectInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE & JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK;
+
 	const size_t JOB_OBJECT_INFORMATION_SIZE = sizeof(jobObjectInformation);
 
-	if (processIsInJob) {
-		// if process is in job we need to check if it's the required job
-		if (!QueryInformationJobObject(NULL, JobObjectExtendedLimitInformation, &jobObjectInformation, JOB_OBJECT_INFORMATION_SIZE, NULL)) {
-			consoleLog("Failed to Query Job Object Information", OLD_CPU_SIMULATOR_ERR);
-			return false;
-		}
-
-		processIsInJob = jobObjectInformation.BasicLimitInformation.LimitFlags & JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
-	}
-
-	bool result = false;
-
-	if (!processIsInJob) {
-		// we create a job so that if either the processHandle or the synced processHandle ends
-		// for whatever reason, we don't sync the processHandle anymore
-		jobObject = CreateJobObject(NULL, NULL);
-
-		if (!jobObject || jobObject == INVALID_HANDLE_VALUE) {
-			consoleLog("Failed to Create Job Object", OLD_CPU_SIMULATOR_ERR);
-			return false;
-		}
-
-		// this is how we kill both processes if either ends
-		jobObjectInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE & JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK;
-
-		if (!SetInformationJobObject(jobObject, JobObjectExtendedLimitInformation, &jobObjectInformation, JOB_OBJECT_INFORMATION_SIZE)) {
-			consoleLog("Failed to Set Job Object Information", OLD_CPU_SIMULATOR_ERR);
-			goto error;
-		}
-
-		// assign the current processHandle to the job object
-		// we assign the synced processHandle later
-		if (!AssignProcessToJobObject(jobObject, currentProcess)) {
-			consoleLog("Failed to Assign Process to Job Object", OLD_CPU_SIMULATOR_ERR);
-			goto error;
-		}
+	if (!SetInformationJobObject(jobObject, JobObjectExtendedLimitInformation, &jobObjectInformation, JOB_OBJECT_INFORMATION_SIZE)) {
+		consoleLog("Failed to Set Job Object Information", OLD_CPU_SIMULATOR_ERR);
+		goto error;
 	}
 
 	size_t _commandLineSize = commandLine.size() + 1;
@@ -220,7 +193,7 @@ bool OldCPUSimulator::open(std::string commandLine) {
 		PROCESS_INFORMATION processInformation = {};
 
 		// create the processHandle, fail if we can't
-		opened = CreateProcess(NULL, _commandLine, NULL, NULL, TRUE, 0, NULL, NULL, &startupInfo, &processInformation)
+		opened = CreateProcess(NULL, _commandLine, NULL, NULL, TRUE, CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &startupInfo, &processInformation)
 			&& processInformation.hProcess
 			&& processInformation.hThread;
 
