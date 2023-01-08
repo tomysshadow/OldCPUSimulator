@@ -193,7 +193,7 @@ bool OldCPUSimulator::open(std::string commandLine) {
 		PROCESS_INFORMATION processInformation = {};
 
 		// create the processHandle, fail if we can't
-		opened = CreateProcess(NULL, _commandLine, NULL, NULL, FALSE, CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &startupInfo, &processInformation)
+		opened = CreateProcess(NULL, _commandLine, NULL, NULL, FALSE, CREATE_BREAKAWAY_FROM_JOB | CREATE_SUSPENDED, NULL, NULL, &startupInfo, &processInformation)
 			&& processInformation.hProcess
 			&& processInformation.hThread;
 
@@ -440,40 +440,43 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		goto error2;
 	}
 
-	suspended = false;
-
 	if (syncedProcessMainThreadOnly) {
 		consoleLog("Syncing Main Thread Only", OLD_CPU_SIMULATOR_OUT);
 
-		// if the thread terminated then try suspending the process
-		if (suspendThread()) {
-			if (suspended) {
-				for (;;) {
-					if (!wait(suspendMs, s2, timeEvent)) {
-						consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-						goto error3;
-					}
+		// we start with the synced thread suspended
+		suspended = true;
 
-					if (!resumeThread()) {
-						// main thread terminated
-						// try suspending the process
-						break;
-					}
+		for (;;) {
+			if (!wait(suspendMs, s2, timeEvent)) {
+				consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
+				goto error3;
+			}
 
-					if (!wait(resumeMs, s2, timeEvent)) {
-						consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-						goto error3;
-					}
+			if (!resumeThread()) {
+				// main thread terminated
+				// try suspending the process
+				break;
+			}
 
-					if (!suspendThread()) {
-						// main thread terminated
-						// try suspending the process
-						break;
-					}
-				}
+			if (!wait(resumeMs, s2, timeEvent)) {
+				consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
+				goto error3;
+			}
+
+			if (!suspendThread()) {
+				// main thread terminated
+				// try suspending the process
+				break;
 			}
 		}
+	} else {
+		if (ResumeThread(syncedThread) != -1) {
+			consoleLog("Failed to Resume Thread", OLD_CPU_SIMULATOR_ERR);
+			goto error3;
+		}
 	}
+
+	suspended = false;
 
 	if (syncMode == SYNC_MODE_SUSPEND_PROCESS) {
 		consoleLog("Testing Sync Mode: Suspend Process", OLD_CPU_SIMULATOR_OUT);
