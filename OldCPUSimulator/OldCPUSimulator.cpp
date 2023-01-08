@@ -151,39 +151,19 @@ bool OldCPUSimulator::open(std::string commandLine) {
 		return true;
 	}
 
-	bool result = false;
-
-	// we create a job so that if either the processHandle or the synced processHandle ends
-	// for whatever reason, we don't sync the processHandle anymore
-	jobObject = CreateJobObject(NULL, NULL);
-
-	if (!jobObject || jobObject == INVALID_HANDLE_VALUE) {
-		consoleLog("Failed to Create Job Object", OLD_CPU_SIMULATOR_ERR);
-		return false;
-	}
-
-	// this is how we kill both processes if either ends
-	JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobObjectInformation = {};
-	jobObjectInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE & JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK;
-
-	const size_t JOB_OBJECT_INFORMATION_SIZE = sizeof(jobObjectInformation);
-
-	if (!SetInformationJobObject(jobObject, JobObjectExtendedLimitInformation, &jobObjectInformation, JOB_OBJECT_INFORMATION_SIZE)) {
-		consoleLog("Failed to Set Job Object Information", OLD_CPU_SIMULATOR_ERR);
-		goto error;
-	}
-
 	size_t _commandLineSize = commandLine.size() + 1;
 	LPSTR _commandLine = new CHAR[_commandLineSize];
 
 	if (!_commandLine) {
 		consoleLog("Failed to Allocate commandLine", OLD_CPU_SIMULATOR_ERR);
-		goto error;
+		return false;
 	}
+
+	bool result = false;
 
 	if (strncpy_s(_commandLine, _commandLineSize, commandLine.c_str(), _commandLineSize)) {
 		consoleLog("Failed to Copy String", OLD_CPU_SIMULATOR_ERR);
-		goto error2;
+		goto error;
 	}
 
 	{
@@ -199,13 +179,33 @@ bool OldCPUSimulator::open(std::string commandLine) {
 
 		if (!opened) {
 			consoleLog("Failed to Create Process", OLD_CPU_SIMULATOR_ERR);
-			goto error2;
+			goto error;
 		}
 
 		syncedProcessID = processInformation.dwProcessId;
 		syncedThreadID = processInformation.dwThreadId;
 		syncedProcess = processInformation.hProcess;
 		syncedThread = processInformation.hThread;
+
+		// we create a job so that if either the processHandle or the synced processHandle ends
+		// for whatever reason, we don't sync the processHandle anymore
+		jobObject = CreateJobObject(NULL, NULL);
+
+		if (!jobObject || jobObject == INVALID_HANDLE_VALUE) {
+			consoleLog("Failed to Create Job Object", OLD_CPU_SIMULATOR_ERR);
+			goto error;
+		}
+
+		// this is how we kill both processes if either ends
+		JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobObjectInformation = {};
+		jobObjectInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK;
+
+		const size_t JOB_OBJECT_INFORMATION_SIZE = sizeof(jobObjectInformation);
+
+		if (!SetInformationJobObject(jobObject, JobObjectExtendedLimitInformation, &jobObjectInformation, JOB_OBJECT_INFORMATION_SIZE)) {
+			consoleLog("Failed to Set Job Object Information", OLD_CPU_SIMULATOR_ERR);
+			goto error2;
+		}
 
 		if (!AssignProcessToJobObject(jobObject, syncedProcess)) {
 			consoleLog("Failed to Assign Process to Job Object", OLD_CPU_SIMULATOR_ERR);
@@ -214,19 +214,17 @@ bool OldCPUSimulator::open(std::string commandLine) {
 	}
 	result = true;
 	error2:
-	delete[] _commandLine;
-	_commandLine = NULL;
-	
-	if (result) {
-		return true;
+	if (!result) {
+		if (!CloseHandle(jobObject)) {
+			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
+			goto error;
+		}
+
+		jobObject = NULL;
 	}
 	error:
-	if (!CloseHandle(jobObject)) {
-		consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
-		goto error;
-	}
-
-	jobObject = NULL;
+	delete[] _commandLine;
+	_commandLine = NULL;
 	return result;
 }
 
@@ -470,7 +468,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 			}
 		}
 	} else {
-		if (ResumeThread(syncedThread) != -1) {
+		if (ResumeThread(syncedThread) == -1) {
 			consoleLog("Failed to Resume Thread", OLD_CPU_SIMULATOR_ERR);
 			goto error3;
 		}
