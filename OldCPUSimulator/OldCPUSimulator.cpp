@@ -193,7 +193,7 @@ bool OldCPUSimulator::open(std::string commandLine) {
 		PROCESS_INFORMATION processInformation = {};
 
 		// create the processHandle, fail if we can't
-		opened = CreateProcess(NULL, _commandLine, NULL, NULL, TRUE, CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &startupInfo, &processInformation)
+		opened = CreateProcess(NULL, _commandLine, NULL, NULL, FALSE, CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &startupInfo, &processInformation)
 			&& processInformation.hProcess
 			&& processInformation.hThread;
 
