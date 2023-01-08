@@ -185,7 +185,7 @@ bool OldCPUSimulator::open(std::string commandLine) {
 		}
 
 		// this is how we kill both processes if either ends
-		jobObjectInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+		jobObjectInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE & JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK;
 
 		if (!SetInformationJobObject(jobObject, JobObjectExtendedLimitInformation, &jobObjectInformation, JOB_OBJECT_INFORMATION_SIZE)) {
 			consoleLog("Failed to Set Job Object Information", OLD_CPU_SIMULATOR_ERR);
@@ -233,6 +233,11 @@ bool OldCPUSimulator::open(std::string commandLine) {
 		syncedThreadID = processInformation.dwThreadId;
 		syncedProcess = processInformation.hProcess;
 		syncedThread = processInformation.hThread;
+
+		if (!AssignProcessToJobObject(jobObject, syncedProcess)) {
+			consoleLog("Failed to Assign Process to Job Object", OLD_CPU_SIMULATOR_ERR);
+			goto error2;
+		}
 	}
 	result = true;
 	error2:
