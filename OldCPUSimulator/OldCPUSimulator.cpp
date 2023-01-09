@@ -187,8 +187,8 @@ bool OldCPUSimulator::open(std::string commandLine) {
 		syncedProcess = processInformation.hProcess;
 		syncedThread = processInformation.hThread;
 
-		// we create a job so that if either the processHandle or the synced processHandle ends
-		// for whatever reason, we don't sync the processHandle anymore
+		// we create a job so that if either the process or the synced process ends
+		// for whatever reason, we don't sync the process anymore
 		jobObject = CreateJobObject(NULL, NULL);
 
 		if (!jobObject || jobObject == INVALID_HANDLE_VALUE) {
