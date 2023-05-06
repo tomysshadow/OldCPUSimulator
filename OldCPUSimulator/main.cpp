@@ -1,7 +1,6 @@
 #include "shared.h"
 #include "OldCPUSimulator.h"
 #include <string>
-#include <sstream>
 #include <windows.h>
 
 #define MAIN_OUT 2

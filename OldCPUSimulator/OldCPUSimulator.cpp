@@ -460,6 +460,9 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		OSVERSIONINFO osVersionInfo = {};
 		osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
 
+		// only for Windows XP and greater
+		// would be possible, but difficult to adapt for Windows 2000/NT 4.0
+		// http://www.informit.com/articles/article.aspx?p=22442&seqNum=6
 		if (ntQuerySystemInformation
 			&& GetVersionEx(&osVersionInfo)
 			&& ((osVersionInfo.dwMajorVersion > 5)
