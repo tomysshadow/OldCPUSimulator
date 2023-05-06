@@ -259,7 +259,7 @@ namespace OldCPUSimulatorGUI {
             try {
                 string fullPath = recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem);
 
-                if (String.IsNullOrEmpty(fullPath)) {
+                if (String.IsNullOrWhiteSpace(fullPath)) {
                     MessageBox.Show(Properties.Resources.SelectRecentFileFirst, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -466,7 +466,7 @@ namespace OldCPUSimulatorGUI {
         }
 
         private void recentFilesListBox_SelectedIndexChanged(object sender, EventArgs e) {
-            if (String.IsNullOrEmpty(recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem))) {
+            if (String.IsNullOrWhiteSpace(recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem))) {
                 runRecentButton.Enabled = false;
                 return;
             }
