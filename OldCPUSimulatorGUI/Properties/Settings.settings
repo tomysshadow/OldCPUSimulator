@@ -2,35 +2,59 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OldCPUSimulatorGUI.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString0" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles0" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString1" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles1" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString2" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles2" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString3" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles3" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString4" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles4" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString5" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles5" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString6" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles6" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString7" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles7" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString8" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles8" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="oldCPUSimulatorSaveDataRecentFilesListBoxItemString9" Type="System.String" Scope="User">
+    <Setting Name="RecentFiles9" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="TargetMhzSelectedIndex" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="TargetMhz" Type="System.UInt64" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="RefreshHz" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="SetProcessPriorityHigh" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SetSyncedProcessAffinityOne" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SyncedProcessMainThreadOnly" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="RefreshRateFloorFifteen" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="QuickReferenceLinkVisited" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

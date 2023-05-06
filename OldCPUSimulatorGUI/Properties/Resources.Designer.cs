@@ -61,6 +61,15 @@ namespace OldCPUSimulatorGUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to restore the defaults?.
+        /// </summary>
+        internal static string AreYouSureRestoreDefaults {
+            get {
+                return ResourceManager.GetString("AreYouSureRestoreDefaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The CPU&apos;s clock speed could not be determined..
         /// </summary>
         internal static string CPUSpeedNotDetermined {
@@ -88,6 +97,15 @@ namespace OldCPUSimulatorGUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Old CPU Simulator.
+        /// </summary>
+        internal static string OldCPUSimulator {
+            get {
+                return ResourceManager.GetString("OldCPUSimulator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Old CPU Simulator Process failed to be created..
         /// </summary>
         internal static string OldCPUSimulatorProcessFailedCreate {
@@ -97,11 +115,20 @@ namespace OldCPUSimulatorGUI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You must select a file first (or click New.).
+        ///   Looks up a localized string similar to Do you want to run the drag and dropped file?.
         /// </summary>
-        internal static string SelectFileFirst {
+        internal static string RunDragAndDroppedFile {
             get {
-                return ResourceManager.GetString("SelectFileFirst", resourceCulture);
+                return ResourceManager.GetString("RunDragAndDroppedFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must select a Recent File first (or click Open.).
+        /// </summary>
+        internal static string SelectRecentFileFirst {
+            get {
+                return ResourceManager.GetString("SelectRecentFileFirst", resourceCulture);
             }
         }
         

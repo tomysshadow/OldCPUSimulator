@@ -9,47 +9,17 @@
 void OldCPUSimulator::destroy() {
 	//consoleLog("Destroying Old CPU Simulator", OLD_CPU_SIMULATOR_OUT);
 
-	if (syncedProcess) {
-		if (!CloseHandle(syncedProcess)) {
-			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
-			goto error3;
-		}
-
-		syncedProcess = NULL;
+	if (!closeProcess(syncedProcess)) {
+		consoleLog("Failed to Close Process", OLD_CPU_SIMULATOR_ERR);
 	}
 
-	error3:
-	if (syncedThread) {
-		if (!CloseHandle(syncedThread)) {
-			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
-			goto error2;
-		}
-
-		syncedThread = NULL;
+	if (!closeThread(syncedThread)) {
+		consoleLog("Failed to Close Thread", OLD_CPU_SIMULATOR_ERR);
 	}
 
-	error2:
-	if (jobObject && jobObject != INVALID_HANDLE_VALUE) {
-		if (!CloseHandle(jobObject)) {
-			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
-			goto error;
-		}
-
-		jobObject = NULL;
+	if (!closeHandle(jobObject)) {
+		consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
 	}
-
-	error:
-	if (systemInformation) {
-		delete[] systemInformation;
-		systemInformation = NULL;
-		systemInformationSize = 0;
-	}
-
-	setProcessInformation = NULL;
-
-	ntSuspendProcess = NULL;
-	ntResumeProcess = NULL;
-	ntQuerySystemInformation = NULL;
 }
 
 bool OldCPUSimulator::duplicate(const OldCPUSimulator &oldCPUSimulator) {
@@ -81,12 +51,7 @@ bool OldCPUSimulator::duplicate(const OldCPUSimulator &oldCPUSimulator) {
 	systemInformationSize = oldCPUSimulator.systemInformationSize;
 
 	if (oldCPUSimulator.systemInformation) {
-		if (systemInformation) {
-			delete[] systemInformation;
-			systemInformation = NULL;
-		}
-
-		systemInformation = new BYTE[systemInformationSize];
+		systemInformation = std::shared_ptr<BYTE[]>(oldCPUSimulator.systemInformation);
 
 		if (!systemInformation) {
 			consoleLog("Failed to Allocate systemInformation", OLD_CPU_SIMULATOR_ERR);
@@ -152,79 +117,73 @@ bool OldCPUSimulator::open(std::string commandLine) {
 	}
 
 	size_t _commandLineSize = commandLine.size() + 1;
-	LPSTR _commandLine = new CHAR[_commandLineSize];
+	std::unique_ptr<CHAR[]> _commandLine = std::unique_ptr<CHAR[]>(new CHAR[_commandLineSize]);
 
 	if (!_commandLine) {
 		consoleLog("Failed to Allocate commandLine", OLD_CPU_SIMULATOR_ERR);
 		return false;
 	}
 
-	bool result = false;
-
-	if (strncpy_s(_commandLine, _commandLineSize, commandLine.c_str(), _commandLineSize)) {
+	if (strncpy_s(_commandLine.get(), _commandLineSize, commandLine.c_str(), _commandLineSize)) {
 		consoleLog("Failed to Copy String", OLD_CPU_SIMULATOR_ERR);
-		goto error;
+		return false;
 	}
 
-	{
-		STARTUPINFO startupInfo = {};
-		startupInfo.cb = sizeof(startupInfo);
+	STARTUPINFO startupInfo = {};
+	startupInfo.cb = sizeof(startupInfo);
 
-		PROCESS_INFORMATION processInformation = {};
+	PROCESS_INFORMATION processInformation = {};
 
-		// create the processHandle, fail if we can't
-		opened = CreateProcess(NULL, _commandLine, NULL, NULL, FALSE, CREATE_BREAKAWAY_FROM_JOB | CREATE_SUSPENDED, NULL, NULL, &startupInfo, &processInformation)
-			&& processInformation.hProcess
-			&& processInformation.hThread;
+	// create the processHandle, fail if we can't
+	opened = CreateProcess(NULL, _commandLine.get(), NULL, NULL, FALSE, CREATE_BREAKAWAY_FROM_JOB | CREATE_SUSPENDED, NULL, NULL, &startupInfo, &processInformation)
+		&& processInformation.hProcess
+		&& processInformation.hThread;
 
-		if (!opened) {
-			consoleLog("Failed to Create Process", OLD_CPU_SIMULATOR_ERR);
-			goto error;
-		}
-
-		syncedProcessID = processInformation.dwProcessId;
-		syncedThreadID = processInformation.dwThreadId;
-		syncedProcess = processInformation.hProcess;
-		syncedThread = processInformation.hThread;
-
-		// we create a job so that if either the process or the synced process ends
-		// for whatever reason, we don't sync the process anymore
-		jobObject = CreateJobObject(NULL, NULL);
-
-		if (!jobObject || jobObject == INVALID_HANDLE_VALUE) {
-			consoleLog("Failed to Create Job Object", OLD_CPU_SIMULATOR_ERR);
-			goto error;
-		}
-
-		// this is how we kill both processes if either ends
-		JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobObjectInformation = {};
-		jobObjectInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK;
-
-		const size_t JOB_OBJECT_INFORMATION_SIZE = sizeof(jobObjectInformation);
-
-		if (!SetInformationJobObject(jobObject, JobObjectExtendedLimitInformation, &jobObjectInformation, JOB_OBJECT_INFORMATION_SIZE)) {
-			consoleLog("Failed to Set Job Object Information", OLD_CPU_SIMULATOR_ERR);
-			goto error2;
-		}
-
-		if (!AssignProcessToJobObject(jobObject, syncedProcess)) {
-			consoleLog("Failed to Assign Process to Job Object", OLD_CPU_SIMULATOR_ERR);
-			goto error2;
-		}
+	if (!opened) {
+		consoleLog("Failed to Create Process", OLD_CPU_SIMULATOR_ERR);
+		return false;
 	}
-	result = true;
-	error2:
-	if (!result) {
-		if (!CloseHandle(jobObject)) {
+
+	syncedProcessID = processInformation.dwProcessId;
+	syncedThreadID = processInformation.dwThreadId;
+	syncedProcess = processInformation.hProcess;
+	syncedThread = processInformation.hThread;
+
+	// we create a job so that if either the process or the synced process ends
+	// for whatever reason, we don't sync the process anymore
+	jobObject = CreateJobObject(NULL, NULL);
+
+	if (!jobObject || jobObject == INVALID_HANDLE_VALUE) {
+		consoleLog("Failed to Create Job Object", OLD_CPU_SIMULATOR_ERR);
+		return false;
+	}
+
+	bool result = true;
+
+	MAKE_SCOPE_EXIT(jobObjectScopeExit) {
+		if (!closeHandle(jobObject)) {
 			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
-			goto error;
+			result = false;
 		}
+	};
 
-		jobObject = NULL;
+	// this is how we kill both processes if either ends
+	JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobObjectInformation = {};
+	jobObjectInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK;
+
+	const size_t JOB_OBJECT_INFORMATION_SIZE = sizeof(jobObjectInformation);
+
+	if (!SetInformationJobObject(jobObject, JobObjectExtendedLimitInformation, &jobObjectInformation, JOB_OBJECT_INFORMATION_SIZE)) {
+		consoleLog("Failed to Set Job Object Information", OLD_CPU_SIMULATOR_ERR);
+		return false;
 	}
-	error:
-	delete[] _commandLine;
-	_commandLine = NULL;
+
+	if (!AssignProcessToJobObject(jobObject, syncedProcess)) {
+		consoleLog("Failed to Assign Process to Job Object", OLD_CPU_SIMULATOR_ERR);
+		return false;
+	}
+
+	jobObjectScopeExit.dismiss();
 	return result;
 }
 
@@ -237,43 +196,26 @@ bool OldCPUSimulator::close() {
 
 	bool result = true;
 
-	if (jobObject && jobObject != INVALID_HANDLE_VALUE) {
-		if (!CloseHandle(jobObject)) {
+	SCOPE_EXIT {
+		if (!closeHandle(jobObject)) {
 			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
 			result = false;
-			goto error3;
 		}
+	};
 
-		jobObject = NULL;
-	}
-	error3:
-	if (syncedThread) {
-		if (!CloseHandle(syncedThread)) {
-			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
+	SCOPE_EXIT {
+		if (!closeThread(syncedThread)) {
+			consoleLog("Failed to Close Thread", OLD_CPU_SIMULATOR_ERR);
 			result = false;
-			goto error2;
 		}
+	};
 
-		syncedThread = NULL;
-	}
-	error2:
-	if (syncedProcess) {
-		if (!TerminateProcess(syncedProcess, 0)) {
-			if (GetLastError() != ERROR_ACCESS_DENIED) {
-				consoleLog("Failed to Terminate Process", OLD_CPU_SIMULATOR_ERR);
-				result = false;
-			}
-		}
-
-		if (!CloseHandle(syncedProcess)) {
-			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
+	SCOPE_EXIT {
+		if (!terminateProcess(syncedProcess)) {
+			consoleLog("Failed to Terminate Process", OLD_CPU_SIMULATOR_ERR);
 			result = false;
-			goto error;
 		}
-
-		syncedProcess = NULL;
-	}
-	error:
+	};
 	return result;
 }
 
@@ -351,34 +293,8 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		honorTimerResolutionRequests(currentProcess, setProcessInformation);
 	}
 
-	// create message only window
 	// the PostMessage/GetMessage here has been replaced with a SetEvent/WaitForSingleObject so that
 	// we are not a window-holding process (to fulfill Windows 11 timer throttling requirement)
-	/*
-	WNDCLASSEX windowClassEx = {};
-	windowClassEx.cbSize = sizeof(windowClassEx);
-	windowClassEx.lpfnWndProc = DefWindowProc;
-	windowClassEx.hInstance = GetModuleHandle(NULL);
-	windowClassEx.lpszClassName = "OLD_CPU_SIMULATOR";
-
-	if (!windowClassEx.hInstance) {
-		consoleLog("Instance Handle must not be NULL", OLD_CPU_SIMULATOR_ERR);
-		return false;
-	}
-
-	if (!RegisterClassEx(&windowClassEx)) {
-		consoleLog("Failed to Register Window Class", OLD_CPU_SIMULATOR_ERR);
-		return false;
-	}
-
-	messageOnlyWindowHandle = CreateWindowEx(WS_OVERLAPPED, windowClassEx.lpszClassName, "Old CPU Simulator", WS_CHILD, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, HWND_MESSAGE, NULL, windowClassEx.hInstance, NULL);
-
-	if (!messageOnlyWindowHandle) {
-		consoleLog("Failed to Create Message Only Window", OLD_CPU_SIMULATOR_ERR);
-		goto error;
-	}
-	*/
-
 	HANDLE timeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	if (!timeEvent || timeEvent == INVALID_HANDLE_VALUE) {
@@ -386,14 +302,21 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		return false;
 	}
 
-	bool result = false;
+	bool result = true;
+
+	SCOPE_EXIT {
+		if (!closeHandle(timeEvent)) {
+			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
+			result = false;
+		}
+	};
 
 	TIMECAPS timeDevCaps = {};
 	const size_t TIME_DEV_CAPS_SIZE = sizeof(timeDevCaps);
 
 	if (timeGetDevCaps(&timeDevCaps, TIME_DEV_CAPS_SIZE) != MMSYSERR_NOERROR) {
 		consoleLog("Failed to Get Time Dev Caps", OLD_CPU_SIMULATOR_ERR);
-		goto error2;
+		return false;
 	}
 
 	// one millisecond (approximately)
@@ -405,7 +328,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 
 	if (!ms || !s || !s2 || s < ms || s2 < s) {
 		consoleLog("Invalid Time Dev Caps", OLD_CPU_SIMULATOR_ERR);
-		goto error2;
+		return false;
 	}
 
 	// if we're suspended 3 / 4
@@ -435,8 +358,15 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 	// set precision to highest value that will work for both suspend/resume wait time
 	if (timeBeginPeriod(gcdMs) != TIMERR_NOERROR) {
 		consoleLog("Failed to Begin Time Period", OLD_CPU_SIMULATOR_OUT);
-		goto error2;
+		return false;
 	}
+
+	SCOPE_EXIT {
+		if (timeEndPeriod(gcdMs) != TIMERR_NOERROR) {
+			consoleLog("Failed to End Time Period", OLD_CPU_SIMULATOR_ERR);
+			result = false;
+		}
+	};
 
 	if (syncedProcessMainThreadOnly) {
 		consoleLog("Syncing Main Thread Only", OLD_CPU_SIMULATOR_OUT);
@@ -447,7 +377,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		for (;;) {
 			if (!wait(suspendMs, s2, timeEvent)) {
 				consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-				goto error3;
+				return false;
 			}
 
 			if (!resumeThread()) {
@@ -458,7 +388,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 
 			if (!wait(resumeMs, s2, timeEvent)) {
 				consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-				goto error3;
+				return false;
 			}
 
 			if (!suspendThread()) {
@@ -470,7 +400,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 	} else {
 		if (ResumeThread(syncedThread) == -1) {
 			consoleLog("Failed to Resume Thread", OLD_CPU_SIMULATOR_ERR);
-			goto error3;
+			return false;
 		}
 	}
 
@@ -486,7 +416,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 					for (;;) {
 						if (!wait(suspendMs, s2, timeEvent)) {
 							consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-							goto error3;
+							return false;
 						}
 
 						if (!resumeProcess()) {
@@ -496,7 +426,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 
 						if (!wait(resumeMs, s2, timeEvent)) {
 							consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-							goto error3;
+							return false;
 						}
 
 						if (!suspendProcess()) {
@@ -514,6 +444,15 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 			syncMode = SYNC_MODE_QUERY_SYSTEM_INFORMATION;
 		}
 	}
+
+	SCOPE_EXIT {
+		closeResumedThreads();
+
+		if (!resumedThreadsVector.empty()) {
+			consoleLog("Failed to Close Resumed Threads", OLD_CPU_SIMULATOR_ERR);
+			result = false;
+		}
+	};
 
 	if (syncMode == SYNC_MODE_QUERY_SYSTEM_INFORMATION) {
 		consoleLog("Testing Sync Mode: Query System Information", OLD_CPU_SIMULATOR_OUT);
@@ -535,14 +474,14 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 						for (;;) {
 							if (!wait(suspendMs, s2, timeEvent)) {
 								consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-								goto error4;
+								return false;
 							}
 
 							resumeThreads();
 
 							if (!wait(resumeMs, s2, timeEvent)) {
 								consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-								goto error4;
+								return false;
 							}
 
 							if (!querySystemInformation()) {
@@ -554,7 +493,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 				}
 			} catch (...) {
 				consoleLog("Failed to Query System Information", OLD_CPU_SIMULATOR_ERR);
-				goto error4;
+				return false;
 			}
 		} else {
 			syncMode = SYNC_MODE_TOOLHELP_SNAPSHOT;
@@ -568,19 +507,19 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 			if (toolhelpSnapshot()) {
 				if (suspendedThreadIDsVector.empty()) {
 					consoleLog("No Sync Mode", OLD_CPU_SIMULATOR_ERR);
-					goto error4;
+					return false;
 				} else {
 					for (;;) {
 						if (!wait(suspendMs, s2, timeEvent)) {
 							consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-							goto error4;
+							return false;
 						}
 
 						resumeThreads();
 
 						if (!wait(resumeMs, s2, timeEvent)) {
 							consoleLog("Failed to Wait Old CPU Simulator", OLD_CPU_SIMULATOR_ERR);
-							goto error4;
+							return false;
 						}
 
 						if (!toolhelpSnapshot()) {
@@ -592,48 +531,8 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 			}
 		} catch (...) {
 			consoleLog("Failed to Toolhelp Snapshot", OLD_CPU_SIMULATOR_ERR);
-			goto error4;
+			return false;
 		}
 	}
-
-	result = true;
-	error4:
-	closeResumedThreads();
-
-	if (!resumedThreadsVector.empty()) {
-		consoleLog("Failed to Close Resumed Threads", OLD_CPU_SIMULATOR_ERR);
-		result = false;
-	}
-	error3:
-	if (timeEndPeriod(gcdMs) != TIMERR_NOERROR) {
-		consoleLog("Failed to End Time Period", OLD_CPU_SIMULATOR_ERR);
-		result = false;
-	}
-	error2:
-	if (timeEvent && timeEvent != INVALID_HANDLE_VALUE) {
-		/*
-		if (!DestroyWindow(messageOnlyWindowHandle)) {
-			consoleLog("Failed to Destroy Window", OLD_CPU_SIMULATOR_ERR);
-			result = false;
-			goto error;
-		}
-
-		messageOnlyWindowHandle = NULL;
-		*/
-		if (!CloseHandle(timeEvent)) {
-			consoleLog("Failed to Close Handle", OLD_CPU_SIMULATOR_ERR);
-			result = false;
-			goto error;
-		}
-
-		timeEvent = NULL;
-	}
-	/*
-	if (!UnregisterClass(windowClassEx.lpszClassName, windowClassEx.hInstance)) {
-		consoleLog("Failed to Unregister Window Class", OLD_CPU_SIMULATOR_ERR);
-		result = false;
-	}
-	*/
-	error:
 	return result;
 }

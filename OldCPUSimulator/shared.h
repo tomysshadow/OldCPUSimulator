@@ -1,5 +1,8 @@
 #pragma once
 #define _WIN32_WINNT 0x0501
+#include "scope_guard.hpp"
+#include <memory>
+#include <exception>
 #include <string>
 #define WIN32_NO_STATUS
 #include <windows.h>
@@ -120,6 +123,77 @@ inline UINT clamp(UINT number, UINT min, UINT max) {
 
 inline UINT gcd(UINT a, UINT b) {
 	return a ? gcd(b % a, a) : b;
+}
+
+inline bool closeHandle(HANDLE &handle) {
+	if (handle && handle != INVALID_HANDLE_VALUE) {
+		if (!CloseHandle(handle)) {
+			return false;
+		}
+	}
+
+	handle = NULL;
+	return true;
+}
+
+inline bool closeMutex(HANDLE &mutex) {
+	if (mutex && mutex != INVALID_HANDLE_VALUE) {
+		if (!CloseHandle(mutex)) {
+			return false;
+		}
+	}
+
+	mutex = NULL;
+	return true;
+}
+
+inline bool releaseMutex(HANDLE &mutex) {
+	bool result = true;
+
+	if (mutex && mutex != INVALID_HANDLE_VALUE) {
+		if (!ReleaseMutex(mutex)) {
+			result = false;
+		}
+
+		if (!CloseHandle(mutex)) {
+			return false;
+		}
+	}
+
+	mutex = NULL;
+	return result;
+}
+
+inline bool closeProcess(HANDLE &process) {
+	if (process) {
+		if (!CloseHandle(process)) {
+			return false;
+		}
+	}
+
+	process = NULL;
+	return true;
+}
+
+inline bool terminateProcess(HANDLE &process) {
+	if (process) {
+		if (!TerminateProcess(process, 0)) {
+			if (GetLastError() != ERROR_ACCESS_DENIED) {
+				return false;
+			}
+		}
+
+		if (!CloseHandle(process)) {
+			return false;
+		}
+	}
+
+	process = NULL;
+	return true;
+}
+
+inline bool closeThread(HANDLE &thread) {
+	return closeProcess(thread);
 }
 
 void consoleLog(const char* str = 0, short newline = true, short tab = false, bool err = false, const char* file = 0, unsigned int line = 0);

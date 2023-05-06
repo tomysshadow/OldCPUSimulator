@@ -79,38 +79,30 @@ bool getMaxMhz(ULONG &maxMhz) {
 	GetSystemInfo(&systemInfo);
 
 	ULONG PROCESSOR_POWER_INFORMATION_SIZE = sizeof(PROCESSOR_POWER_INFORMATION) * systemInfo.dwNumberOfProcessors;
-	PVOID outputBuffer = new BYTE[PROCESSOR_POWER_INFORMATION_SIZE];
+	std::unique_ptr<BYTE[]> outputBuffer = std::unique_ptr<BYTE[]>(new BYTE[PROCESSOR_POWER_INFORMATION_SIZE]);
 
 	if (!outputBuffer) {
 		consoleLog("Failed to Allocate outputBuffer", SHARED_ERR);
 		return false;
 	}
 
-	bool result = false;
-
-	if (CallNtPowerInformation(ProcessorInformation, NULL, NULL, outputBuffer, PROCESSOR_POWER_INFORMATION_SIZE) != STATUS_SUCCESS) {
+	if (CallNtPowerInformation(ProcessorInformation, NULL, NULL, outputBuffer.get(), PROCESSOR_POWER_INFORMATION_SIZE) != STATUS_SUCCESS) {
 		consoleLog("Failed to Call Power Information", SHARED_ERR);
-		goto error;
+		return false;
 	}
 
-	PPROCESSOR_POWER_INFORMATION processorPowerInformationPointer = (PPROCESSOR_POWER_INFORMATION)outputBuffer;
+	PPROCESSOR_POWER_INFORMATION processorPowerInformationPointer = (PPROCESSOR_POWER_INFORMATION)outputBuffer.get();
 
 	if (!processorPowerInformationPointer) {
 		consoleLog("processorPowerInformationPointer must not be NULL", SHARED_ERR);
-		goto error;
+		return false;
 	}
 
 	for (DWORD i = 0; i < systemInfo.dwNumberOfProcessors; i++) {
 		maxMhz = max(processorPowerInformationPointer->MaxMhz, maxMhz);
 		processorPowerInformationPointer++;
 	}
-
-	result = true;
-	processorPowerInformationPointer = NULL;
-	error:
-	delete[] outputBuffer;
-	outputBuffer = NULL;
-	return result;
+	return true;
 }
 
 bool setProcessAffinity(HANDLE process, DWORD affinity) {

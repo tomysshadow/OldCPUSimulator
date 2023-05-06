@@ -26,120 +26,216 @@ namespace OldCPUSimulatorGUI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString0 {
+        public string RecentFiles0 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString0"]));
+                return ((string)(this["RecentFiles0"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString0"] = value;
+                this["RecentFiles0"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString1 {
+        public string RecentFiles1 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString1"]));
+                return ((string)(this["RecentFiles1"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString1"] = value;
+                this["RecentFiles1"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString2 {
+        public string RecentFiles2 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString2"]));
+                return ((string)(this["RecentFiles2"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString2"] = value;
+                this["RecentFiles2"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString3 {
+        public string RecentFiles3 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString3"]));
+                return ((string)(this["RecentFiles3"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString3"] = value;
+                this["RecentFiles3"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString4 {
+        public string RecentFiles4 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString4"]));
+                return ((string)(this["RecentFiles4"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString4"] = value;
+                this["RecentFiles4"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString5 {
+        public string RecentFiles5 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString5"]));
+                return ((string)(this["RecentFiles5"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString5"] = value;
+                this["RecentFiles5"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString6 {
+        public string RecentFiles6 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString6"]));
+                return ((string)(this["RecentFiles6"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString6"] = value;
+                this["RecentFiles6"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString7 {
+        public string RecentFiles7 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString7"]));
+                return ((string)(this["RecentFiles7"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString7"] = value;
+                this["RecentFiles7"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString8 {
+        public string RecentFiles8 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString8"]));
+                return ((string)(this["RecentFiles8"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString8"] = value;
+                this["RecentFiles8"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string oldCPUSimulatorSaveDataRecentFilesListBoxItemString9 {
+        public string RecentFiles9 {
             get {
-                return ((string)(this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString9"]));
+                return ((string)(this["RecentFiles9"]));
             }
             set {
-                this["oldCPUSimulatorSaveDataRecentFilesListBoxItemString9"] = value;
+                this["RecentFiles9"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TargetMhzSelectedIndex {
+            get {
+                return ((int)(this["TargetMhzSelectedIndex"]));
+            }
+            set {
+                this["TargetMhzSelectedIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public ulong TargetMhz {
+            get {
+                return ((ulong)(this["TargetMhz"]));
+            }
+            set {
+                this["TargetMhz"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public decimal RefreshHz {
+            get {
+                return ((decimal)(this["RefreshHz"]));
+            }
+            set {
+                this["RefreshHz"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SetProcessPriorityHigh {
+            get {
+                return ((bool)(this["SetProcessPriorityHigh"]));
+            }
+            set {
+                this["SetProcessPriorityHigh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SetSyncedProcessAffinityOne {
+            get {
+                return ((bool)(this["SetSyncedProcessAffinityOne"]));
+            }
+            set {
+                this["SetSyncedProcessAffinityOne"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SyncedProcessMainThreadOnly {
+            get {
+                return ((bool)(this["SyncedProcessMainThreadOnly"]));
+            }
+            set {
+                this["SyncedProcessMainThreadOnly"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool RefreshRateFloorFifteen {
+            get {
+                return ((bool)(this["RefreshRateFloorFifteen"]));
+            }
+            set {
+                this["RefreshRateFloorFifteen"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuickReferenceLinkVisited {
+            get {
+                return ((bool)(this["QuickReferenceLinkVisited"]));
+            }
+            set {
+                this["QuickReferenceLinkVisited"] = value;
             }
         }
     }

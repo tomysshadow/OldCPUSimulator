@@ -1,4 +1,4 @@
-Old CPU Simulator 2.1.3
+Old CPU Simulator 2.2.0
 By Anthony Kleine
 
 	This command line tool simulates running a process on a CPU with a
@@ -13,7 +13,7 @@ Usage: OldCPUSimulator -t targetRate [options] -sw software.exe
 	to simulate.
 	This argument is required.
 	
-	Try 233 to simulate an Intel Pentium 233 MHz from the late 1990s.
+	Try 233 to simulate an Intel Pentium 233 MHz from the late 90s.
 	Try 350 to simulate an Intel Pentium II 350 MHz from the early 2000s.
 	Try 933 to simulate an Intel Pentium III 933 MHz from the mid 2000s.
 
@@ -45,11 +45,8 @@ Usage: OldCPUSimulator -t targetRate [options] -sw software.exe
 	May not work with newer games.
 
 -mt (or --synced-process-main-thread-only)
-	Try enabling this if the process you're running
-	seems to be barely affected by Old CPU Simulator,
-	as it may increase accuracy on some Windows versions,
-	as well as reduce stuttering.
-	May cause errors with some games.
+	This is an optimization which improves the accuracy of the
+	simulation, but may not work with all games.
 
 -rf (or --refresh-rate-floor-fifteen)
 	Rounds Refresh Rate to the nearest multiple of 15 if applicable.

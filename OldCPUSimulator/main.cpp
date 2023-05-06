@@ -52,11 +52,8 @@ void help() {
 	consoleLog("May not work with newer games.", 2, true);
 
 	consoleLog("-mt (or --synced-process-main-thread-only)");
-	consoleLog("Try enabling this if the process you're running", true, true);
-	consoleLog("seems to be barely affected by Old CPU Simulator,", true, true);
-	consoleLog("as it may increase accuracy on some Windows versions,", true, true);
-	consoleLog("as well as reduce stuttering.", true, true);
-	consoleLog("May cause errors with some games.", 2, true);
+	consoleLog("This is an optimization which improves the accuracy of the", true, true);
+	consoleLog("simulation, but may not work with all games.", 2, true);
 
 	consoleLog("-rf (or --refresh-rate-floor-fifteen)");
 	consoleLog("Rounds Refresh Rate to the nearest multiple of 15 if applicable.", 2, true);
@@ -74,173 +71,156 @@ int main(int argc, char** argv) {
 	HANDLE applicationMutex = CreateMutex(NULL, TRUE, "Old CPU Simulator");
 
 	if (GetLastError() == ERROR_ALREADY_EXISTS) {
-		if (applicationMutex && applicationMutex != INVALID_HANDLE_VALUE) {
-			if (!CloseHandle(applicationMutex)) {
-				consoleLog("Failed to Close Handle", MAIN_ERR);
-				return -2;
-			}
-
-			applicationMutex = NULL;
+		if (!closeMutex(applicationMutex)) {
+			consoleLog("Failed to Close Mutex", MAIN_ERR);
 		}
 		return -2;
 	}
 
-	consoleLog("Old CPU Simulator 2.1.3");
+	int result = -1;
+
+	SCOPE_EXIT {
+		if (!releaseMutex(applicationMutex)) {
+			consoleLog("Failed to Release Mutex", MAIN_ERR);
+			result = -2;
+		}
+	};
+
+	consoleLog("Old CPU Simulator 2.2.0");
 	consoleLog("By Anthony Kleine", 2);
 
 	// the number of required arguments
 	// including the executable name, even if we don't use it
 	const int MIN_ARGC = 1;
 
-	int result = -1;
-
 	if (argc < MIN_ARGC) {
 		help();
-		goto error2;
+		return result;
 	}
 
-	{
-		const int MIN_ARGS_REQUIRED = 2;
+	const int MIN_ARGS_REQUIRED = 2;
 
-		std::string arg = "";
-		int argc2 = argc - 1;
-		int argsRequired = 0;
+	std::string arg = "";
+	int argc2 = argc - 1;
+	int argsRequired = 0;
 
-		bool setProcessPriorityHigh = false;
-		bool setSyncedProcessAffinityOne = false;
-		bool syncedProcessMainThreadOnly = false;
-		bool refreshHzFloorFifteen = false;
+	bool setProcessPriorityHigh = false;
+	bool setSyncedProcessAffinityOne = false;
+	bool syncedProcessMainThreadOnly = false;
+	bool refreshHzFloorFifteen = false;
 
-		std::string software = "";
+	std::string software = "";
 
-		SYNC_MODE syncMode = SYNC_MODE_SUSPEND_PROCESS;
-		ULONG maxMhz = 0;
-		ULONG targetMhz = 233;
-		UINT refreshHz = 1000;
+	SYNC_MODE syncMode = SYNC_MODE_SUSPEND_PROCESS;
+	ULONG maxMhz = 0;
+	ULONG targetMhz = 233;
+	UINT refreshHz = 1000;
 
-		for (int i = MIN_ARGC; i < argc; i++) {
-			arg = std::string(argv[i]);
+	for (int i = MIN_ARGC; i < argc; i++) {
+		arg = std::string(argv[i]);
 
-			if (arg == "-h" || arg == "--help") {
-				help();
-				result = 0;
-				goto error2;
-			} else if (arg == "-ph" || arg == "--set-process-priority-high") {
-				setProcessPriorityHigh = true;
-			} else if (arg == "-a1" || arg == "--set-synced-process-affinity-one") {
-				setSyncedProcessAffinityOne = true;
-			} else if (arg == "-mt" || arg == "--synced-process-main-thread-only") {
-				syncedProcessMainThreadOnly = true;
-			} else if (arg == "-rf" || arg == "--refresh-rate-floor-fifteen") {
-				refreshHzFloorFifteen = true;
-			} else if (arg == "-sw" || arg == "--software") {
-				software = getArgumentSliceFromCommandLine(GetCommandLine(), i + 1);
-				argsRequired++;
-				break;
-			} else if (arg == "--dev-force-sync-mode-suspend-process") {
-				syncMode = SYNC_MODE_SUSPEND_PROCESS;
-			} else if (arg == "--dev-force-sync-mode-query-system-information") {
-				syncMode = SYNC_MODE_QUERY_SYSTEM_INFORMATION;
-			} else if (arg == "--dev-force-sync-mode-toolhelp-snapshot") {
-				syncMode = SYNC_MODE_TOOLHELP_SNAPSHOT;
-			} else if (arg == "--dev-get-max-mhz") {
-				if (!getMaxMhz(maxMhz)
-					|| !maxMhz) {
-					consoleLog("Failed to Get Max Rate", MAIN_ERR);
-					result = -3;
-					goto error2;
-				}
-
-				consoleLog(std::to_string(maxMhz).c_str(), false);
-				result = 0;
-				goto error2;
-			} else {
-				if (i < argc2) {
-					if (arg == "-t" || arg == "--target-rate") {
-						if (!getMaxMhz(maxMhz)
-							|| !maxMhz) {
-							consoleLog("Failed to Get Max Rate", MAIN_ERR);
-							result = -3;
-							goto error2;
-						}
-
-						targetMhz = strtol(argv[++i], NULL, 10);
-
-						if (!targetMhz) {
-							consoleLog("Target Rate must be a valid non-zero number", 2);
-							help();
-							goto error2;
-						}
-
-						/*
-						if (maxMhz <= targetMhz) {
-							std::ostringstream oStringStream;
-							oStringStream << "Target Rate must not exceed or equal the Max Rate of " << maxMhz;
-
-							consoleLog(oStringStream.str().c_str(), 2);
-							help();
-							goto error2;
-						}
-						*/
-
-						argsRequired++;
-					} else if (arg == "-r" || arg == "--refresh-rate") {
-						refreshHz = strtol(argv[++i], NULL, 10);
-
-						if (!refreshHz) {
-							consoleLog("Refresh Rate must be a valid non-zero number", 2);
-							help();
-							goto error2;
-						}
-
-						//argsRequired++;
-					}
-				}
-			}
-		}
-
-		if (argsRequired < MIN_ARGS_REQUIRED) {
+		if (arg == "-h" || arg == "--help") {
 			help();
-			goto error2;
-		}
-
-		{
-			OldCPUSimulator oldCPUSimulator(setProcessPriorityHigh, syncedProcessMainThreadOnly, setSyncedProcessAffinityOne, refreshHzFloorFifteen);
-
-			if (!oldCPUSimulator.open(software)) {
-				consoleLog("Failed to Open Old CPU Simulator", MAIN_ERR);
-				goto error2;
-			}
-
-			if (!oldCPUSimulator.run(syncMode, maxMhz, targetMhz, refreshHz)) {
-				consoleLog("Failed to Run Old CPU Simulator", MAIN_ERR);
-				goto error3;
-			}
-
 			result = 0;
-			error3:
-			if (!oldCPUSimulator.close()) {
-				consoleLog("Failed to Close Old CPU Simulator", MAIN_ERR);
-				result = -1;
-				goto error2;
+			return result;
+		} else if (arg == "-ph" || arg == "--set-process-priority-high") {
+			setProcessPriorityHigh = true;
+		} else if (arg == "-a1" || arg == "--set-synced-process-affinity-one") {
+			setSyncedProcessAffinityOne = true;
+		} else if (arg == "-mt" || arg == "--synced-process-main-thread-only") {
+			syncedProcessMainThreadOnly = true;
+		} else if (arg == "-rf" || arg == "--refresh-rate-floor-fifteen") {
+			refreshHzFloorFifteen = true;
+		} else if (arg == "-sw" || arg == "--software") {
+			software = getArgumentSliceFromCommandLine(GetCommandLine(), i + 1);
+			argsRequired++;
+			break;
+		} else if (arg == "--dev-force-sync-mode-suspend-process") {
+			syncMode = SYNC_MODE_SUSPEND_PROCESS;
+		} else if (arg == "--dev-force-sync-mode-query-system-information") {
+			syncMode = SYNC_MODE_QUERY_SYSTEM_INFORMATION;
+		} else if (arg == "--dev-force-sync-mode-toolhelp-snapshot") {
+			syncMode = SYNC_MODE_TOOLHELP_SNAPSHOT;
+		} else if (arg == "--dev-get-max-mhz") {
+			if (!getMaxMhz(maxMhz)
+				|| !maxMhz) {
+				consoleLog("Failed to Get Max Rate", MAIN_ERR);
+				result = -3;
+				return result;
+			}
+
+			consoleLog(std::to_string(maxMhz).c_str(), false);
+			result = 0;
+			return result;
+		} else {
+			if (i < argc2) {
+				if (arg == "-t" || arg == "--target-rate") {
+					if (!getMaxMhz(maxMhz)
+						|| !maxMhz) {
+						consoleLog("Failed to Get Max Rate", MAIN_ERR);
+						result = -3;
+						return result;
+					}
+
+					targetMhz = strtol(argv[++i], NULL, 10);
+
+					if (!targetMhz) {
+						consoleLog("Target Rate must be a valid non-zero number", 2);
+						help();
+						return result;
+					}
+
+					/*
+					if (maxMhz <= targetMhz) {
+						std::ostringstream oStringStream;
+						oStringStream << "Target Rate must not exceed or equal the Max Rate of " << maxMhz;
+
+						consoleLog(oStringStream.str().c_str(), 2);
+						help();
+						return result;
+					}
+					*/
+
+					argsRequired++;
+				} else if (arg == "-r" || arg == "--refresh-rate") {
+					refreshHz = strtol(argv[++i], NULL, 10);
+
+					if (!refreshHz) {
+						consoleLog("Refresh Rate must be a valid non-zero number", 2);
+						help();
+						return result;
+					}
+
+					//argsRequired++;
+				}
 			}
 		}
 	}
-	error2:
-	if (applicationMutex && applicationMutex != INVALID_HANDLE_VALUE) {
-		if (!ReleaseMutex(applicationMutex)) {
-			consoleLog("Failed to Release Mutex", MAIN_ERR);
-			result = -2;
-		}
 
-		if (!CloseHandle(applicationMutex)) {
-			consoleLog("Failed to Close Handle", MAIN_ERR);
-			result = -2;
-			goto error;
-		}
-
-		applicationMutex = NULL;
+	if (argsRequired < MIN_ARGS_REQUIRED) {
+		help();
+		return result;
 	}
-	error:
+
+	OldCPUSimulator oldCPUSimulator(setProcessPriorityHigh, syncedProcessMainThreadOnly, setSyncedProcessAffinityOne, refreshHzFloorFifteen);
+
+	if (!oldCPUSimulator.open(software)) {
+		consoleLog("Failed to Open Old CPU Simulator", MAIN_ERR);
+		return result;
+	}
+
+	SCOPE_EXIT {
+		if (!oldCPUSimulator.close()) {
+			consoleLog("Failed to Close Old CPU Simulator", MAIN_ERR);
+			result = -1;
+		}
+	};
+
+	if (!oldCPUSimulator.run(syncMode, maxMhz, targetMhz, refreshHz)) {
+		consoleLog("Failed to Run Old CPU Simulator", MAIN_ERR);
+		return result;
+	}
+
+	result = 0;
 	return result;
 }

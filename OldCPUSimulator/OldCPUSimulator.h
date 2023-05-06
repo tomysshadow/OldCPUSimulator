@@ -43,7 +43,7 @@ class OldCPUSimulator {
 	SetProcessInformationProc setProcessInformation = NULL;
 
 	SIZE_T systemInformationSize = 0;
-	PVOID systemInformation = NULL;
+	std::shared_ptr<BYTE[]> systemInformation = NULL;
 
 	NtSuspendProcessProc ntSuspendProcess = NULL;
 	NtResumeProcessProc ntResumeProcess = NULL;
@@ -163,60 +163,50 @@ class OldCPUSimulator {
 		SIZE_T pageSize = systemInfo.dwPageSize;
 
 		if (!pageSize) {
-			throw "Failed to Get Page Size";
+			throw std::runtime_error("Failed to Get Page Size");
 		}
 
 		if (systemInformation) {
 			if (systemInformationSize == pageSize) {
 				return;
 			}
-
-			delete[] systemInformation;
-			systemInformation = NULL;
-			systemInformationSize = 0;
 		}
 
 		systemInformationSize = pageSize;
-		systemInformation = new BYTE[systemInformationSize];
+		systemInformation = std::shared_ptr<BYTE[]>(new BYTE[systemInformationSize]);
 
 		if (!systemInformation) {
-			throw "Failed to Allocate systemInformation";
+			throw std::bad_alloc();
 		}
 	}
 
 	inline bool OldCPUSimulator::querySystemInformation() {
 		ULONG returnSize = 0;
-		NTSTATUS ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation, systemInformationSize, &returnSize);
+		NTSTATUS ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation.get(), systemInformationSize, &returnSize);
 
 		while (ntStatus == STATUS_INFO_LENGTH_MISMATCH) {
 			// if the buffer wasn't large enough, increase the size
-			delete[] systemInformation;
-			systemInformation = NULL;
-
 			systemInformationSize += systemInformationSize;
-			systemInformation = new BYTE[systemInformationSize];
+			systemInformation = std::shared_ptr<BYTE[]>(new BYTE[systemInformationSize]);
 
 			if (!systemInformation) {
-				throw "Failed to Allocate systemInformation";
+				throw std::bad_alloc();
 			}
 
-			ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation, systemInformationSize, &returnSize);
+			ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation.get(), systemInformationSize, &returnSize);
 		}
 
 		const size_t SYSTEM_PROCESS_INFORMATION_SIZE = sizeof(__SYSTEM_PROCESS_INFORMATION);
 
 		if (ntStatus != STATUS_SUCCESS || returnSize < SYSTEM_PROCESS_INFORMATION_SIZE) {
-			delete[] systemInformation;
-			systemInformation = NULL;
-			systemInformationSize = 0;
-			throw "Failed to Query System Information";
+			throw std::runtime_error("Failed to Query System Information");
 		}
 
-		SIZE_T systemInformationEndIndex = (SIZE_T)systemInformation + systemInformationSize;
+		SIZE_T systemInformationEndIndex = (SIZE_T)systemInformation.get() + systemInformationSize;
 
 		ULONG nextEntryOffset = 0;
 
-		__PSYSTEM_PROCESS_INFORMATION systemProcessInformationPointer = (__PSYSTEM_PROCESS_INFORMATION)systemInformation;
+		__PSYSTEM_PROCESS_INFORMATION systemProcessInformationPointer = (__PSYSTEM_PROCESS_INFORMATION)systemInformation.get();
 		PSYSTEM_THREAD_INFORMATION systemThreadInformationPointer = NULL;
 
 		DWORD threadID = 0;
@@ -232,7 +222,7 @@ class OldCPUSimulator {
 				systemThreadInformationPointer = (PSYSTEM_THREAD_INFORMATION)(systemProcessInformationPointer + 1);
 
 				if (!systemThreadInformationPointer) {
-					throw "systemThreadInformationPointer must not be NULL";
+					throw std::runtime_error("systemThreadInformationPointer must not be NULL");
 				}
 
 				for (ULONG i = 0; i < systemProcessInformationPointer->NumberOfThreads; i++) {
@@ -253,9 +243,6 @@ class OldCPUSimulator {
 				}
 
 				suspendedThreadIDsVector.insert(suspendedThreadIDsVector.end(), _suspendedThreadIDsVector.begin(), _suspendedThreadIDsVector.end());
-
-				systemProcessInformationPointer = NULL;
-				systemThreadInformationPointer = NULL;
 				return true;
 			}
 
@@ -267,12 +254,6 @@ class OldCPUSimulator {
 
 			systemProcessInformationPointer = (__PSYSTEM_PROCESS_INFORMATION)((PBYTE)systemProcessInformationPointer + nextEntryOffset);
 		} while ((SIZE_T)systemProcessInformationPointer < systemInformationEndIndex);
-
-		systemProcessInformationPointer = NULL;
-		systemThreadInformationPointer = NULL;
-		delete[] systemInformation;
-		systemInformation = NULL;
-		systemInformationSize = 0;
 		return false;
 	}
 
@@ -286,7 +267,7 @@ class OldCPUSimulator {
 			lastError = GetLastError();
 
 			if (lastError != ERROR_SUCCESS && lastError != ERROR_NO_MORE_FILES) {
-				throw "Failed at First Thread";
+				throw std::runtime_error("Failed at First Thread");
 			}
 			return false;
 		}
@@ -322,7 +303,7 @@ class OldCPUSimulator {
 		lastError = GetLastError();
 
 		if (lastError != ERROR_SUCCESS && lastError != ERROR_NO_MORE_FILES) {
-			throw "Failed at Next Thread";
+			throw std::runtime_error("Failed at Next Thread");
 		}
 
 		if (!threadID) {
@@ -335,14 +316,14 @@ class OldCPUSimulator {
 		HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
 
 		if (!snapshot || snapshot == INVALID_HANDLE_VALUE) {
-			throw "Failed to Create Toolhelp Snapshot";
+			throw std::runtime_error("Failed to Create Toolhelp Snapshot");
 		}
 
 		__try {
 			return _toolhelpSnapshot_snapshotHandle(snapshot);
 		} __finally {
 			if (!CloseHandle(snapshot)) {
-				throw "Failed to Close Handle";
+				throw std::runtime_error("Failed to Close Handle");
 			}
 
 			snapshot = NULL;

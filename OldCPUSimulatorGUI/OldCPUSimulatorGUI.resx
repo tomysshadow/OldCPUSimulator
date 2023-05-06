@@ -118,10 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="helpToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>175, 17</value>
-  </metadata>
-  <metadata name="helpToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>175, 17</value>
+    <value>150, 17</value>
   </metadata>
   <data name="refreshHzMaximumNumericUpDown.ToolTip" xml:space="preserve">
     <value>The Refresh Rate (in Hz, from 1 to 1000) at which to refresh.
@@ -167,14 +164,7 @@ smoothest possible playback setting.
 
 Try 60, 30 or 15 for gaming, 1 to 6 for video encoding.</value>
   </data>
-  <data name="syncedProcessMainThreadOnlyCheckBox.ToolTip" xml:space="preserve">
-    <value>Try enabling this if the process you're running
-seems to be barely affected by Old CPU Simulator,
-as it may increase accuracy on some Windows versions,
-as well as reduce stuttering.
-May cause errors with some games.</value>
-  </data>
-  <metadata name="newOpenFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
