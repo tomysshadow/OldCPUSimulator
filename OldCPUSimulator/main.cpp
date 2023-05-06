@@ -52,7 +52,7 @@ void help() {
 
 	consoleLog("-mt (or --synced-process-main-thread-only)");
 	consoleLog("This is an optimization which improves the accuracy of the", true, true);
-	consoleLog("simulation, but may not work with all games.", 2, true);
+	consoleLog("simulation, but may not work well with multithreaded software.", 2, true);
 
 	consoleLog("-rf (or --refresh-rate-floor-fifteen)");
 	consoleLog("Rounds Refresh Rate to the nearest multiple of 15 if applicable.", 2, true);

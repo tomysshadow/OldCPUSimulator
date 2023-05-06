@@ -302,7 +302,7 @@
             this.syncedProcessMainThreadOnlyCheckBox.TabIndex = 4;
             this.syncedProcessMainThreadOnlyCheckBox.Text = "Synced Process\r\nMain Thread Only";
             this.helpToolTip.SetToolTip(this.syncedProcessMainThreadOnlyCheckBox, "This is an optimization which improves the accuracy of the\r\nsimulation, but may n" +
-        "ot work with all games.");
+        "ot work well with multithreaded software.");
             this.syncedProcessMainThreadOnlyCheckBox.UseVisualStyleBackColor = true;
             this.syncedProcessMainThreadOnlyCheckBox.Click += new System.EventHandler(this.syncedProcessMainThreadOnlyCheckBox_Click);
             // 

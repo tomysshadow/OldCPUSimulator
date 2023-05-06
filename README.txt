@@ -46,7 +46,7 @@ Usage: OldCPUSimulator -t targetRate [options] -sw software.exe
 
 -mt (or --synced-process-main-thread-only)
 	This is an optimization which improves the accuracy of the
-	simulation, but may not work with all games.
+	simulation, but may not work well with multithreaded software.
 
 -rf (or --refresh-rate-floor-fifteen)
 	Rounds Refresh Rate to the nearest multiple of 15 if applicable.
