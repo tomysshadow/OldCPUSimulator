@@ -184,6 +184,14 @@ class OldCPUSimulator {
 	}
 
 	inline bool OldCPUSimulator::querySystemInformation() {
+		if (!systemInformation) {
+			throw std::runtime_error("systemInformation must not be NULL");
+		}
+
+		if (!systemInformationSize) {
+			throw std::runtime_error("systemInformationSize must not be zero");
+		}
+
 		ULONG returnSize = 0;
 		NTSTATUS ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation.get(), systemInformationSize, &returnSize);
 
@@ -205,7 +213,8 @@ class OldCPUSimulator {
 			throw std::runtime_error("Failed to Query System Information");
 		}
 
-		SIZE_T returnEndIndex = (SIZE_T)systemInformation.get() + returnSize;
+		SIZE_T returnBeginIndex = (SIZE_T)systemInformation.get();
+		SIZE_T returnEndIndex = returnBeginIndex + returnSize;
 
 		ULONG nextEntryOffset = 0;
 
@@ -242,6 +251,7 @@ class OldCPUSimulator {
 							suspendedThreadIDsMap[threadID] = thread;
 						}
 					}
+
 					systemThreadInformationPointer++;
 				}
 
@@ -252,11 +262,15 @@ class OldCPUSimulator {
 			nextEntryOffset = systemProcessInformationPointer->NextEntryOffset;
 
 			if (!nextEntryOffset) {
-				break;
+				return false;
+			}
+
+			if ((SIZE_T)systemProcessInformationPointer + nextEntryOffset < (SIZE_T)systemProcessInformationPointer) {
+				return false;
 			}
 
 			systemProcessInformationPointer = (__PSYSTEM_PROCESS_INFORMATION)((PBYTE)systemProcessInformationPointer + nextEntryOffset);
-		} while ((SIZE_T)systemProcessInformationPointer < returnEndIndex);
+		} while ((SIZE_T)systemProcessInformationPointer >= returnBeginIndex && (SIZE_T)systemProcessInformationPointer + SYSTEM_PROCESS_INFORMATION_SIZE <= returnEndIndex);
 		return false;
 	}
 
