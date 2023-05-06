@@ -67,7 +67,7 @@ void help() {
 }
 
 int main(int argc, char** argv) {
-	HANDLE applicationMutex = CreateMutex(NULL, TRUE, "Old CPU Simulator");
+	HANDLE applicationMutex = CreateMutex(NULL, TRUE, TEXT("Old CPU Simulator"));
 
 	if (GetLastError() == ERROR_ALREADY_EXISTS) {
 		if (!closeMutex(applicationMutex)) {

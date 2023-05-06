@@ -66,13 +66,13 @@ bool OldCPUSimulator::duplicate(const OldCPUSimulator &oldCPUSimulator) {
 }
 
 OldCPUSimulator::OldCPUSimulator(bool setProcessPriorityHigh, bool syncedProcessMainThreadOnly, bool setSyncedProcessAffinityOne, bool refreshHzFloorFifteen) : setProcessPriorityHigh(setProcessPriorityHigh), syncedProcessMainThreadOnly(syncedProcessMainThreadOnly), setSyncedProcessAffinityOne(setSyncedProcessAffinityOne), refreshHzFloorFifteen(refreshHzFloorFifteen) {
-	HMODULE kernel32ModuleHandle = LoadLibrary("KERNEL32.DLL");
+	HMODULE kernel32ModuleHandle = LoadLibrary(TEXT("KERNEL32.DLL"));
 
 	if (kernel32ModuleHandle) {
 		setProcessInformation = (SetProcessInformationProc)GetProcAddress(kernel32ModuleHandle, "SetProcessInformation");
 	}
 
-	HMODULE ntdllModuleHandle = LoadLibrary("NTDLL.DLL");
+	HMODULE ntdllModuleHandle = LoadLibrary(TEXT("NTDLL.DLL"));
 
 	if (ntdllModuleHandle) {
 		ntSuspendProcess = (NtSuspendProcessProc)GetProcAddress(ntdllModuleHandle, "NtSuspendProcess");

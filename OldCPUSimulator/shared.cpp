@@ -15,14 +15,6 @@ extern "C" {
 #define SHARED_OUT true, 2
 #define SHARED_ERR true, 2, true, __FILE__, __LINE__
 
-/*
-void CALLBACK TimeProc(UINT id, UINT msg, DWORD user, DWORD one, DWORD two) {
-	if (user) {
-		PostMessage((HWND)user, UWM_OLD_CPU_SIMULATOR_PROCESS_SYNC_WAIT, NULL, NULL);
-	}
-}
-*/
-
 void consoleLog(const char* str, short newline, short tab, bool err, const char* file, unsigned int line) {
 	if (!str) {
 		str = "";

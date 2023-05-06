@@ -103,12 +103,6 @@ enum SYNC_MODE {
 	SYNC_MODE_TOOLHELP_SNAPSHOT
 };
 
-/*
-const UINT UWM_OLD_CPU_SIMULATOR_PROCESS_SYNC_WAIT = RegisterWindowMessage("UWM_OLD_CPU_SIMULATOR_PROCESS_SYNC_WAIT");
-
-void CALLBACK TimeProc(UINT id, UINT msg, DWORD user, DWORD one, DWORD two);
-*/
-
 inline bool stringNullOrEmpty(const char* str) {
 	return !str || !*str;
 }
