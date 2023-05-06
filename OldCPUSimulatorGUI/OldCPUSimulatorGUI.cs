@@ -371,7 +371,17 @@ namespace OldCPUSimulatorGUI {
                 }
 
                 fileName = openFileDialog.FileName;
+
+                // test for whitespace after showing dialog
+                if (String.IsNullOrWhiteSpace(fileName)) {
+                    return;
+                }
             } else {
+                // test for whitespace before showing message box
+                if (String.IsNullOrWhiteSpace(fileName)) {
+                    return;
+                }
+
                 if (MessageBox.Show(Properties.Resources.RunDragAndDroppedFile, Properties.Resources.OldCPUSimulator, MessageBoxButtons.YesNo, MessageBoxIcon.None) == DialogResult.No) {
                     return;
                 }
@@ -431,9 +441,15 @@ namespace OldCPUSimulatorGUI {
             if (fileNames.Length < 1) {
                 return;
             }
+
+            string fileName = fileNames[0];
+
+            if (fileName == null) {
+                return;
+            }
             
             // let the cursor effects disable before opening
-            SynchronizationContext.Current.Post(Open, fileNames[0]);
+            SynchronizationContext.Current.Post(Open, fileName);
         }
 
         private void OldCPUSimulatorGUI_Load(object sender, EventArgs e) {
