@@ -391,7 +391,7 @@ namespace OldCPUSimulatorGUI {
             bool itemRemoved = false;
 
             for (int i = 0; i < itemsEndIndex; i++) {
-                if (fileName == recentFilesListBox.GetItemText(recentFilesListBox.Items[i])) {
+                if (String.Equals(fileName, recentFilesListBox.GetItemText(recentFilesListBox.Items[i]), StringComparison.OrdinalIgnoreCase)) {
                     recentFilesListBox.Items.RemoveAt(i);
                     itemRemoved = true;
                     break;
