@@ -201,11 +201,11 @@ class OldCPUSimulator {
 
 		const size_t SYSTEM_PROCESS_INFORMATION_SIZE = sizeof(__SYSTEM_PROCESS_INFORMATION);
 
-		if (ntStatus != STATUS_SUCCESS || returnSize < SYSTEM_PROCESS_INFORMATION_SIZE) {
+		if (ntStatus != STATUS_SUCCESS || returnSize < SYSTEM_PROCESS_INFORMATION_SIZE || returnSize > systemInformationSize) {
 			throw std::runtime_error("Failed to Query System Information");
 		}
 
-		SIZE_T systemInformationEndIndex = (SIZE_T)systemInformation.get() + systemInformationSize;
+		SIZE_T returnEndIndex = (SIZE_T)systemInformation.get() + returnSize;
 
 		ULONG nextEntryOffset = 0;
 
@@ -256,7 +256,7 @@ class OldCPUSimulator {
 			}
 
 			systemProcessInformationPointer = (__PSYSTEM_PROCESS_INFORMATION)((PBYTE)systemProcessInformationPointer + nextEntryOffset);
-		} while ((SIZE_T)systemProcessInformationPointer < systemInformationEndIndex);
+		} while ((SIZE_T)systemProcessInformationPointer < returnEndIndex);
 		return false;
 	}
 
