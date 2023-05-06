@@ -115,6 +115,15 @@ namespace OldCPUSimulatorGUI {
             return true;
         }
 
+        void ShowCustomTargetRate() {
+            if (targetMhzComboBox.SelectedIndex == targetMhzComboBox.Items.IndexOf(CUSTOM_TARGET_RATE)) {
+                targetMhzComboBox.DropDownStyle = ComboBoxStyle.DropDown;
+                targetMhzComboBox.Text = Properties.Settings.Default.TargetMhz.ToString();
+            } else {
+                targetMhzComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            }
+        }
+
         void ShowRefreshRateMinimumMaximum() {
             if (refreshHzNumericUpDown.Value == refreshHzNumericUpDown.Maximum) {
                 refreshHzMaximumNumericUpDown.Controls[0].Enabled = false;
@@ -173,16 +182,7 @@ namespace OldCPUSimulatorGUI {
             FloorRefreshRateFifteen(out ulong targetMhz, out ulong maxMhz);
         }
 
-        void SelectTargetMhz() {
-            if (targetMhzComboBox.SelectedIndex == targetMhzComboBox.Items.IndexOf(CUSTOM_TARGET_RATE)) {
-                targetMhzComboBox.DropDownStyle = ComboBoxStyle.DropDown;
-                targetMhzComboBox.Text = Properties.Settings.Default.TargetMhz.ToString();
-            } else {
-                targetMhzComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            }
-        }
-
-        void ResetRefreshHz() {
+        void ResetRefreshRate() {
             FloorRefreshRateFifteen();
 
             refreshHzNumericUpDown.Value = refreshHzNumericUpDown.Maximum;
@@ -358,7 +358,7 @@ namespace OldCPUSimulatorGUI {
 
             targetMhzComboBox.SelectedIndex = Properties.Settings.Default.TargetMhzSelectedIndex;
 
-            SelectTargetMhz();
+            ShowCustomTargetRate();
             FloorRefreshRateFifteen();
         }
 
@@ -504,15 +504,15 @@ namespace OldCPUSimulatorGUI {
         }
 
         private void targetMhzComboBox_SelectionChangeCommitted(object sender, EventArgs e) {
+            ShowCustomTargetRate();
+            ResetRefreshRate();
+
             Properties.Settings.Default.TargetMhzSelectedIndex = targetMhzComboBox.SelectedIndex;
             Properties.Settings.Default.Save();
-
-            SelectTargetMhz();
-            ResetRefreshHz();
         }
 
         private void targetMhzComboBox_TextUpdate(object sender, EventArgs e) {
-            ResetRefreshHz();
+            ResetRefreshRate();
         }
 
         private void refreshHzNumericUpDown_ValueChanged(object sender, EventArgs e) {
