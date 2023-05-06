@@ -76,7 +76,7 @@
             this.recentFilesListBox.HorizontalScrollbar = true;
             this.recentFilesListBox.Location = new System.Drawing.Point(6, 19);
             this.recentFilesListBox.Name = "recentFilesListBox";
-            this.recentFilesListBox.Size = new System.Drawing.Size(248, 69);
+            this.recentFilesListBox.Size = new System.Drawing.Size(248, 82);
             this.recentFilesListBox.TabIndex = 0;
             this.recentFilesListBox.SelectedIndexChanged += new System.EventHandler(this.recentFilesListBox_SelectedIndexChanged);
             // 
@@ -84,7 +84,7 @@
             // 
             this.titleLabel.AutoSize = true;
             this.titleLabel.Font = new System.Drawing.Font("Trebuchet MS", 14F, System.Drawing.FontStyle.Bold);
-            this.titleLabel.Location = new System.Drawing.Point(12, 12);
+            this.titleLabel.Location = new System.Drawing.Point(12, 9);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(174, 24);
             this.titleLabel.TabIndex = 0;
@@ -95,7 +95,7 @@
             this.subtitleLabel.AutoSize = true;
             this.subtitleLabel.Font = new System.Drawing.Font("Georgia", 11F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))));
             this.subtitleLabel.ForeColor = System.Drawing.Color.DimGray;
-            this.subtitleLabel.Location = new System.Drawing.Point(12, 44);
+            this.subtitleLabel.Location = new System.Drawing.Point(12, 33);
             this.subtitleLabel.Name = "subtitleLabel";
             this.subtitleLabel.Size = new System.Drawing.Size(152, 18);
             this.subtitleLabel.TabIndex = 1;
@@ -107,9 +107,9 @@
             this.recentFilesGroupBox.Controls.Add(this.recentLabel);
             this.recentFilesGroupBox.Controls.Add(this.runRecentButton);
             this.recentFilesGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.recentFilesGroupBox.Location = new System.Drawing.Point(12, 94);
+            this.recentFilesGroupBox.Location = new System.Drawing.Point(12, 83);
             this.recentFilesGroupBox.Name = "recentFilesGroupBox";
-            this.recentFilesGroupBox.Size = new System.Drawing.Size(260, 123);
+            this.recentFilesGroupBox.Size = new System.Drawing.Size(260, 136);
             this.recentFilesGroupBox.TabIndex = 6;
             this.recentFilesGroupBox.TabStop = false;
             this.recentFilesGroupBox.Text = "Recent Files";
@@ -117,7 +117,7 @@
             // recentLabel
             // 
             this.recentLabel.AutoSize = true;
-            this.recentLabel.Location = new System.Drawing.Point(106, 99);
+            this.recentLabel.Location = new System.Drawing.Point(106, 112);
             this.recentLabel.Name = "recentLabel";
             this.recentLabel.Size = new System.Drawing.Size(148, 13);
             this.recentLabel.TabIndex = 5;
@@ -126,7 +126,7 @@
             // runRecentButton
             // 
             this.runRecentButton.Enabled = false;
-            this.runRecentButton.Location = new System.Drawing.Point(6, 94);
+            this.runRecentButton.Location = new System.Drawing.Point(6, 107);
             this.runRecentButton.Name = "runRecentButton";
             this.runRecentButton.Size = new System.Drawing.Size(94, 23);
             this.runRecentButton.TabIndex = 4;
@@ -143,9 +143,9 @@
             this.optionsGroupBox.Controls.Add(this.refreshHzLabel);
             this.optionsGroupBox.Controls.Add(this.syncedProcessMainThreadOnlyCheckBox);
             this.optionsGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.optionsGroupBox.Location = new System.Drawing.Point(12, 276);
+            this.optionsGroupBox.Location = new System.Drawing.Point(12, 278);
             this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(259, 134);
+            this.optionsGroupBox.Size = new System.Drawing.Size(260, 125);
             this.optionsGroupBox.TabIndex = 13;
             this.optionsGroupBox.TabStop = false;
             this.optionsGroupBox.Text = "Options";
@@ -156,7 +156,7 @@
             this.refreshRateFloorFifteenCheckBox.Checked = true;
             this.refreshRateFloorFifteenCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.refreshRateFloorFifteenCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.refreshRateFloorFifteenCheckBox.Location = new System.Drawing.Point(126, 79);
+            this.refreshRateFloorFifteenCheckBox.Location = new System.Drawing.Point(129, 76);
             this.refreshRateFloorFifteenCheckBox.Name = "refreshRateFloorFifteenCheckBox";
             this.refreshRateFloorFifteenCheckBox.Size = new System.Drawing.Size(106, 43);
             this.refreshRateFloorFifteenCheckBox.TabIndex = 5;
@@ -171,7 +171,7 @@
             this.setSyncedProcessAffinityOneCheckBox.Checked = true;
             this.setSyncedProcessAffinityOneCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.setSyncedProcessAffinityOneCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.setSyncedProcessAffinityOneCheckBox.Location = new System.Drawing.Point(127, 43);
+            this.setSyncedProcessAffinityOneCheckBox.Location = new System.Drawing.Point(129, 40);
             this.setSyncedProcessAffinityOneCheckBox.Name = "setSyncedProcessAffinityOneCheckBox";
             this.setSyncedProcessAffinityOneCheckBox.Size = new System.Drawing.Size(122, 30);
             this.setSyncedProcessAffinityOneCheckBox.TabIndex = 3;
@@ -187,7 +187,7 @@
             this.setProcessPriorityHighCheckBox.Checked = true;
             this.setProcessPriorityHighCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.setProcessPriorityHighCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.setProcessPriorityHighCheckBox.Location = new System.Drawing.Point(10, 43);
+            this.setProcessPriorityHighCheckBox.Location = new System.Drawing.Point(6, 40);
             this.setProcessPriorityHighCheckBox.Name = "setProcessPriorityHighCheckBox";
             this.setProcessPriorityHighCheckBox.Size = new System.Drawing.Size(117, 30);
             this.setProcessPriorityHighCheckBox.TabIndex = 2;
@@ -202,18 +202,18 @@
             this.refreshHzGroupBox.Controls.Add(this.refreshHzMaximumGroupBox);
             this.refreshHzGroupBox.Controls.Add(this.refreshHzMinimumGroupBox);
             this.refreshHzGroupBox.Controls.Add(this.refreshHzNumericUpDown);
-            this.refreshHzGroupBox.Location = new System.Drawing.Point(102, 17);
+            this.refreshHzGroupBox.Location = new System.Drawing.Point(105, 14);
             this.refreshHzGroupBox.Margin = new System.Windows.Forms.Padding(0);
             this.refreshHzGroupBox.Name = "refreshHzGroupBox";
             this.refreshHzGroupBox.Padding = new System.Windows.Forms.Padding(0);
-            this.refreshHzGroupBox.Size = new System.Drawing.Size(151, 20);
+            this.refreshHzGroupBox.Size = new System.Drawing.Size(149, 20);
             this.refreshHzGroupBox.TabIndex = 1;
             this.refreshHzGroupBox.TabStop = false;
             // 
             // refreshHzMaximumGroupBox
             // 
             this.refreshHzMaximumGroupBox.Controls.Add(this.refreshHzMaximumNumericUpDown);
-            this.refreshHzMaximumGroupBox.Location = new System.Drawing.Point(135, 0);
+            this.refreshHzMaximumGroupBox.Location = new System.Drawing.Point(133, 0);
             this.refreshHzMaximumGroupBox.Margin = new System.Windows.Forms.Padding(0);
             this.refreshHzMaximumGroupBox.Name = "refreshHzMaximumGroupBox";
             this.refreshHzMaximumGroupBox.Padding = new System.Windows.Forms.Padding(0);
@@ -226,16 +226,16 @@
             // refreshHzMaximumNumericUpDown
             // 
             this.refreshHzMaximumNumericUpDown.Enabled = false;
-            this.refreshHzMaximumNumericUpDown.Location = new System.Drawing.Point(-135, 0);
+            this.refreshHzMaximumNumericUpDown.Location = new System.Drawing.Point(-133, 0);
             this.refreshHzMaximumNumericUpDown.Name = "refreshHzMaximumNumericUpDown";
-            this.refreshHzMaximumNumericUpDown.Size = new System.Drawing.Size(151, 20);
+            this.refreshHzMaximumNumericUpDown.Size = new System.Drawing.Size(149, 20);
             this.refreshHzMaximumNumericUpDown.TabIndex = 0;
             this.helpToolTip.SetToolTip(this.refreshHzMaximumNumericUpDown, resources.GetString("refreshHzMaximumNumericUpDown.ToolTip"));
             // 
             // refreshHzMinimumGroupBox
             // 
             this.refreshHzMinimumGroupBox.Controls.Add(this.refreshHzMinimumNumericUpDown);
-            this.refreshHzMinimumGroupBox.Location = new System.Drawing.Point(135, 10);
+            this.refreshHzMinimumGroupBox.Location = new System.Drawing.Point(133, 10);
             this.refreshHzMinimumGroupBox.Margin = new System.Windows.Forms.Padding(0);
             this.refreshHzMinimumGroupBox.Name = "refreshHzMinimumGroupBox";
             this.refreshHzMinimumGroupBox.Padding = new System.Windows.Forms.Padding(0);
@@ -248,9 +248,9 @@
             // refreshHzMinimumNumericUpDown
             // 
             this.refreshHzMinimumNumericUpDown.Enabled = false;
-            this.refreshHzMinimumNumericUpDown.Location = new System.Drawing.Point(-135, -10);
+            this.refreshHzMinimumNumericUpDown.Location = new System.Drawing.Point(-133, -10);
             this.refreshHzMinimumNumericUpDown.Name = "refreshHzMinimumNumericUpDown";
-            this.refreshHzMinimumNumericUpDown.Size = new System.Drawing.Size(151, 20);
+            this.refreshHzMinimumNumericUpDown.Size = new System.Drawing.Size(149, 20);
             this.refreshHzMinimumNumericUpDown.TabIndex = 0;
             this.helpToolTip.SetToolTip(this.refreshHzMinimumNumericUpDown, resources.GetString("refreshHzMinimumNumericUpDown.ToolTip"));
             // 
@@ -269,7 +269,7 @@
             0,
             0});
             this.refreshHzNumericUpDown.Name = "refreshHzNumericUpDown";
-            this.refreshHzNumericUpDown.Size = new System.Drawing.Size(151, 20);
+            this.refreshHzNumericUpDown.Size = new System.Drawing.Size(149, 20);
             this.refreshHzNumericUpDown.TabIndex = 0;
             this.helpToolTip.SetToolTip(this.refreshHzNumericUpDown, resources.GetString("refreshHzNumericUpDown.ToolTip"));
             this.refreshHzNumericUpDown.Value = new decimal(new int[] {
@@ -283,7 +283,7 @@
             // 
             this.refreshHzLabel.AutoSize = true;
             this.refreshHzLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.refreshHzLabel.Location = new System.Drawing.Point(7, 20);
+            this.refreshHzLabel.Location = new System.Drawing.Point(6, 16);
             this.refreshHzLabel.Name = "refreshHzLabel";
             this.refreshHzLabel.Size = new System.Drawing.Size(92, 13);
             this.refreshHzLabel.TabIndex = 0;
@@ -296,7 +296,7 @@
             this.syncedProcessMainThreadOnlyCheckBox.Checked = true;
             this.syncedProcessMainThreadOnlyCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.syncedProcessMainThreadOnlyCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.syncedProcessMainThreadOnlyCheckBox.Location = new System.Drawing.Point(10, 85);
+            this.syncedProcessMainThreadOnlyCheckBox.Location = new System.Drawing.Point(6, 82);
             this.syncedProcessMainThreadOnlyCheckBox.Name = "syncedProcessMainThreadOnlyCheckBox";
             this.syncedProcessMainThreadOnlyCheckBox.Size = new System.Drawing.Size(110, 30);
             this.syncedProcessMainThreadOnlyCheckBox.TabIndex = 4;
@@ -315,7 +315,7 @@
             "Intel Pentium II 350 MHz (early 2000s)",
             "Intel Pentium III 933 MHz (mid 2000s)",
             "Custom Target Rate..."});
-            this.targetMhzComboBox.Location = new System.Drawing.Point(12, 236);
+            this.targetMhzComboBox.Location = new System.Drawing.Point(12, 238);
             this.targetMhzComboBox.Name = "targetMhzComboBox";
             this.targetMhzComboBox.Size = new System.Drawing.Size(260, 21);
             this.targetMhzComboBox.TabIndex = 9;
@@ -325,7 +325,7 @@
             // 
             // openButton
             // 
-            this.openButton.Location = new System.Drawing.Point(12, 65);
+            this.openButton.Location = new System.Drawing.Point(12, 54);
             this.openButton.Name = "openButton";
             this.openButton.Size = new System.Drawing.Size(81, 23);
             this.openButton.TabIndex = 2;
@@ -341,7 +341,7 @@
             // 
             this.maxMhzLabel.AutoSize = true;
             this.maxMhzLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.maxMhzLabel.Location = new System.Drawing.Point(12, 260);
+            this.maxMhzLabel.Location = new System.Drawing.Point(12, 262);
             this.maxMhzLabel.Name = "maxMhzLabel";
             this.maxMhzLabel.Size = new System.Drawing.Size(84, 13);
             this.maxMhzLabel.TabIndex = 10;
@@ -352,7 +352,7 @@
             // 
             this.targetMhzLabel.AutoSize = true;
             this.targetMhzLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.targetMhzLabel.Location = new System.Drawing.Point(12, 220);
+            this.targetMhzLabel.Location = new System.Drawing.Point(12, 222);
             this.targetMhzLabel.Name = "targetMhzLabel";
             this.targetMhzLabel.Size = new System.Drawing.Size(95, 13);
             this.targetMhzLabel.TabIndex = 7;
@@ -362,7 +362,7 @@
             // maxMhzValueLabel
             // 
             this.maxMhzValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.maxMhzValueLabel.Location = new System.Drawing.Point(228, 260);
+            this.maxMhzValueLabel.Location = new System.Drawing.Point(229, 262);
             this.maxMhzValueLabel.Name = "maxMhzValueLabel";
             this.maxMhzValueLabel.Size = new System.Drawing.Size(43, 13);
             this.maxMhzValueLabel.TabIndex = 12;
@@ -383,7 +383,7 @@
             // 
             this.maxMhzEllipsisLabel.AutoSize = true;
             this.maxMhzEllipsisLabel.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.maxMhzEllipsisLabel.Location = new System.Drawing.Point(102, 260);
+            this.maxMhzEllipsisLabel.Location = new System.Drawing.Point(102, 262);
             this.maxMhzEllipsisLabel.Name = "maxMhzEllipsisLabel";
             this.maxMhzEllipsisLabel.Size = new System.Drawing.Size(121, 13);
             this.maxMhzEllipsisLabel.TabIndex = 11;
@@ -393,7 +393,7 @@
             // quickReferenceLinkLabel
             // 
             this.quickReferenceLinkLabel.AutoSize = true;
-            this.quickReferenceLinkLabel.Location = new System.Drawing.Point(183, 220);
+            this.quickReferenceLinkLabel.Location = new System.Drawing.Point(184, 222);
             this.quickReferenceLinkLabel.Name = "quickReferenceLinkLabel";
             this.quickReferenceLinkLabel.Size = new System.Drawing.Size(88, 13);
             this.quickReferenceLinkLabel.TabIndex = 8;
@@ -404,7 +404,7 @@
             // 
             // restoreDefaultsButton
             // 
-            this.restoreDefaultsButton.Location = new System.Drawing.Point(178, 416);
+            this.restoreDefaultsButton.Location = new System.Drawing.Point(178, 409);
             this.restoreDefaultsButton.Name = "restoreDefaultsButton";
             this.restoreDefaultsButton.Size = new System.Drawing.Size(94, 23);
             this.restoreDefaultsButton.TabIndex = 14;
@@ -415,7 +415,7 @@
             // openLabel
             // 
             this.openLabel.AutoSize = true;
-            this.openLabel.Location = new System.Drawing.Point(99, 70);
+            this.openLabel.Location = new System.Drawing.Point(99, 59);
             this.openLabel.Name = "openLabel";
             this.openLabel.Size = new System.Drawing.Size(173, 13);
             this.openLabel.TabIndex = 3;
@@ -426,7 +426,7 @@
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 451);
+            this.ClientSize = new System.Drawing.Size(284, 444);
             this.Controls.Add(this.quickReferenceLinkLabel);
             this.Controls.Add(this.openLabel);
             this.Controls.Add(this.maxMhzEllipsisLabel);
