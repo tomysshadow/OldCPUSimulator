@@ -316,23 +316,23 @@ namespace OldCPUSimulatorGUI {
                         }
 
                         if (!String.IsNullOrEmpty(lastOldCPUSimulatorProcessStandardError)) {
-                            MessageBox.Show(lastOldCPUSimulatorProcessStandardError);
+                            MessageBox.Show(lastOldCPUSimulatorProcessStandardError, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                     break;
                     case -2:
-                    MessageBox.Show(Properties.Resources.NoMultipleInstances);
+                    MessageBox.Show(Properties.Resources.NoMultipleInstances, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
                     case -3:
-                    MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined);
+                    MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
                     default:
-                    MessageBox.Show(Properties.Resources.OldCPUNotSimulated);
+                    MessageBox.Show(Properties.Resources.OldCPUNotSimulated, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
                 }
             } catch {
                 Show();
-                MessageBox.Show(Properties.Resources.OldCPUSimulatorProcessFailedCreate);
+                MessageBox.Show(Properties.Resources.OldCPUSimulatorProcessFailedCreate, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

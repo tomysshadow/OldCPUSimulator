@@ -78,15 +78,16 @@ bool getMaxMhz(ULONG &maxMhz) {
 	SYSTEM_INFO systemInfo = {};
 	GetSystemInfo(&systemInfo);
 
-	ULONG PROCESSOR_POWER_INFORMATION_SIZE = sizeof(PROCESSOR_POWER_INFORMATION) * systemInfo.dwNumberOfProcessors;
-	std::unique_ptr<BYTE[]> outputBuffer = std::unique_ptr<BYTE[]>(new BYTE[PROCESSOR_POWER_INFORMATION_SIZE]);
+	ULONG processorPowerInformationSize = sizeof(PROCESSOR_POWER_INFORMATION) * systemInfo.dwNumberOfProcessors;
+
+	std::unique_ptr<BYTE[]> outputBuffer = std::unique_ptr<BYTE[]>(new BYTE[processorPowerInformationSize]);
 
 	if (!outputBuffer) {
 		consoleLog("Failed to Allocate outputBuffer", SHARED_ERR);
 		return false;
 	}
 
-	if (CallNtPowerInformation(ProcessorInformation, NULL, NULL, outputBuffer.get(), PROCESSOR_POWER_INFORMATION_SIZE) != STATUS_SUCCESS) {
+	if (CallNtPowerInformation(ProcessorInformation, NULL, NULL, outputBuffer.get(), processorPowerInformationSize) != STATUS_SUCCESS) {
 		consoleLog("Failed to Call Power Information", SHARED_ERR);
 		return false;
 	}
