@@ -90,7 +90,7 @@ OldCPUSimulator::OldCPUSimulator(const OldCPUSimulator &oldCPUSimulator) {
 	//consoleLog("Copy Constructing Old CPU Simulator", OLD_CPU_SIMULATOR_OUT);
 
 	if (!duplicate(oldCPUSimulator)) {
-		throw "Failed to Duplicate Old CPU Simulator";
+		throw std::runtime_error("Failed to Duplicate Old CPU Simulator");
 	}
 }
 
@@ -104,7 +104,7 @@ OldCPUSimulator &OldCPUSimulator::operator=(const OldCPUSimulator &oldCPUSimulat
 	destroy();
 
 	if (!duplicate(oldCPUSimulator)) {
-		throw "Failed to Duplicate Old CPU Simulator";
+		throw std::runtime_error("Failed to Duplicate Old CPU Simulator");
 	}
 	return *this;
 }
@@ -461,7 +461,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
 
 		// only for Windows XP and greater
-		// would be possible, but difficult to adapt for Windows 2000/NT 4.0
+		// this would be possible, but difficult to adapt for Windows 2000/NT 4.0
 		// http://www.informit.com/articles/article.aspx?p=22442&seqNum=6
 		if (ntQuerySystemInformation
 			&& GetVersionEx(&osVersionInfo)
