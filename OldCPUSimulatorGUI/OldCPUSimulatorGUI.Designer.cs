@@ -34,6 +34,8 @@
             this.titleLabel = new System.Windows.Forms.Label();
             this.subtitleLabel = new System.Windows.Forms.Label();
             this.recentFilesGroupBox = new System.Windows.Forms.GroupBox();
+            this.recentLabel = new System.Windows.Forms.Label();
+            this.runRecentButton = new System.Windows.Forms.Button();
             this.optionsGroupBox = new System.Windows.Forms.GroupBox();
             this.refreshRateFloorFifteenCheckBox = new System.Windows.Forms.CheckBox();
             this.setSyncedProcessAffinityOneCheckBox = new System.Windows.Forms.CheckBox();
@@ -48,7 +50,6 @@
             this.syncedProcessMainThreadOnlyCheckBox = new System.Windows.Forms.CheckBox();
             this.targetMhzComboBox = new System.Windows.Forms.ComboBox();
             this.openButton = new System.Windows.Forms.Button();
-            this.recentButton = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.maxMhzLabel = new System.Windows.Forms.Label();
             this.targetMhzLabel = new System.Windows.Forms.Label();
@@ -58,7 +59,6 @@
             this.quickReferenceLinkLabel = new System.Windows.Forms.LinkLabel();
             this.restoreDefaultsButton = new System.Windows.Forms.Button();
             this.openLabel = new System.Windows.Forms.Label();
-            this.recentLabel = new System.Windows.Forms.Label();
             this.recentFilesGroupBox.SuspendLayout();
             this.optionsGroupBox.SuspendLayout();
             this.refreshHzGroupBox.SuspendLayout();
@@ -78,6 +78,7 @@
             this.recentFilesListBox.Name = "recentFilesListBox";
             this.recentFilesListBox.Size = new System.Drawing.Size(248, 69);
             this.recentFilesListBox.TabIndex = 0;
+            this.recentFilesListBox.SelectedIndexChanged += new System.EventHandler(this.recentFilesListBox_SelectedIndexChanged);
             // 
             // titleLabel
             // 
@@ -103,13 +104,35 @@
             // recentFilesGroupBox
             // 
             this.recentFilesGroupBox.Controls.Add(this.recentFilesListBox);
+            this.recentFilesGroupBox.Controls.Add(this.recentLabel);
+            this.recentFilesGroupBox.Controls.Add(this.runRecentButton);
             this.recentFilesGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.recentFilesGroupBox.Location = new System.Drawing.Point(11, 123);
+            this.recentFilesGroupBox.Location = new System.Drawing.Point(12, 94);
             this.recentFilesGroupBox.Name = "recentFilesGroupBox";
-            this.recentFilesGroupBox.Size = new System.Drawing.Size(260, 100);
+            this.recentFilesGroupBox.Size = new System.Drawing.Size(260, 123);
             this.recentFilesGroupBox.TabIndex = 6;
             this.recentFilesGroupBox.TabStop = false;
             this.recentFilesGroupBox.Text = "Recent Files";
+            // 
+            // recentLabel
+            // 
+            this.recentLabel.AutoSize = true;
+            this.recentLabel.Location = new System.Drawing.Point(106, 99);
+            this.recentLabel.Name = "recentLabel";
+            this.recentLabel.Size = new System.Drawing.Size(148, 13);
+            this.recentLabel.TabIndex = 5;
+            this.recentLabel.Text = "Run the selected Recent File.";
+            // 
+            // runRecentButton
+            // 
+            this.runRecentButton.Enabled = false;
+            this.runRecentButton.Location = new System.Drawing.Point(6, 94);
+            this.runRecentButton.Name = "runRecentButton";
+            this.runRecentButton.Size = new System.Drawing.Size(94, 23);
+            this.runRecentButton.TabIndex = 4;
+            this.runRecentButton.Text = "Run Recent";
+            this.runRecentButton.UseVisualStyleBackColor = true;
+            this.runRecentButton.Click += new System.EventHandler(this.runRecentButton_Click);
             // 
             // optionsGroupBox
             // 
@@ -120,7 +143,7 @@
             this.optionsGroupBox.Controls.Add(this.refreshHzLabel);
             this.optionsGroupBox.Controls.Add(this.syncedProcessMainThreadOnlyCheckBox);
             this.optionsGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.optionsGroupBox.Location = new System.Drawing.Point(12, 282);
+            this.optionsGroupBox.Location = new System.Drawing.Point(12, 276);
             this.optionsGroupBox.Name = "optionsGroupBox";
             this.optionsGroupBox.Size = new System.Drawing.Size(259, 134);
             this.optionsGroupBox.TabIndex = 13;
@@ -292,7 +315,7 @@
             "Intel Pentium II 350 MHz (early 2000s)",
             "Intel Pentium III 933 MHz (mid 2000s)",
             "Custom Target Rate..."});
-            this.targetMhzComboBox.Location = new System.Drawing.Point(11, 242);
+            this.targetMhzComboBox.Location = new System.Drawing.Point(12, 236);
             this.targetMhzComboBox.Name = "targetMhzComboBox";
             this.targetMhzComboBox.Size = new System.Drawing.Size(260, 21);
             this.targetMhzComboBox.TabIndex = 9;
@@ -304,21 +327,11 @@
             // 
             this.openButton.Location = new System.Drawing.Point(12, 65);
             this.openButton.Name = "openButton";
-            this.openButton.Size = new System.Drawing.Size(64, 23);
+            this.openButton.Size = new System.Drawing.Size(81, 23);
             this.openButton.TabIndex = 2;
             this.openButton.Text = "Open";
             this.openButton.UseVisualStyleBackColor = true;
             this.openButton.Click += new System.EventHandler(this.openButton_Click);
-            // 
-            // recentButton
-            // 
-            this.recentButton.Location = new System.Drawing.Point(12, 94);
-            this.recentButton.Name = "recentButton";
-            this.recentButton.Size = new System.Drawing.Size(64, 23);
-            this.recentButton.TabIndex = 4;
-            this.recentButton.Text = "Recent";
-            this.recentButton.UseVisualStyleBackColor = true;
-            this.recentButton.Click += new System.EventHandler(this.recentButton_Click);
             // 
             // openFileDialog
             // 
@@ -328,7 +341,7 @@
             // 
             this.maxMhzLabel.AutoSize = true;
             this.maxMhzLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.maxMhzLabel.Location = new System.Drawing.Point(12, 266);
+            this.maxMhzLabel.Location = new System.Drawing.Point(12, 260);
             this.maxMhzLabel.Name = "maxMhzLabel";
             this.maxMhzLabel.Size = new System.Drawing.Size(84, 13);
             this.maxMhzLabel.TabIndex = 10;
@@ -339,7 +352,7 @@
             // 
             this.targetMhzLabel.AutoSize = true;
             this.targetMhzLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.targetMhzLabel.Location = new System.Drawing.Point(12, 226);
+            this.targetMhzLabel.Location = new System.Drawing.Point(12, 220);
             this.targetMhzLabel.Name = "targetMhzLabel";
             this.targetMhzLabel.Size = new System.Drawing.Size(95, 13);
             this.targetMhzLabel.TabIndex = 7;
@@ -349,7 +362,7 @@
             // maxMhzValueLabel
             // 
             this.maxMhzValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.maxMhzValueLabel.Location = new System.Drawing.Point(228, 266);
+            this.maxMhzValueLabel.Location = new System.Drawing.Point(228, 260);
             this.maxMhzValueLabel.Name = "maxMhzValueLabel";
             this.maxMhzValueLabel.Size = new System.Drawing.Size(43, 13);
             this.maxMhzValueLabel.TabIndex = 12;
@@ -370,7 +383,7 @@
             // 
             this.maxMhzEllipsisLabel.AutoSize = true;
             this.maxMhzEllipsisLabel.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.maxMhzEllipsisLabel.Location = new System.Drawing.Point(102, 266);
+            this.maxMhzEllipsisLabel.Location = new System.Drawing.Point(102, 260);
             this.maxMhzEllipsisLabel.Name = "maxMhzEllipsisLabel";
             this.maxMhzEllipsisLabel.Size = new System.Drawing.Size(121, 13);
             this.maxMhzEllipsisLabel.TabIndex = 11;
@@ -380,7 +393,7 @@
             // quickReferenceLinkLabel
             // 
             this.quickReferenceLinkLabel.AutoSize = true;
-            this.quickReferenceLinkLabel.Location = new System.Drawing.Point(183, 226);
+            this.quickReferenceLinkLabel.Location = new System.Drawing.Point(183, 220);
             this.quickReferenceLinkLabel.Name = "quickReferenceLinkLabel";
             this.quickReferenceLinkLabel.Size = new System.Drawing.Size(88, 13);
             this.quickReferenceLinkLabel.TabIndex = 8;
@@ -391,9 +404,9 @@
             // 
             // restoreDefaultsButton
             // 
-            this.restoreDefaultsButton.Location = new System.Drawing.Point(11, 422);
+            this.restoreDefaultsButton.Location = new System.Drawing.Point(178, 416);
             this.restoreDefaultsButton.Name = "restoreDefaultsButton";
-            this.restoreDefaultsButton.Size = new System.Drawing.Size(260, 23);
+            this.restoreDefaultsButton.Size = new System.Drawing.Size(94, 23);
             this.restoreDefaultsButton.TabIndex = 14;
             this.restoreDefaultsButton.Text = "Restore Defaults";
             this.restoreDefaultsButton.UseVisualStyleBackColor = true;
@@ -402,32 +415,21 @@
             // openLabel
             // 
             this.openLabel.AutoSize = true;
-            this.openLabel.Location = new System.Drawing.Point(82, 70);
+            this.openLabel.Location = new System.Drawing.Point(99, 70);
             this.openLabel.Name = "openLabel";
             this.openLabel.Size = new System.Drawing.Size(173, 13);
             this.openLabel.TabIndex = 3;
             this.openLabel.Text = "Select an executable file and run it.";
-            // 
-            // recentLabel
-            // 
-            this.recentLabel.AutoSize = true;
-            this.recentLabel.Location = new System.Drawing.Point(82, 99);
-            this.recentLabel.Name = "recentLabel";
-            this.recentLabel.Size = new System.Drawing.Size(179, 13);
-            this.recentLabel.TabIndex = 5;
-            this.recentLabel.Text = "Run the Recent File selected below.";
             // 
             // OldCPUSimulatorGUI
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 457);
+            this.ClientSize = new System.Drawing.Size(284, 451);
             this.Controls.Add(this.quickReferenceLinkLabel);
-            this.Controls.Add(this.recentLabel);
             this.Controls.Add(this.openLabel);
             this.Controls.Add(this.maxMhzEllipsisLabel);
-            this.Controls.Add(this.recentButton);
             this.Controls.Add(this.restoreDefaultsButton);
             this.Controls.Add(this.maxMhzValueLabel);
             this.Controls.Add(this.targetMhzLabel);
@@ -449,6 +451,7 @@
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.OldCPUSimulatorGUI_DragEnter);
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.OldCPUSimulatorGUI_DragOver);
             this.recentFilesGroupBox.ResumeLayout(false);
+            this.recentFilesGroupBox.PerformLayout();
             this.optionsGroupBox.ResumeLayout(false);
             this.optionsGroupBox.PerformLayout();
             this.refreshHzGroupBox.ResumeLayout(false);
@@ -476,7 +479,7 @@
 		private System.Windows.Forms.CheckBox syncedProcessMainThreadOnlyCheckBox;
 		private System.Windows.Forms.CheckBox refreshRateFloorFifteenCheckBox;
 		private System.Windows.Forms.Button openButton;
-		private System.Windows.Forms.Button recentButton;
+		private System.Windows.Forms.Button runRecentButton;
 		private System.Windows.Forms.NumericUpDown refreshHzNumericUpDown;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.Label maxMhzLabel;

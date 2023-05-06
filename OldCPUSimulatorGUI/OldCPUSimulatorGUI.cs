@@ -337,9 +337,7 @@ namespace OldCPUSimulatorGUI {
         }
 
         void LoadSettings() {
-            // fix bug with Recent button after Restoring Defaults
-            recentFilesListBox.ResetText();
-
+            recentFilesListBox.Items.Clear();
             recentFilesListBox.Items.Insert(0, Properties.Settings.Default.RecentFiles0);
             recentFilesListBox.Items.Insert(1, Properties.Settings.Default.RecentFiles1);
             recentFilesListBox.Items.Insert(2, Properties.Settings.Default.RecentFiles2);
@@ -379,12 +377,11 @@ namespace OldCPUSimulatorGUI {
                 }
             }
 
-            const int RECENT_FILES_END_INDEX = 9;
-
+            int itemsEndIndex = recentFilesListBox.Items.Count - 1;
             bool itemRemoved = false;
 
-            for (int i = 0; i < RECENT_FILES_END_INDEX; i++) {
-                if (fileName == recentFilesListBox.Items[i].ToString()) {
+            for (int i = 0; i < itemsEndIndex; i++) {
+                if (fileName == recentFilesListBox.GetItemText(recentFilesListBox.Items[i])) {
                     recentFilesListBox.Items.RemoveAt(i);
                     itemRemoved = true;
                     break;
@@ -392,28 +389,24 @@ namespace OldCPUSimulatorGUI {
             }
 
             if (!itemRemoved) {
-                recentFilesListBox.Items.RemoveAt(RECENT_FILES_END_INDEX);
+                recentFilesListBox.Items.RemoveAt(itemsEndIndex);
             }
 
             recentFilesListBox.Items.Insert(0, fileName);
             recentFilesListBox.SelectedIndex = 0;
 
-            Properties.Settings.Default.RecentFiles0 = recentFilesListBox.Items[0].ToString();
-            Properties.Settings.Default.RecentFiles1 = recentFilesListBox.Items[1].ToString();
-            Properties.Settings.Default.RecentFiles2 = recentFilesListBox.Items[2].ToString();
-            Properties.Settings.Default.RecentFiles3 = recentFilesListBox.Items[3].ToString();
-            Properties.Settings.Default.RecentFiles4 = recentFilesListBox.Items[4].ToString();
-            Properties.Settings.Default.RecentFiles5 = recentFilesListBox.Items[5].ToString();
-            Properties.Settings.Default.RecentFiles6 = recentFilesListBox.Items[6].ToString();
-            Properties.Settings.Default.RecentFiles7 = recentFilesListBox.Items[7].ToString();
-            Properties.Settings.Default.RecentFiles8 = recentFilesListBox.Items[8].ToString();
-            Properties.Settings.Default.RecentFiles9 = recentFilesListBox.Items[9].ToString();
+            Properties.Settings.Default.RecentFiles0 = recentFilesListBox.GetItemText(recentFilesListBox.Items[0]);
+            Properties.Settings.Default.RecentFiles1 = recentFilesListBox.GetItemText(recentFilesListBox.Items[1]);
+            Properties.Settings.Default.RecentFiles2 = recentFilesListBox.GetItemText(recentFilesListBox.Items[2]);
+            Properties.Settings.Default.RecentFiles3 = recentFilesListBox.GetItemText(recentFilesListBox.Items[3]);
+            Properties.Settings.Default.RecentFiles4 = recentFilesListBox.GetItemText(recentFilesListBox.Items[4]);
+            Properties.Settings.Default.RecentFiles5 = recentFilesListBox.GetItemText(recentFilesListBox.Items[5]);
+            Properties.Settings.Default.RecentFiles6 = recentFilesListBox.GetItemText(recentFilesListBox.Items[6]);
+            Properties.Settings.Default.RecentFiles7 = recentFilesListBox.GetItemText(recentFilesListBox.Items[7]);
+            Properties.Settings.Default.RecentFiles8 = recentFilesListBox.GetItemText(recentFilesListBox.Items[8]);
+            Properties.Settings.Default.RecentFiles9 = recentFilesListBox.GetItemText(recentFilesListBox.Items[9]);
             Properties.Settings.Default.Save();
 
-            CreateOldCPUSimulatorProcess();
-        }
-
-        private void Recent() {
             CreateOldCPUSimulatorProcess();
         }
 
@@ -472,8 +465,17 @@ namespace OldCPUSimulatorGUI {
             Open();
         }
 
-        private void recentButton_Click(object sender, EventArgs e) {
-            Recent();
+        private void recentFilesListBox_SelectedIndexChanged(object sender, EventArgs e) {
+            if (String.IsNullOrEmpty(recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem))) {
+                runRecentButton.Enabled = false;
+                return;
+            }
+
+            runRecentButton.Enabled = true;
+        }
+
+        private void runRecentButton_Click(object sender, EventArgs e) {
+            CreateOldCPUSimulatorProcess();
         }
 
         private void quickReferenceLinkLabel_Click(object sender, EventArgs e) {
@@ -544,7 +546,7 @@ namespace OldCPUSimulatorGUI {
             }
 
             if (keyData == (Keys.Control | Keys.R)) {
-                Recent();
+                CreateOldCPUSimulatorProcess();
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
