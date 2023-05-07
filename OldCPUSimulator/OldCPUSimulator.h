@@ -43,7 +43,7 @@ class OldCPUSimulator {
 	SetProcessInformationProc setProcessInformation = NULL;
 
 	SIZE_T systemInformationSize = 0;
-	std::shared_ptr<BYTE[]> systemInformation = NULL;
+	std::unique_ptr<BYTE[]> systemInformation = NULL;
 
 	NtSuspendProcessProc ntSuspendProcess = NULL;
 	NtResumeProcessProc ntResumeProcess = NULL;
@@ -176,7 +176,7 @@ class OldCPUSimulator {
 		}
 
 		systemInformationSize = pageSize;
-		systemInformation = std::shared_ptr<BYTE[]>(new BYTE[systemInformationSize]);
+		systemInformation = std::unique_ptr<BYTE[]>(new BYTE[systemInformationSize]);
 
 		if (!systemInformation) {
 			throw std::bad_alloc();
@@ -198,7 +198,7 @@ class OldCPUSimulator {
 		while (ntStatus == STATUS_INFO_LENGTH_MISMATCH) {
 			// if the buffer wasn't large enough, increase the size
 			systemInformationSize += systemInformationSize;
-			systemInformation = std::shared_ptr<BYTE[]>(new BYTE[systemInformationSize]);
+			systemInformation = std::unique_ptr<BYTE[]>(new BYTE[systemInformationSize]);
 
 			if (!systemInformation) {
 				throw std::bad_alloc();
@@ -260,6 +260,7 @@ class OldCPUSimulator {
 
 			nextEntryOffset = systemProcessInformationPointer->NextEntryOffset;
 
+			// this also handles the case where the next entry offset is zero
 			if ((SIZE_T)systemProcessInformationPointer + nextEntryOffset <= (SIZE_T)systemProcessInformationPointer) {
 				return false;
 			}

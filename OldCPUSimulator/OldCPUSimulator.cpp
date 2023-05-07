@@ -51,7 +51,9 @@ bool OldCPUSimulator::duplicate(const OldCPUSimulator &oldCPUSimulator) {
 	systemInformationSize = oldCPUSimulator.systemInformationSize;
 
 	if (oldCPUSimulator.systemInformation) {
-		systemInformation = std::shared_ptr<BYTE[]>(oldCPUSimulator.systemInformation);
+		// this is a unique_ptr because the data in the buffer doesn't matter when copying
+		// (only the size)
+		systemInformation = std::unique_ptr<BYTE[]>(new BYTE[systemInformationSize]);
 
 		if (!systemInformation) {
 			consoleLog("Failed to Allocate systemInformation", OLD_CPU_SIMULATOR_ERR);

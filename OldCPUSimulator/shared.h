@@ -9,6 +9,9 @@
 #include <winternl.h>
 #undef WIN32_NO_STATUS
 
+// this is a documented structure, but needs to be included here
+// because the Windows headers don't define it
+// http://www.mschaef.com/windows_h_is_wierd
 typedef struct _PROCESSOR_POWER_INFORMATION {
 	ULONG Number;
 	ULONG MaxMhz;

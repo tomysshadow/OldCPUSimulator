@@ -434,22 +434,22 @@ namespace OldCPUSimulatorGUI {
                 return;
             }
 
-            if (!(e.Data.GetData(DataFormats.FileDrop) is string[] fileNames)) {
+            if (!(e.Data.GetData(DataFormats.FileDrop) is string[] droppedFileNames)) {
                 return;
             }
 
-            if (fileNames.Length < 1) {
+            if (droppedFileNames.Length < 1) {
                 return;
             }
 
-            string fileName = fileNames[0];
+            string droppedFileName = droppedFileNames[0];
 
-            if (fileName == null) {
+            if (droppedFileName == null) {
                 return;
             }
             
             // let the cursor effects disable before opening
-            SynchronizationContext.Current.Post(Open, fileName);
+            SynchronizationContext.Current.Post(Open, droppedFileName);
         }
 
         private void OldCPUSimulatorGUI_Load(object sender, EventArgs e) {
