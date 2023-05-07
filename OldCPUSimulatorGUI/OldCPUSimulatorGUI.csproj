@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MathUtils.cs" />
     <Compile Include="OldCPUSimulatorGUI.cs">
       <SubType>Form</SubType>
     </Compile>
