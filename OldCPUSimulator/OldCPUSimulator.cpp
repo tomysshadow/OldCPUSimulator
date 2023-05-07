@@ -370,6 +370,9 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		}
 	};
 
+	// the most accurate mode
+	// uses only documented functions (SuspendThread/ResumeThread)
+	// but doesn't work if the main thread exits or is inactive
 	if (syncedProcessMainThreadOnly) {
 		consoleLog("Syncing Main Thread Only", OLD_CPU_SIMULATOR_OUT);
 
@@ -408,6 +411,8 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 
 	suspended = false;
 
+	// the second most accurate mode
+	// but uses undocumented functions (NtSuspendProcess/NtResumeProcess)
 	if (syncMode == SYNC_MODE_SUSPEND_PROCESS) {
 		consoleLog("Testing Sync Mode: Suspend Process", OLD_CPU_SIMULATOR_OUT);
 
@@ -456,6 +461,8 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		}
 	};
 
+	// the third most accurate mode
+	// but uses NtQuerySystemInformation, which Microsoft recommends against
 	if (syncMode == SYNC_MODE_QUERY_SYSTEM_INFORMATION) {
 		consoleLog("Testing Sync Mode: Query System Information", OLD_CPU_SIMULATOR_OUT);
 
@@ -505,6 +512,8 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		}
 	}
 
+	// least accurate mode
+	// uses only documented functions (the Toolhelp Snapshot API from Windows 95)
 	if (syncMode == SYNC_MODE_TOOLHELP_SNAPSHOT) {
 		consoleLog("Testing Sync Mode: Toolhelp Snapshot", OLD_CPU_SIMULATOR_OUT);
 
