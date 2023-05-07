@@ -145,42 +145,6 @@ namespace OldCPUSimulatorGUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int TargetMhzSelectedIndex {
-            get {
-                return ((int)(this["TargetMhzSelectedIndex"]));
-            }
-            set {
-                this["TargetMhzSelectedIndex"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public ulong TargetMhz {
-            get {
-                return ((ulong)(this["TargetMhz"]));
-            }
-            set {
-                this["TargetMhz"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
-        public decimal RefreshHz {
-            get {
-                return ((decimal)(this["RefreshHz"]));
-            }
-            set {
-                this["RefreshHz"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool SetProcessPriorityHigh {
             get {
@@ -236,6 +200,42 @@ namespace OldCPUSimulatorGUI.Properties {
             }
             set {
                 this["QuickReferenceLinkVisited"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TargetMhzSelectedIndex {
+            get {
+                return ((int)(this["TargetMhzSelectedIndex"]));
+            }
+            set {
+                this["TargetMhzSelectedIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public ulong TargetMhz {
+            get {
+                return ((ulong)(this["TargetMhz"]));
+            }
+            set {
+                this["TargetMhz"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public decimal RefreshHz {
+            get {
+                return ((decimal)(this["RefreshHz"]));
+            }
+            set {
+                this["RefreshHz"] = value;
             }
         }
     }

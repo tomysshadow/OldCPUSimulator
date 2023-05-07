@@ -349,12 +349,12 @@ namespace OldCPUSimulatorGUI {
             recentFilesListBox.Items.Insert(8, Properties.Settings.Default.RecentFiles8);
             recentFilesListBox.Items.Insert(9, Properties.Settings.Default.RecentFiles9);
 
-            quickReferenceLinkLabel.LinkVisited = Properties.Settings.Default.QuickReferenceLinkVisited;
-
             setProcessPriorityHighCheckBox.Checked = Properties.Settings.Default.SetProcessPriorityHigh;
             setSyncedProcessAffinityOneCheckBox.Checked = Properties.Settings.Default.SetSyncedProcessAffinityOne;
             syncedProcessMainThreadOnlyCheckBox.Checked = Properties.Settings.Default.SyncedProcessMainThreadOnly;
             refreshRateFloorFifteenCheckBox.Checked = Properties.Settings.Default.RefreshRateFloorFifteen;
+
+            quickReferenceLinkLabel.LinkVisited = Properties.Settings.Default.QuickReferenceLinkVisited;
 
             targetMhzComboBox.SelectedIndex = Properties.Settings.Default.TargetMhzSelectedIndex;
 
@@ -494,6 +494,29 @@ namespace OldCPUSimulatorGUI {
             CreateOldCPUSimulatorProcess();
         }
 
+        private void setProcessPriorityHighCheckBox_Click(object sender, EventArgs e) {
+            Properties.Settings.Default.SetProcessPriorityHigh = setProcessPriorityHighCheckBox.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void setSyncedProcessAffinityOneCheckBox_Click(object sender, EventArgs e) {
+            Properties.Settings.Default.SetSyncedProcessAffinityOne = setSyncedProcessAffinityOneCheckBox.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void syncedProcessMainThreadOnlyCheckBox_Click(object sender, EventArgs e) {
+            Properties.Settings.Default.SyncedProcessMainThreadOnly = syncedProcessMainThreadOnlyCheckBox.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void refreshRateFloorFifteenCheckBox_Click(object sender, EventArgs e) {
+            FloorRefreshRateFifteen();
+
+            Properties.Settings.Default.RefreshHz = refreshHzNumericUpDown.Value;
+            Properties.Settings.Default.RefreshRateFloorFifteen = refreshRateFloorFifteenCheckBox.Checked;
+            Properties.Settings.Default.Save();
+        }
+
         private void quickReferenceLinkLabel_Click(object sender, EventArgs e) {
             Process.Start("http://intel.com/pressroom/kits/quickrefyr.htm");
 
@@ -519,29 +542,6 @@ namespace OldCPUSimulatorGUI {
             ShowRefreshRateMinimumMaximum();
 
             Properties.Settings.Default.RefreshHz = refreshHzNumericUpDown.Value;
-            Properties.Settings.Default.Save();
-        }
-
-        private void setProcessPriorityHighCheckBox_Click(object sender, EventArgs e) {
-            Properties.Settings.Default.SetProcessPriorityHigh = setProcessPriorityHighCheckBox.Checked;
-            Properties.Settings.Default.Save();
-        }
-
-        private void setSyncedProcessAffinityOneCheckBox_Click(object sender, EventArgs e) {
-            Properties.Settings.Default.SetSyncedProcessAffinityOne = setSyncedProcessAffinityOneCheckBox.Checked;
-            Properties.Settings.Default.Save();
-        }
-
-        private void syncedProcessMainThreadOnlyCheckBox_Click(object sender, EventArgs e) {
-            Properties.Settings.Default.SyncedProcessMainThreadOnly = syncedProcessMainThreadOnlyCheckBox.Checked;
-            Properties.Settings.Default.Save();
-        }
-
-        private void refreshRateFloorFifteenCheckBox_Click(object sender, EventArgs e) {
-            FloorRefreshRateFifteen();
-
-            Properties.Settings.Default.RefreshHz = refreshHzNumericUpDown.Value;
-            Properties.Settings.Default.RefreshRateFloorFifteen = refreshRateFloorFifteenCheckBox.Checked;
             Properties.Settings.Default.Save();
         }
 
