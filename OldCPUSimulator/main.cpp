@@ -61,9 +61,9 @@ void help() {
 	consoleLog("The software that will be created as the synced process.", true, true);
 	consoleLog("This argument is required.", 2, true);
 
-	consoleLog("It must be given last, after all the options. It may", true, true);
-	consoleLog("include command line arguments, which will be passed", true, true);
-	consoleLog("to the software specified.", 2, true);
+	consoleLog("It must be given last, after all the options.", true, true);
+	consoleLog("Command line arguments may also be specified,", true, true);
+	consoleLog("which will be passed to the software.", 2, true);
 }
 
 int main(int argc, char** argv) {

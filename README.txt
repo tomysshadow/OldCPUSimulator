@@ -55,6 +55,6 @@ Usage: OldCPUSimulator -t targetRate [options] -sw software.exe
 	The software that will be created as the synced process.
 	This argument is required.
 
-	It must be given last, after all the options. It may
-	include command line arguments, which will be passed
-	to the software specified.
+	It must be given last, after all the options.
+	Command line arguments may also be specified,
+	which will be passed to the software.
