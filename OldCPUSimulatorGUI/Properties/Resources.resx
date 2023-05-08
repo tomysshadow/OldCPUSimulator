@@ -124,7 +124,7 @@
     <value>The CPU's clock speed could not be determined.</value>
   </data>
   <data name="MissingFile" xml:space="preserve">
-    <value>The file ({0}) is missing.</value>
+    <value>The file "{0}" is missing.</value>
   </data>
   <data name="NoMultipleInstances" xml:space="preserve">
     <value>You must not run multiple instances of Old CPU Simulator.</value>

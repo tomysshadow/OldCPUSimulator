@@ -79,7 +79,7 @@ namespace OldCPUSimulatorGUI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file ({0}) is missing..
+        ///   Looks up a localized string similar to The file &quot;{0}&quot; is missing..
         /// </summary>
         internal static string MissingFile {
             get {
