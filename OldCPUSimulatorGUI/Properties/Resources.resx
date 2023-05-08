@@ -123,6 +123,9 @@
   <data name="CPUSpeedNotDetermined" xml:space="preserve">
     <value>The CPU's clock speed could not be determined.</value>
   </data>
+  <data name="MissingFile" xml:space="preserve">
+    <value>The file ({0}) is missing.</value>
+  </data>
   <data name="NoMultipleInstances" xml:space="preserve">
     <value>You must not run multiple instances of Old CPU Simulator.</value>
   </data>
@@ -132,8 +135,8 @@
   <data name="OldCPUSimulator" xml:space="preserve">
     <value>Old CPU Simulator</value>
   </data>
-  <data name="OldCPUSimulatorProcessFailedCreate" xml:space="preserve">
-    <value>The Old CPU Simulator Process failed to be created.</value>
+  <data name="OldCPUSimulatorProcessUnableToCreate" xml:space="preserve">
+    <value>The Old CPU Simulator Process is unable to be created.</value>
   </data>
   <data name="RunDragAndDroppedFile" xml:space="preserve">
     <value>Do you want to run the drag and dropped file?</value>

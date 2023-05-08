@@ -79,6 +79,15 @@ namespace OldCPUSimulatorGUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file ({0}) is missing..
+        /// </summary>
+        internal static string MissingFile {
+            get {
+                return ResourceManager.GetString("MissingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must not run multiple instances of Old CPU Simulator..
         /// </summary>
         internal static string NoMultipleInstances {
@@ -106,11 +115,11 @@ namespace OldCPUSimulatorGUI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Old CPU Simulator Process failed to be created..
+        ///   Looks up a localized string similar to The Old CPU Simulator Process is unable to be created..
         /// </summary>
-        internal static string OldCPUSimulatorProcessFailedCreate {
+        internal static string OldCPUSimulatorProcessUnableToCreate {
             get {
-                return ResourceManager.GetString("OldCPUSimulatorProcessFailedCreate", resourceCulture);
+                return ResourceManager.GetString("OldCPUSimulatorProcessUnableToCreate", resourceCulture);
             }
         }
         

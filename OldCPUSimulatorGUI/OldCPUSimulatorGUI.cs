@@ -332,7 +332,7 @@ namespace OldCPUSimulatorGUI {
                 }
             } catch {
                 Show();
-                MessageBox.Show(Properties.Resources.OldCPUSimulatorProcessFailedCreate, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Properties.Resources.OldCPUSimulatorProcessUnableToCreate, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -363,22 +363,22 @@ namespace OldCPUSimulatorGUI {
         }
 
         private void Open(object droppedFileName = null) {
-            string fileName = droppedFileName as string;
+            string fullPath = droppedFileName as string;
 
-            if (fileName == null) {
+            if (fullPath == null) {
                 if (openFileDialog.ShowDialog() == DialogResult.Cancel) {
                     return;
                 }
 
-                fileName = openFileDialog.FileName;
+                fullPath = openFileDialog.FileName;
 
                 // test for whitespace after showing dialog
-                if (String.IsNullOrWhiteSpace(fileName)) {
+                if (String.IsNullOrWhiteSpace(fullPath)) {
                     return;
                 }
             } else {
                 // test for whitespace before showing message box
-                if (String.IsNullOrWhiteSpace(fileName)) {
+                if (String.IsNullOrWhiteSpace(fullPath)) {
                     return;
                 }
 
@@ -387,11 +387,21 @@ namespace OldCPUSimulatorGUI {
                 }
             }
 
+            // we get the full path now in case this is run from a different location in future
+            try {
+                fullPath = Path.GetFullPath(fullPath);
+            } catch {
+                MessageBox.Show(String.Format(Properties.Resources.MissingFile, fullPath), Properties.Resources.OldCPUNotSimulated, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             int itemsEndIndex = recentFilesListBox.Items.Count - 1;
             bool itemRemoved = false;
 
             for (int i = 0; i < itemsEndIndex; i++) {
-                if (String.Equals(fileName, recentFilesListBox.GetItemText(recentFilesListBox.Items[i]), StringComparison.OrdinalIgnoreCase)) {
+                // we don't care if these actually refer to the same file
+                // only that we don't want the same text entry twice
+                if (String.Equals(fullPath, recentFilesListBox.GetItemText(recentFilesListBox.Items[i]), StringComparison.OrdinalIgnoreCase)) {
                     recentFilesListBox.Items.RemoveAt(i);
                     itemRemoved = true;
                     break;
@@ -402,7 +412,7 @@ namespace OldCPUSimulatorGUI {
                 recentFilesListBox.Items.RemoveAt(itemsEndIndex);
             }
 
-            recentFilesListBox.Items.Insert(0, fileName);
+            recentFilesListBox.Items.Insert(0, fullPath);
             recentFilesListBox.SelectedIndex = 0;
 
             Properties.Settings.Default.RecentFiles0 = recentFilesListBox.GetItemText(recentFilesListBox.Items[0]);
