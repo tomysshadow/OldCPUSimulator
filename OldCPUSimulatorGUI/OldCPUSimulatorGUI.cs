@@ -337,6 +337,8 @@ namespace OldCPUSimulatorGUI {
         }
 
         void LoadSettings() {
+            runRecentButton.Enabled = false;
+
             recentFilesListBox.Items.Clear();
             recentFilesListBox.Items.Insert(0, Properties.Settings.Default.RecentFiles0);
             recentFilesListBox.Items.Insert(1, Properties.Settings.Default.RecentFiles1);
