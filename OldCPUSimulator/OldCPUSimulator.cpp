@@ -473,6 +473,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 		// this would be possible, but difficult to adapt for Windows 2000/NT 4.0
 		// http://www.informit.com/articles/article.aspx?p=22442&seqNum=6
 		if (ntQuerySystemInformation
+			#pragma warning(suppress : 4996)
 			&& GetVersionEx(&osVersionInfo)
 			&& ((osVersionInfo.dwMajorVersion > 5)
 			|| ((osVersionInfo.dwMajorVersion == 5) && (osVersionInfo.dwMinorVersion >= 1)))) {

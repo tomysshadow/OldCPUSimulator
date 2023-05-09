@@ -157,7 +157,7 @@ bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setP
 
 	const DWORD PROCESS_POWER_THROTTLING_STATE_SIZE = sizeof(processPowerThrottlingState);
 
-	if (!setProcessInformation(process, ProcessPowerThrottling, &processPowerThrottlingState, PROCESS_POWER_THROTTLING_STATE_SIZE)) {
+	if (!setProcessInformation(process, _ProcessPowerThrottling, &processPowerThrottlingState, PROCESS_POWER_THROTTLING_STATE_SIZE)) {
 		if (GetLastError() != ERROR_INVALID_PARAMETER) {
 			consoleLog("Failed to Set Process Information", SHARED_ERR);
 			return false;

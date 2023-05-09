@@ -21,19 +21,20 @@ typedef struct _PROCESSOR_POWER_INFORMATION {
 	ULONG CurrentIdleState;
 } PROCESSOR_POWER_INFORMATION, *PPROCESSOR_POWER_INFORMATION;
 
-typedef enum _PROCESS_INFORMATION_CLASS {
-	ProcessMemoryPriority,
-	ProcessMemoryExhaustionInfo,
-	ProcessAppMemoryInfo,
-	ProcessInPrivateInfo,
-	ProcessPowerThrottling,
-	ProcessReservedValue1,
-	ProcessTelemetryCoverageInfo,
-	ProcessProtectionLevelInfo,
-	ProcessLeapSecondInfo,
-	ProcessMachineTypeInfo,
-	ProcessInformationClassMax
-} PROCESS_INFORMATION_CLASS;
+// redefined here from Windows 11 to allow compile for Windows 10 and below
+typedef enum ___PROCESS_INFORMATION_CLASS {
+	_ProcessMemoryPriority,
+	_ProcessMemoryExhaustionInfo,
+	_ProcessAppMemoryInfo,
+	_ProcessInPrivateInfo,
+	_ProcessPowerThrottling,
+	_ProcessReservedValue1,
+	_ProcessTelemetryCoverageInfo,
+	_ProcessProtectionLevelInfo,
+	_ProcessLeapSecondInfo,
+	_ProcessMachineTypeInfo,
+	_ProcessInformationClassMax
+} __PROCESS_INFORMATION_CLASS;
 
 typedef struct _PROCESS_POWER_THROTTLING_STATE {
 	ULONG Version;
@@ -48,7 +49,7 @@ typedef struct _PROCESS_POWER_THROTTLING_STATE {
 
 #define PROCESS_POWER_THROTTLING_VALID_FLAGS (PROCESS_POWER_THROTTLING_EXECUTION_SPEED | PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION)
 
-typedef BOOL(WINAPI *SetProcessInformationProc)(_In_ HANDLE hProcess, _In_ PROCESS_INFORMATION_CLASS ProcessInformationClass, _In_reads_bytes_(ProcessInformationSize) LPVOID ProcessInformation, _In_ DWORD ProcessInformationSize);
+typedef BOOL(WINAPI *SetProcessInformationProc)(_In_ HANDLE hProcess, _In_ __PROCESS_INFORMATION_CLASS ProcessInformationClass, _In_reads_bytes_(ProcessInformationSize) LPVOID ProcessInformation, _In_ DWORD ProcessInformationSize);
 
 typedef NTSTATUS(NTAPI *NtSuspendProcessProc)(__in HANDLE ProcessHandle);
 typedef NTSTATUS(NTAPI *NtResumeProcessProc)(__in HANDLE ProcessHandle);
