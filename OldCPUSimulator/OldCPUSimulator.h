@@ -218,7 +218,7 @@ class OldCPUSimulator {
 		ULONG nextEntryOffset = 0;
 
 		__PSYSTEM_PROCESS_INFORMATION systemProcessInformationPointer = (__PSYSTEM_PROCESS_INFORMATION)systemInformation.get();
-		PSYSTEM_THREAD_INFORMATION systemThreadInformationPointer = NULL;
+		__PSYSTEM_THREAD_INFORMATION systemThreadInformationPointer = NULL;
 
 		DWORD threadID = 0;
 		HANDLE thread = NULL;
@@ -230,7 +230,7 @@ class OldCPUSimulator {
 
 		do {
 			if ((DWORD)systemProcessInformationPointer->UniqueProcessId == syncedProcessID) {
-				systemThreadInformationPointer = (PSYSTEM_THREAD_INFORMATION)(systemProcessInformationPointer + 1);
+				systemThreadInformationPointer = (__PSYSTEM_THREAD_INFORMATION)(systemProcessInformationPointer + 1);
 
 				if (!systemThreadInformationPointer) {
 					throw std::runtime_error("systemThreadInformationPointer must not be NULL");

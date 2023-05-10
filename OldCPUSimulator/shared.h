@@ -36,11 +36,11 @@ typedef enum ___PROCESS_INFORMATION_CLASS {
 	_ProcessInformationClassMax
 } __PROCESS_INFORMATION_CLASS;
 
-typedef struct _PROCESS_POWER_THROTTLING_STATE {
+typedef struct ___PROCESS_POWER_THROTTLING_STATE {
 	ULONG Version;
 	ULONG ControlMask;
 	ULONG StateMask;
-} PROCESS_POWER_THROTTLING_STATE, *PPROCESS_POWER_THROTTLING_STATE;
+} __PROCESS_POWER_THROTTLING_STATE, *__PPROCESS_POWER_THROTTLING_STATE;
 
 #define PROCESS_POWER_THROTTLING_CURRENT_VERSION 1
 
@@ -56,10 +56,10 @@ typedef NTSTATUS(NTAPI *NtResumeProcessProc)(__in HANDLE ProcessHandle);
 
 typedef LONG KPRIORITY;
 
-typedef struct _CLIENT_ID {
+typedef struct ___CLIENT_ID {
 	HANDLE UniqueProcess;
 	HANDLE UniqueThread;
-} CLIENT_ID;
+} __CLIENT_ID;
 
 typedef struct ___SYSTEM_PROCESS_INFORMATION {
 	ULONG NextEntryOffset;
@@ -87,17 +87,17 @@ typedef struct ___SYSTEM_PROCESS_INFORMATION {
 	LARGE_INTEGER Reserved7[6];
 } __SYSTEM_PROCESS_INFORMATION, *__PSYSTEM_PROCESS_INFORMATION;
 
-typedef struct _SYSTEM_THREAD_INFORMATION {
+typedef struct ___SYSTEM_THREAD_INFORMATION {
 	LARGE_INTEGER Reserved1[3];
 	ULONG Reserved2;
 	PVOID StartAddress;
-	CLIENT_ID ClientId;
+	__CLIENT_ID ClientId;
 	KPRIORITY Priority;
 	LONG BasePriority;
 	ULONG Reserved3;
 	ULONG ThreadState;
 	ULONG WaitReason;
-} SYSTEM_THREAD_INFORMATION, *PSYSTEM_THREAD_INFORMATION;
+} __SYSTEM_THREAD_INFORMATION, *__PSYSTEM_THREAD_INFORMATION;
 
 typedef NTSTATUS(NTAPI *NtQuerySystemInformationProc)(__in SYSTEM_INFORMATION_CLASS SystemInformationClass, __inout PVOID SystemInformation, __in ULONG SystemInformationLength, __out_opt PULONG ReturnLength);
 

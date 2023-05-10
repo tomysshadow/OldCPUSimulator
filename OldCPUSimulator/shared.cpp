@@ -150,7 +150,7 @@ bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setP
 	}
 
 	// Windows 11 timer throttling behaviour
-	PROCESS_POWER_THROTTLING_STATE processPowerThrottlingState = {};
+	__PROCESS_POWER_THROTTLING_STATE processPowerThrottlingState = {};
 	processPowerThrottlingState.Version = PROCESS_POWER_THROTTLING_CURRENT_VERSION;
 	processPowerThrottlingState.ControlMask = PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION;
 	processPowerThrottlingState.StateMask = 0;
