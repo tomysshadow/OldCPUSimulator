@@ -12,14 +12,14 @@
 // this is a documented structure, but needs to be included here
 // because the Windows headers don't define it
 // http://www.mschaef.com/windows_h_is_wierd
-typedef struct _PROCESSOR_POWER_INFORMATION {
+typedef struct ___PROCESSOR_POWER_INFORMATION {
 	ULONG Number;
 	ULONG MaxMhz;
 	ULONG CurrentMhz;
 	ULONG MhzLimit;
 	ULONG MaxIdleState;
 	ULONG CurrentIdleState;
-} PROCESSOR_POWER_INFORMATION, *PPROCESSOR_POWER_INFORMATION;
+} __PROCESSOR_POWER_INFORMATION, *__PPROCESSOR_POWER_INFORMATION;
 
 // redefined here from Windows 11 to allow compile for Windows 10 and below
 typedef enum ___PROCESS_INFORMATION_CLASS {
@@ -42,19 +42,19 @@ typedef struct ___PROCESS_POWER_THROTTLING_STATE {
 	ULONG StateMask;
 } __PROCESS_POWER_THROTTLING_STATE, *__PPROCESS_POWER_THROTTLING_STATE;
 
-#define PROCESS_POWER_THROTTLING_CURRENT_VERSION 1
+#define _PROCESS_POWER_THROTTLING_CURRENT_VERSION 1
 
-#define PROCESS_POWER_THROTTLING_EXECUTION_SPEED 0x1
-#define PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION 0x4
+#define _PROCESS_POWER_THROTTLING_EXECUTION_SPEED 0x1
+#define _PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION 0x4
 
-#define PROCESS_POWER_THROTTLING_VALID_FLAGS (PROCESS_POWER_THROTTLING_EXECUTION_SPEED | PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION)
+#define _PROCESS_POWER_THROTTLING_VALID_FLAGS (_PROCESS_POWER_THROTTLING_EXECUTION_SPEED | _PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION)
 
 typedef BOOL(WINAPI *SetProcessInformationProc)(_In_ HANDLE hProcess, _In_ __PROCESS_INFORMATION_CLASS ProcessInformationClass, _In_reads_bytes_(ProcessInformationSize) LPVOID ProcessInformation, _In_ DWORD ProcessInformationSize);
 
 typedef NTSTATUS(NTAPI *NtSuspendProcessProc)(__in HANDLE ProcessHandle);
 typedef NTSTATUS(NTAPI *NtResumeProcessProc)(__in HANDLE ProcessHandle);
 
-typedef LONG KPRIORITY;
+typedef LONG _KPRIORITY;
 
 typedef struct ___CLIENT_ID {
 	HANDLE UniqueProcess;
@@ -66,7 +66,7 @@ typedef struct ___SYSTEM_PROCESS_INFORMATION {
 	ULONG NumberOfThreads;
 	BYTE Reserved1[48];
 	UNICODE_STRING ImageName;
-	KPRIORITY BasePriority;
+	_KPRIORITY BasePriority;
 	HANDLE UniqueProcessId;
 	PVOID Reserved2;
 	ULONG HandleCount;
@@ -92,7 +92,7 @@ typedef struct ___SYSTEM_THREAD_INFORMATION {
 	ULONG Reserved2;
 	PVOID StartAddress;
 	__CLIENT_ID ClientId;
-	KPRIORITY Priority;
+	_KPRIORITY Priority;
 	LONG BasePriority;
 	ULONG Reserved3;
 	ULONG ThreadState;

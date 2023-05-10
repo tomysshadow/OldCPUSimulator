@@ -70,7 +70,7 @@ bool getMaxMhz(ULONG &maxMhz) {
 	SYSTEM_INFO systemInfo = {};
 	GetSystemInfo(&systemInfo);
 
-	ULONG processorPowerInformationSize = sizeof(PROCESSOR_POWER_INFORMATION) * systemInfo.dwNumberOfProcessors;
+	ULONG processorPowerInformationSize = sizeof(__PROCESSOR_POWER_INFORMATION) * systemInfo.dwNumberOfProcessors;
 
 	std::unique_ptr<BYTE[]> outputBuffer = std::unique_ptr<BYTE[]>(new BYTE[processorPowerInformationSize]);
 
@@ -84,7 +84,7 @@ bool getMaxMhz(ULONG &maxMhz) {
 		return false;
 	}
 
-	PPROCESSOR_POWER_INFORMATION processorPowerInformationPointer = (PPROCESSOR_POWER_INFORMATION)outputBuffer.get();
+	__PPROCESSOR_POWER_INFORMATION processorPowerInformationPointer = (__PPROCESSOR_POWER_INFORMATION)outputBuffer.get();
 
 	if (!processorPowerInformationPointer) {
 		consoleLog("processorPowerInformationPointer must not be NULL", SHARED_ERR);
@@ -151,8 +151,8 @@ bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setP
 
 	// Windows 11 timer throttling behaviour
 	__PROCESS_POWER_THROTTLING_STATE processPowerThrottlingState = {};
-	processPowerThrottlingState.Version = PROCESS_POWER_THROTTLING_CURRENT_VERSION;
-	processPowerThrottlingState.ControlMask = PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION;
+	processPowerThrottlingState.Version = _PROCESS_POWER_THROTTLING_CURRENT_VERSION;
+	processPowerThrottlingState.ControlMask = _PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION;
 	processPowerThrottlingState.StateMask = 0;
 
 	const DWORD PROCESS_POWER_THROTTLING_STATE_SIZE = sizeof(processPowerThrottlingState);
