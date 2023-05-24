@@ -569,12 +569,11 @@ namespace OldCPUSimulatorGUI {
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
-            if (keyData == (Keys.Control | Keys.O)) {
+            switch (keyData) {
+                case Keys.Control | Keys.O:
                 Open();
                 return true;
-            }
-
-            if (keyData == (Keys.Control | Keys.R)) {
+                case Keys.Control | Keys.R:
                 CreateOldCPUSimulatorProcess();
                 return true;
             }
