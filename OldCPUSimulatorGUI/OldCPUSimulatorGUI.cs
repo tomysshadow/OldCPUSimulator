@@ -471,7 +471,7 @@ namespace OldCPUSimulatorGUI {
             try {
                 Directory.SetCurrentDirectory(Application.StartupPath);
             } catch {
-                // Fail silently.
+                // fail silently
             }
 
             LoadSettings();
