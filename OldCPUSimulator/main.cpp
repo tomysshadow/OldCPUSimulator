@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
 		}
 	};
 
-	consoleLog("Old CPU Simulator 2.2.0");
+	consoleLog("Old CPU Simulator 2.2.1");
 	consoleLog("By Anthony Kleine", 2);
 
 	// the number of required arguments

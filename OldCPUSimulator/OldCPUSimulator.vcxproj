@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Logo\OldCPUSimulator.ico" />
+    <Image Include="Logo\OldCPUSimulator.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

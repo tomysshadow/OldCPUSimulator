@@ -500,6 +500,7 @@ namespace OldCPUSimulatorGUI {
             }
 
             runRecentButton.Enabled = true;
+            runRecentButton.Focus();
         }
 
         private void runRecentButton_Click(object sender, EventArgs e) {
