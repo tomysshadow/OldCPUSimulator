@@ -465,7 +465,7 @@ namespace OldCPUSimulatorGUI {
         }
 
         private void OldCPUSimulatorGUI_Load(object sender, EventArgs e) {
-            titleLabel.Text += " " + typeof(OldCPUSimulatorGUI).Assembly.GetName().Version;
+            titleLabel.Text = Properties.Resources.OldCPUSimulator + " " + typeof(OldCPUSimulatorGUI).Assembly.GetName().Version;
             Text = titleLabel.Text;
 
             try {
