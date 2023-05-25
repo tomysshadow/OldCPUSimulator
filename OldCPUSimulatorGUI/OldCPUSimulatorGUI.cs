@@ -284,7 +284,6 @@ namespace OldCPUSimulatorGUI {
                 Hide();
 
                 using (Process oldCPUSimulatorProcess = Process.Start(oldCPUSimulatorProcessStartInfo)) {
-
                     oldCPUSimulatorProcess.WaitForExit();
 
                     Show();
