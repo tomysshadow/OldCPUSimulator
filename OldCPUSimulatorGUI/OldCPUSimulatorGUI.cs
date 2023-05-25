@@ -34,30 +34,28 @@ namespace OldCPUSimulatorGUI {
             };
 
             try {
-                Process oldCPUSimulatorProcess = Process.Start(oldCPUSimulatorProcessStartInfo);
-
-                if (!oldCPUSimulatorProcess.HasExited) {
+                using (Process oldCPUSimulatorProcess = Process.Start(oldCPUSimulatorProcessStartInfo)) {
                     oldCPUSimulatorProcess.WaitForExit();
+
+                    string oldCPUSimulatorProcessStandardError = null;
+                    string oldCPUSimulatorProcessStandardOutput = null;
+
+                    if (oldCPUSimulatorProcessStartInfo.RedirectStandardError) {
+                        oldCPUSimulatorProcessStandardError = oldCPUSimulatorProcess.StandardError.ReadToEnd();
+                    }
+
+                    if (oldCPUSimulatorProcessStartInfo.RedirectStandardOutput) {
+                        oldCPUSimulatorProcessStandardOutput = oldCPUSimulatorProcess.StandardOutput.ReadToEnd();
+                    }
+
+                    if (oldCPUSimulatorProcess.ExitCode != 0 || !ulong.TryParse(oldCPUSimulatorProcessStandardOutput.Split('\n').Last(), out maxMhz)) {
+                        MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
+                    }
+
+                    // set the Max Rate Value Label's Text to the Max Rate String
+                    maxMhzValueLabel.Text = maxMhz.ToString();
                 }
-
-                string oldCPUSimulatorProcessStandardError = null;
-                string oldCPUSimulatorProcessStandardOutput = null;
-
-                if (oldCPUSimulatorProcessStartInfo.RedirectStandardError) {
-                    oldCPUSimulatorProcessStandardError = oldCPUSimulatorProcess.StandardError.ReadToEnd();
-                }
-
-                if (oldCPUSimulatorProcessStartInfo.RedirectStandardOutput) {
-                    oldCPUSimulatorProcessStandardOutput = oldCPUSimulatorProcess.StandardOutput.ReadToEnd();
-                }
-
-                if (oldCPUSimulatorProcess.ExitCode != 0 || !ulong.TryParse(oldCPUSimulatorProcessStandardOutput.Split('\n').Last(), out maxMhz)) {
-                    MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
-
-                // set the Max Rate Value Label's Text to the Max Rate String
-                maxMhzValueLabel.Text = maxMhz.ToString();
             } catch {
                 MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -284,51 +282,51 @@ namespace OldCPUSimulatorGUI {
                 // create the Old CPU Simulator Process
                 // hide... our laziness with not being async
                 Hide();
-                Process oldCPUSimulatorProcess = Process.Start(oldCPUSimulatorProcessStartInfo);
 
-                if (!oldCPUSimulatorProcess.HasExited) {
+                using (Process oldCPUSimulatorProcess = Process.Start(oldCPUSimulatorProcessStartInfo)) {
+
                     oldCPUSimulatorProcess.WaitForExit();
-                }
 
-                Show();
+                    Show();
 
-                string oldCPUSimulatorProcessStandardError = null;
-                string oldCPUSimulatorProcessStandardOutput = null;
+                    string oldCPUSimulatorProcessStandardError = null;
+                    string oldCPUSimulatorProcessStandardOutput = null;
 
-                if (oldCPUSimulatorProcessStartInfo.RedirectStandardError) {
-                    oldCPUSimulatorProcessStandardError = oldCPUSimulatorProcess.StandardError.ReadToEnd();
-                }
-
-                if (oldCPUSimulatorProcessStartInfo.RedirectStandardOutput) {
-                    oldCPUSimulatorProcessStandardOutput = oldCPUSimulatorProcess.StandardOutput.ReadToEnd();
-                }
-
-                switch (oldCPUSimulatorProcess.ExitCode) {
-                    case 0:
-                    break;
-                    case -1:
-                    if (!String.IsNullOrEmpty(oldCPUSimulatorProcessStandardError)) {
-                        string[] lastOldCPUSimulatorProcessStandardErrors = oldCPUSimulatorProcessStandardError.Split('\n');
-                        string lastOldCPUSimulatorProcessStandardError = null;
-
-                        if (lastOldCPUSimulatorProcessStandardErrors.Length > 1) {
-                            lastOldCPUSimulatorProcessStandardError = lastOldCPUSimulatorProcessStandardErrors[lastOldCPUSimulatorProcessStandardErrors.Length - 2];
-                        }
-
-                        if (!String.IsNullOrEmpty(lastOldCPUSimulatorProcessStandardError)) {
-                            MessageBox.Show(lastOldCPUSimulatorProcessStandardError, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                    if (oldCPUSimulatorProcessStartInfo.RedirectStandardError) {
+                        oldCPUSimulatorProcessStandardError = oldCPUSimulatorProcess.StandardError.ReadToEnd();
                     }
-                    break;
-                    case -2:
-                    MessageBox.Show(Properties.Resources.NoMultipleInstances, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-                    case -3:
-                    MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-                    default:
-                    MessageBox.Show(Properties.Resources.OldCPUNotSimulated, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
+
+                    if (oldCPUSimulatorProcessStartInfo.RedirectStandardOutput) {
+                        oldCPUSimulatorProcessStandardOutput = oldCPUSimulatorProcess.StandardOutput.ReadToEnd();
+                    }
+
+                    switch (oldCPUSimulatorProcess.ExitCode) {
+                        case 0:
+                        break;
+                        case -1:
+                        if (!String.IsNullOrEmpty(oldCPUSimulatorProcessStandardError)) {
+                            string[] lastOldCPUSimulatorProcessStandardErrors = oldCPUSimulatorProcessStandardError.Split('\n');
+                            string lastOldCPUSimulatorProcessStandardError = null;
+
+                            if (lastOldCPUSimulatorProcessStandardErrors.Length > 1) {
+                                lastOldCPUSimulatorProcessStandardError = lastOldCPUSimulatorProcessStandardErrors[lastOldCPUSimulatorProcessStandardErrors.Length - 2];
+                            }
+
+                            if (!String.IsNullOrEmpty(lastOldCPUSimulatorProcessStandardError)) {
+                                MessageBox.Show(lastOldCPUSimulatorProcessStandardError, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                        break;
+                        case -2:
+                        MessageBox.Show(Properties.Resources.NoMultipleInstances, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                        case -3:
+                        MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                        default:
+                        MessageBox.Show(Properties.Resources.OldCPUNotSimulated, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                    }
                 }
             } catch {
                 Show();
@@ -531,7 +529,7 @@ namespace OldCPUSimulatorGUI {
         }
 
         private void quickReferenceLinkLabel_Click(object sender, EventArgs e) {
-            Process.Start("http://intel.com/pressroom/kits/quickrefyr.htm");
+            Process.Start("http://intel.com/pressroom/kits/quickrefyr.htm").Dispose();
 
             quickReferenceLinkLabel.LinkVisited = true;
 
