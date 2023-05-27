@@ -528,7 +528,11 @@ namespace OldCPUSimulatorGUI {
         }
 
         private void quickReferenceLinkLabel_Click(object sender, EventArgs e) {
-            Process.Start("http://intel.com/pressroom/kits/quickrefyr.htm").Dispose();
+            try {
+                Process.Start("http://intel.com/pressroom/kits/quickrefyr.htm").Dispose();
+            } catch {
+                // fail silently
+            }
 
             quickReferenceLinkLabel.LinkVisited = true;
 
