@@ -127,7 +127,7 @@
     <value>The file "{0}" is missing.</value>
   </data>
   <data name="NoMultipleInstances" xml:space="preserve">
-    <value>You must not run multiple instances of Old CPU Simulator.</value>
+    <value>You cannot run multiple instances of Old CPU Simulator.</value>
   </data>
   <data name="OldCPUNotSimulated" xml:space="preserve">
     <value>The old CPU could not be simulated.</value>
