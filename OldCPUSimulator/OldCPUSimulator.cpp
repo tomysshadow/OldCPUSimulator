@@ -326,7 +326,8 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 	// one second (approximately)
 	UINT s = clamp(1000, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
 	// two seconds (we should never hit this)
-	UINT s2 = max(2000, s + s);
+	UINT s2 = s + s;
+	s2 = max(2000, s2);
 
 	if (!ms || !s || !s2 || s < ms || s2 < s) {
 		consoleLog("Invalid Time Dev Caps", OLD_CPU_SIMULATOR_ERR);
@@ -346,7 +347,8 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 	// we do this after in case the Refresh Rate before was well above the maximum
 	if (refreshHzFloorFifteen) {
 		maxRefreshHz = floor(maxRefreshHz / 15) * 15;
-		refreshHz = clamp((UINT)min(floor(refreshHz / 15) * 15, maxRefreshHz), ms, s);
+		refreshHz = floor(refreshHz / 15) * 15;
+		refreshHz = clamp((UINT)min(refreshHz, maxRefreshHz), ms, s);
 	}
 
 	UINT refreshMs = clamp(s / refreshHz, (UINT)ceil(minRefreshMs), s);
@@ -359,7 +361,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 
 	// set precision to highest value that will work for both suspend/resume wait time
 	if (timeBeginPeriod(gcdMs) != TIMERR_NOERROR) {
-		consoleLog("Failed to Begin Time Period", OLD_CPU_SIMULATOR_OUT);
+		consoleLog("Failed to Begin Time Period", OLD_CPU_SIMULATOR_ERR);
 		return false;
 	}
 

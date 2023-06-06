@@ -113,7 +113,7 @@ namespace OldCPUSimulatorGUI {
             return true;
         }
 
-        void ShowCustomTargetRate() {
+        private void ShowCustomTargetRate() {
             if (targetMhzComboBox.SelectedIndex == targetMhzComboBox.Items.IndexOf(CUSTOM_TARGET_RATE)) {
                 targetMhzComboBox.DropDownStyle = ComboBoxStyle.DropDown;
                 targetMhzComboBox.Text = Properties.Settings.Default.TargetMhz.ToString();
@@ -122,7 +122,7 @@ namespace OldCPUSimulatorGUI {
             }
         }
 
-        void ShowRefreshRateMinimumMaximum() {
+        private void ShowRefreshRateMinimumMaximum() {
             if (refreshHzNumericUpDown.Value == refreshHzNumericUpDown.Maximum) {
                 refreshHzMaximumNumericUpDown.Controls[0].Enabled = false;
                 refreshHzMaximumGroupBox.Visible = true;
@@ -138,7 +138,7 @@ namespace OldCPUSimulatorGUI {
             }
         }
 
-        bool FloorRefreshRateFifteen(out ulong targetMhz, out ulong maxMhz) {
+        private bool FloorRefreshRateFifteen(out ulong targetMhz, out ulong maxMhz) {
             if (!GetMhz(out targetMhz, out maxMhz)) {
                 return false;
             }
@@ -168,7 +168,8 @@ namespace OldCPUSimulatorGUI {
 
                 refreshHzNumericUpDown.Minimum = 15;
                 refreshHzNumericUpDown.Increment = 15;
-                refreshHzNumericUpDown.Value = MathUtils.Clamp((uint)Math.Min((double)Math.Floor(refreshHzNumericUpDown.Value / 15) * 15, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+                refreshHzNumericUpDown.Value = Math.Floor(refreshHzNumericUpDown.Value / 15) * 15;
+                refreshHzNumericUpDown.Value = MathUtils.Clamp((uint)Math.Min((double)refreshHzNumericUpDown.Value, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
                 refreshHzNumericUpDown.Maximum = MathUtils.Clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
             }
 
@@ -176,11 +177,11 @@ namespace OldCPUSimulatorGUI {
             return true;
         }
 
-        void FloorRefreshRateFifteen() {
+        private void FloorRefreshRateFifteen() {
             FloorRefreshRateFifteen(out ulong targetMhz, out ulong maxMhz);
         }
 
-        void ResetRefreshRate() {
+        private void ResetRefreshRate() {
             FloorRefreshRateFifteen();
 
             refreshHzNumericUpDown.Value = refreshHzNumericUpDown.Maximum;
@@ -190,7 +191,7 @@ namespace OldCPUSimulatorGUI {
         }
 
         // http://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/
-        public static string GetValidArgument(string argument, bool force = false) {
+        private string GetValidArgument(string argument, bool force = false) {
             if (argument == null) {
                 argument = String.Empty;
             }
@@ -333,7 +334,7 @@ namespace OldCPUSimulatorGUI {
             }
         }
 
-        void LoadSettings() {
+        private void LoadSettings() {
             runRecentButton.Enabled = false;
 
             recentFilesListBox.Items.Clear();
