@@ -111,10 +111,6 @@ inline bool stringNullOrEmpty(const char* str) {
 	return !str || !*str;
 }
 
-inline bool stringsCaseInsensitiveEqual(const char* leftHandSide, const char* rightHandSide) {
-	return !_stricmp(leftHandSide, rightHandSide);
-}
-
 inline UINT clamp(UINT number, UINT min, UINT max) {
 	return min(max, max(min, number));
 }

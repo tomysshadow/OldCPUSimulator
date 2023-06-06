@@ -347,7 +347,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 	// we do this after in case the Refresh Rate before was well above the maximum
 	if (refreshHzFloorFifteen) {
 		maxRefreshHz = floor(maxRefreshHz / 15) * 15;
-		refreshHz = floor(refreshHz / 15) * 15;
+		refreshHz = (UINT)floor(refreshHz / 15) * 15;
 		refreshHz = clamp((UINT)min(refreshHz, maxRefreshHz), ms, s);
 	}
 
