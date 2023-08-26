@@ -254,83 +254,99 @@ namespace OldCPUSimulatorGUI {
                 oldCPUSimulatorProcessStartInfoArguments.Append(" -rf");
             }
 
-            try {
-                string fullPath = recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem);
+            Thread createOldCPUSimulatorProcessThread = new Thread(delegate () {
+                try {
+                    string fullPath = null;
 
-                if (String.IsNullOrWhiteSpace(fullPath)) {
-                    MessageBox.Show(Properties.Resources.SelectRecentFileFirst, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                    Invoke(new MethodInvoker(delegate () {
+                        fullPath = recentFilesListBox.GetItemText(recentFilesListBox.SelectedItem);
+                    }));
 
-                fullPath = Path.GetFullPath(fullPath);
-
-                // create the Old CPU Simulator Process Start Info
-                oldCPUSimulatorProcessStartInfoArguments.Append(" -sw ");
-                oldCPUSimulatorProcessStartInfoArguments.Append(GetValidArgument(fullPath, true));
-
-                ProcessStartInfo oldCPUSimulatorProcessStartInfo = new ProcessStartInfo(OLD_CPU_SIMULATOR_PATH, oldCPUSimulatorProcessStartInfoArguments.ToString()) {
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = false,
-                    RedirectStandardInput = false,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true,
-                    ErrorDialog = false,
-                    WorkingDirectory = Path.GetDirectoryName(fullPath)
-                };
-
-                // create the Old CPU Simulator Process
-                // hide... our laziness with not being async
-                Hide();
-
-                using (Process oldCPUSimulatorProcess = Process.Start(oldCPUSimulatorProcessStartInfo)) {
-                    oldCPUSimulatorProcess.WaitForExit();
-
-                    Show();
-
-                    string oldCPUSimulatorProcessStandardError = null;
-                    string oldCPUSimulatorProcessStandardOutput = null;
-
-                    if (oldCPUSimulatorProcessStartInfo.RedirectStandardError) {
-                        oldCPUSimulatorProcessStandardError = oldCPUSimulatorProcess.StandardError.ReadToEnd();
+                    if (String.IsNullOrWhiteSpace(fullPath)) {
+                        Invoke(new MethodInvoker(delegate () {
+                            MessageBox.Show(Properties.Resources.SelectRecentFileFirst, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }));
+                        return;
                     }
 
-                    if (oldCPUSimulatorProcessStartInfo.RedirectStandardOutput) {
-                        oldCPUSimulatorProcessStandardOutput = oldCPUSimulatorProcess.StandardOutput.ReadToEnd();
-                    }
+                    fullPath = Path.GetFullPath(fullPath);
 
-                    switch (oldCPUSimulatorProcess.ExitCode) {
-                        case 0:
-                        break;
-                        case -1:
-                        if (!String.IsNullOrEmpty(oldCPUSimulatorProcessStandardError)) {
-                            string[] lastOldCPUSimulatorProcessStandardErrors = oldCPUSimulatorProcessStandardError.Split('\n');
-                            string lastOldCPUSimulatorProcessStandardError = null;
+                    // create the Old CPU Simulator Process Start Info
+                    oldCPUSimulatorProcessStartInfoArguments.Append(" -sw ");
+                    oldCPUSimulatorProcessStartInfoArguments.Append(GetValidArgument(fullPath, true));
 
-                            if (lastOldCPUSimulatorProcessStandardErrors.Length > 1) {
-                                lastOldCPUSimulatorProcessStandardError = lastOldCPUSimulatorProcessStandardErrors[lastOldCPUSimulatorProcessStandardErrors.Length - 2];
+                    ProcessStartInfo oldCPUSimulatorProcessStartInfo = new ProcessStartInfo(OLD_CPU_SIMULATOR_PATH, oldCPUSimulatorProcessStartInfoArguments.ToString()) {
+                        UseShellExecute = false,
+                        RedirectStandardError = true,
+                        RedirectStandardOutput = false,
+                        RedirectStandardInput = false,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        CreateNoWindow = true,
+                        ErrorDialog = false,
+                        WorkingDirectory = Path.GetDirectoryName(fullPath)
+                    };
+
+                    // create the Old CPU Simulator Process
+                    // hide... our laziness with not being async
+                    Invoke(new MethodInvoker(delegate () {
+                        Hide();
+                    }));
+
+                    using (Process oldCPUSimulatorProcess = Process.Start(oldCPUSimulatorProcessStartInfo)) {
+                        oldCPUSimulatorProcess.WaitForExit();
+
+                        Invoke(new MethodInvoker(delegate () {
+                            Show();
+
+                            string oldCPUSimulatorProcessStandardError = null;
+                            string oldCPUSimulatorProcessStandardOutput = null;
+
+                            if (oldCPUSimulatorProcessStartInfo.RedirectStandardError) {
+                                oldCPUSimulatorProcessStandardError = oldCPUSimulatorProcess.StandardError.ReadToEnd();
                             }
 
-                            if (!String.IsNullOrEmpty(lastOldCPUSimulatorProcessStandardError)) {
-                                MessageBox.Show(lastOldCPUSimulatorProcessStandardError, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            if (oldCPUSimulatorProcessStartInfo.RedirectStandardOutput) {
+                                oldCPUSimulatorProcessStandardOutput = oldCPUSimulatorProcess.StandardOutput.ReadToEnd();
                             }
-                        }
-                        break;
-                        case -2:
-                        MessageBox.Show(Properties.Resources.NoMultipleInstances, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        break;
-                        case -3:
-                        MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        break;
-                        default:
-                        MessageBox.Show(Properties.Resources.OldCPUNotSimulated, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        break;
+
+                            switch (oldCPUSimulatorProcess.ExitCode) {
+                                case 0:
+                                break;
+                                case -1:
+                                if (!String.IsNullOrEmpty(oldCPUSimulatorProcessStandardError)) {
+                                    string[] lastOldCPUSimulatorProcessStandardErrors = oldCPUSimulatorProcessStandardError.Split('\n');
+                                    string lastOldCPUSimulatorProcessStandardError = null;
+
+                                    if (lastOldCPUSimulatorProcessStandardErrors.Length > 1) {
+                                        lastOldCPUSimulatorProcessStandardError = lastOldCPUSimulatorProcessStandardErrors[lastOldCPUSimulatorProcessStandardErrors.Length - 2];
+                                    }
+
+                                    if (!String.IsNullOrEmpty(lastOldCPUSimulatorProcessStandardError)) {
+                                        MessageBox.Show(lastOldCPUSimulatorProcessStandardError, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }
+                                }
+                                break;
+                                case -2:
+                                MessageBox.Show(Properties.Resources.NoMultipleInstances, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                break;
+                                case -3:
+                                MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                break;
+                                default:
+                                MessageBox.Show(Properties.Resources.OldCPUNotSimulated, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                break;
+                            }
+                        }));
                     }
+                } catch {
+                    Invoke(new MethodInvoker(delegate () {
+                        Show();
+                        MessageBox.Show(Properties.Resources.OldCPUSimulatorProcessUnableToCreate, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }));
                 }
-            } catch {
-                Show();
-                MessageBox.Show(Properties.Resources.OldCPUSimulatorProcessUnableToCreate, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            });
+
+            createOldCPUSimulatorProcessThread.Start();
         }
 
         private void LoadSettings() {

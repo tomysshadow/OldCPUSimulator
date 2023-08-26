@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
 		}
 	};
 
-	consoleLog("Old CPU Simulator 2.2.1");
+	consoleLog("Old CPU Simulator 2.2.2");
 	consoleLog("By Anthony Kleine", 2);
 
 	// the number of required arguments
@@ -161,7 +161,7 @@ int main(int argc, char** argv) {
 						return result;
 					}
 
-					targetMhz = strtol(argv[++i], NULL, 10);
+					targetMhz = strtoul(argv[++i], NULL, 10);
 
 					if (!targetMhz) {
 						consoleLog("Target Rate must be a valid non-zero number", 2);
