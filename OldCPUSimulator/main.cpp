@@ -161,7 +161,7 @@ int main(int argc, char** argv) {
 						return result;
 					}
 
-					targetMhz = strtoul(argv[++i], 0, 10);
+					targetMhz = strtoul(argv[++i], 0, 0);
 
 					if (!targetMhz) {
 						consoleLog("Target Rate must be a valid non-zero number", 2);
@@ -182,7 +182,7 @@ int main(int argc, char** argv) {
 
 					argsRequired++;
 				} else if (arg == "-r" || arg == "--refresh-rate") {
-					refreshHz = strtoul(argv[++i], 0, 10);
+					refreshHz = strtoul(argv[++i], 0, 0);
 
 					if (!refreshHz) {
 						consoleLog("Refresh Rate must be a valid non-zero number", 2);
