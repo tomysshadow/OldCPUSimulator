@@ -232,11 +232,10 @@ namespace OldCPUSimulatorGUI {
             }
 
             // create Arguments for the Old CPU Simulator Process Start Info
-            StringBuilder oldCPUSimulatorProcessStartInfoArguments = new StringBuilder();
-            oldCPUSimulatorProcessStartInfoArguments.Append(" -t ");
+            StringBuilder oldCPUSimulatorProcessStartInfoArguments = new StringBuilder("-t ");
             oldCPUSimulatorProcessStartInfoArguments.Append(targetMhz);
             oldCPUSimulatorProcessStartInfoArguments.Append(" -r ");
-            oldCPUSimulatorProcessStartInfoArguments.Append(refreshHzNumericUpDown.Value);
+            oldCPUSimulatorProcessStartInfoArguments.Append((uint)refreshHzNumericUpDown.Value);
 
             if (setProcessPriorityHighCheckBox.Checked) {
                 oldCPUSimulatorProcessStartInfoArguments.Append(" -ph");
