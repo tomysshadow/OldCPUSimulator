@@ -67,7 +67,7 @@ namespace OldCPUSimulatorGUI {
             return GetMaxMhz(out ulong maxMhz);
         }
 
-        private readonly ulong[] targetMhzs = new ulong[] { 100, 133, 166, 200, 233, 266, 300, 333, 350, 400, 450 };
+        private readonly ulong[] targetMhzs = new ulong[] { 200, 233, 266, 300, 333, 350, 400, 450 };
 
         private bool GetMhz(out ulong targetMhz, out ulong maxMhz) {
             targetMhz = 0;

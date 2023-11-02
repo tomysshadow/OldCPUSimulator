@@ -311,9 +311,6 @@
             this.targetMhzComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.targetMhzComboBox.FormattingEnabled = true;
             this.targetMhzComboBox.Items.AddRange(new object[] {
-            "100 MHz",
-            "133 MHz",
-            "166 MHz",
             "200 MHz",
             "233 MHz",
             "266 MHz",
