@@ -311,9 +311,17 @@
             this.targetMhzComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.targetMhzComboBox.FormattingEnabled = true;
             this.targetMhzComboBox.Items.AddRange(new object[] {
-            "Intel Pentium 233 MHz (late 1990s)",
-            "Intel Pentium II 350 MHz (early 2000s)",
-            "Intel Pentium III 933 MHz (mid 2000s)",
+            "100 MHz",
+            "133 MHz",
+            "166 MHz",
+            "200 MHz",
+            "233 MHz",
+            "266 MHz",
+            "300 MHz",
+            "333 MHz",
+            "350 MHz",
+            "400 MHz",
+            "450 MHz",
             "Custom Target Rate..."});
             this.targetMhzComboBox.Location = new System.Drawing.Point(12, 238);
             this.targetMhzComboBox.Name = "targetMhzComboBox";

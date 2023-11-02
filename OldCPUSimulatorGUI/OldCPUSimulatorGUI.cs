@@ -67,7 +67,7 @@ namespace OldCPUSimulatorGUI {
             return GetMaxMhz(out ulong maxMhz);
         }
 
-        private readonly ulong[] targetMhzs = new ulong[] { 233, 350, 933 };
+        private readonly ulong[] targetMhzs = new ulong[] { 100, 133, 166, 200, 233, 266, 300, 333, 350, 400, 450 };
 
         private bool GetMhz(out ulong targetMhz, out ulong maxMhz) {
             targetMhz = 0;
@@ -511,8 +511,11 @@ namespace OldCPUSimulatorGUI {
                 return;
             }
 
-            runRecentButton.Enabled = true;
-            runRecentButton.Focus();
+            // only enable if not enabled before, prevent arrow key scroll bug
+            if (!runRecentButton.Enabled) {
+                runRecentButton.Enabled = true;
+                runRecentButton.Focus();
+            }
         }
 
         private void runRecentButton_Click(object sender, EventArgs e) {

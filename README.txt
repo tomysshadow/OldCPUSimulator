@@ -1,4 +1,4 @@
-Old CPU Simulator 2.2.2
+Old CPU Simulator 2.2.3
 By Anthony Kleine
 
 	This command line tool simulates running a process on a CPU with a
@@ -12,10 +12,6 @@ Usage: OldCPUSimulator -t targetRate [options] -sw software.exe
 	The Target Rate (in MHz, from 1 to your CPU's current clock speed)
 	to simulate.
 	This argument is required.
-	
-	Try 233 to simulate an Intel Pentium 233 MHz from the late 90s.
-	Try 350 to simulate an Intel Pentium II 350 MHz from the early 2000s.
-	Try 933 to simulate an Intel Pentium III 933 MHz from the mid 2000s.
 
 	Go to http://intel.com/pressroom/kits/quickrefyr.htm
 	for a quick reference of year to clock speed.

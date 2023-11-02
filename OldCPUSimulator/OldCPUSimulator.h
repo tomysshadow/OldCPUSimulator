@@ -11,7 +11,7 @@
 class OldCPUSimulator {
 	private:
 	void destroy();
-	bool duplicate(const OldCPUSimulator &oldCPUSimulator);
+	//bool duplicate(const OldCPUSimulator &oldCPUSimulator);
 
 	bool opened = false;
 
@@ -402,8 +402,8 @@ class OldCPUSimulator {
 	public:
 	OldCPUSimulator(bool setProcessPriorityHigh, bool syncedProcessMainThreadOnly, bool setSyncedProcessAffinityOne, bool refreshHzFloorFifteen);
 	~OldCPUSimulator();
-	OldCPUSimulator(const OldCPUSimulator &oldCPUSimulator);
-	OldCPUSimulator &operator=(const OldCPUSimulator &oldCPUSimulator);
+	OldCPUSimulator(const OldCPUSimulator &oldCPUSimulator) = delete;
+	OldCPUSimulator &operator=(const OldCPUSimulator &oldCPUSimulator) = delete;
 	bool open(std::string commandLine);
 	bool close();
 	bool run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UINT refreshHz);

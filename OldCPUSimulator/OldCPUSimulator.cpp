@@ -22,51 +22,6 @@ void OldCPUSimulator::destroy() {
 	}
 }
 
-bool OldCPUSimulator::duplicate(const OldCPUSimulator &oldCPUSimulator) {
-	//consoleLog("Duplicating Old CPU Simulator", OLD_CPU_SIMULATOR_OUT);
-	opened = oldCPUSimulator.opened;
-
-	setProcessPriorityHigh = oldCPUSimulator.setProcessPriorityHigh;
-	syncedProcessMainThreadOnly = oldCPUSimulator.syncedProcessMainThreadOnly;
-	setSyncedProcessAffinityOne = oldCPUSimulator.setSyncedProcessAffinityOne;
-	refreshHzFloorFifteen = oldCPUSimulator.refreshHzFloorFifteen;
-
-	syncedProcessID = oldCPUSimulator.syncedProcessID;
-	syncedThreadID = oldCPUSimulator.syncedThreadID;
-
-	syncedProcess = oldCPUSimulator.syncedProcess;
-	syncedThread = oldCPUSimulator.syncedThread;
-
-	jobObject = oldCPUSimulator.jobObject;
-
-	suspended = oldCPUSimulator.suspended;
-
-	suspendedThreadIDsVector = oldCPUSimulator.suspendedThreadIDsVector;
-	suspendedThreadIDsMap = oldCPUSimulator.suspendedThreadIDsMap;
-
-	resumedThreadsVector = oldCPUSimulator.resumedThreadsVector;
-
-	setProcessInformation = oldCPUSimulator.setProcessInformation;
-
-	systemInformationSize = oldCPUSimulator.systemInformationSize;
-
-	if (oldCPUSimulator.systemInformation) {
-		// this is a unique_ptr because the data in the buffer doesn't matter when copying
-		// (only the size)
-		systemInformation = std::unique_ptr<BYTE[]>(new BYTE[systemInformationSize]);
-
-		if (!systemInformation) {
-			consoleLog("Failed to Allocate systemInformation", OLD_CPU_SIMULATOR_ERR);
-			return false;
-		}
-	}
-	
-	ntSuspendProcess = oldCPUSimulator.ntSuspendProcess;
-	ntResumeProcess = oldCPUSimulator.ntResumeProcess;
-	ntQuerySystemInformation = oldCPUSimulator.ntQuerySystemInformation;
-	return true;
-}
-
 OldCPUSimulator::OldCPUSimulator(bool setProcessPriorityHigh, bool syncedProcessMainThreadOnly, bool setSyncedProcessAffinityOne, bool refreshHzFloorFifteen) : setProcessPriorityHigh(setProcessPriorityHigh), syncedProcessMainThreadOnly(syncedProcessMainThreadOnly), setSyncedProcessAffinityOne(setSyncedProcessAffinityOne), refreshHzFloorFifteen(refreshHzFloorFifteen) {
 	HMODULE kernel32ModuleHandle = LoadLibrary(TEXT("KERNEL32.DLL"));
 
@@ -86,29 +41,6 @@ OldCPUSimulator::OldCPUSimulator(bool setProcessPriorityHigh, bool syncedProcess
 OldCPUSimulator::~OldCPUSimulator() {
 	//consoleLog("Deconstructing Old CPU Simulator", OLD_CPU_SIMULATOR_OUT);
 	destroy();
-}
-
-OldCPUSimulator::OldCPUSimulator(const OldCPUSimulator &oldCPUSimulator) {
-	//consoleLog("Copy Constructing Old CPU Simulator", OLD_CPU_SIMULATOR_OUT);
-
-	if (!duplicate(oldCPUSimulator)) {
-		throw std::runtime_error("Failed to Duplicate Old CPU Simulator");
-	}
-}
-
-OldCPUSimulator &OldCPUSimulator::operator=(const OldCPUSimulator &oldCPUSimulator) {
-	//consoleLog("Setting Old CPU Simulator", OLD_CPU_SIMULATOR_OUT);
-
-	if (this == &oldCPUSimulator) {
-		return *this;
-	}
-
-	destroy();
-
-	if (!duplicate(oldCPUSimulator)) {
-		throw std::runtime_error("Failed to Duplicate Old CPU Simulator");
-	}
-	return *this;
 }
 
 bool OldCPUSimulator::open(std::string commandLine) {
