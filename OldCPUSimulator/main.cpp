@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
 
 	SYNC_MODE syncMode = SYNC_MODE_SUSPEND_PROCESS;
 	ULONG maxMhz = 0;
-	ULONG targetMhz = 233;
+	ULONG targetMhz = 100;
 	UINT refreshHz = 1000;
 
 	for (int i = MIN_ARGC; i < argc; i++) {
