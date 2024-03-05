@@ -85,7 +85,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)$(Configuration)\$(ProjectName).exe" "$(SolutionDir)OldCPUSimulatorGUI\bin\$(Configuration)\$(ProjectName).exe" /y</Command>
+      <Command>xcopy "$(SolutionDir)$(Configuration)\$(ProjectName).exe" "$(SolutionDir)OldCPUSimulatorGUI\bin\$(Configuration)" /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -114,7 +114,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)$(Configuration)\$(ProjectName).exe" "$(SolutionDir)OldCPUSimulatorGUI\bin\$(Configuration)\$(ProjectName).exe" /y</Command>
+      <Command>xcopy "$(SolutionDir)$(Configuration)\$(ProjectName).exe" "$(SolutionDir)OldCPUSimulatorGUI\bin\$(Configuration)" /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
