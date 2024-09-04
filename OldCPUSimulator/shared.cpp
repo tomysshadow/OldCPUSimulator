@@ -170,10 +170,11 @@ std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, 
 	std::vector<std::string> arguments = {};
 
 	{
-		std::smatch matches = {};
-		std::regex commandLineArguments("^\\s*(?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"?|(?:[^\"\\\\\\s]+|\\\\\\S)+|\\\\|\\s+$)+\\s?");
+		const std::regex COMMAND_LINE_ARGUMENTS("^\\s*(?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"?|(?:[^\"\\\\\\s]+|\\\\\\S)+|\\\\|\\s+$)+\\s?");
 
-		while (std::regex_search(commandLine, matches, commandLineArguments)
+		std::smatch matches = {};
+
+		while (std::regex_search(commandLine, matches, COMMAND_LINE_ARGUMENTS)
 			&& matches.length() > 0) {
 			arguments.push_back(matches[0]);
 			commandLine = matches.suffix();

@@ -1,4 +1,4 @@
-Old CPU Simulator 2.2.3
+Old CPU Simulator 2.2.4
 By Anthony Kleine
 
 	This command line tool simulates running a process on a CPU with a
