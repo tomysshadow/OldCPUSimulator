@@ -4,6 +4,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <stdlib.h>
 #define WIN32_NO_STATUS
 #include <windows.h>
 #include <winternl.h>
