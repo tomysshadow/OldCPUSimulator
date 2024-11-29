@@ -111,11 +111,13 @@ inline bool stringNullOrEmpty(const char* str) {
 	return !str || !*str;
 }
 
-inline UINT clamp(UINT number, UINT min, UINT max) {
-	return min(max, max(min, number));
+template <typename Number>
+inline constexpr Number clamp(Number number, Number min, Number max) {
+	return __min(max, __max(number, min));
 }
 
-inline UINT gcd(UINT a, UINT b) {
+template <typename Number>
+inline constexpr Number gcd(Number a, Number b) {
 	return a ? gcd(b % a, a) : b;
 }
 

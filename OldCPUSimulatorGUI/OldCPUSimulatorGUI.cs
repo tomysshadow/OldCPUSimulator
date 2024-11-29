@@ -168,7 +168,7 @@ namespace OldCPUSimulatorGUI {
 
                 refreshHzNumericUpDown.Minimum = 15;
                 refreshHzNumericUpDown.Increment = 15;
-                refreshHzNumericUpDown.Value = MathUtils.Clamp((uint)Math.Min((double)Math.Floor(refreshHzNumericUpDown.Value / 15) * 15, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+                refreshHzNumericUpDown.Value = MathUtils.Clamp(Math.Min((uint)(Math.Floor(refreshHzNumericUpDown.Value / 15) * 15), (uint)maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
                 refreshHzNumericUpDown.Maximum = MathUtils.Clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
             }
 

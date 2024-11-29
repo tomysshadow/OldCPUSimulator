@@ -1,11 +1,6 @@
 #include "shared.h"
 #include <iostream>
-#include <string>
 #include <regex>
-#define WIN32_NO_STATUS
-#include <windows.h>
-#include <winternl.h>
-#undef WIN32_NO_STATUS
 #include <ntstatus.h>
 
 extern "C" {
@@ -181,7 +176,7 @@ std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, 
 		}
 	}
 
-	std::vector<std::string>::size_type argumentsSize = arguments.size() + 1;
+	int argumentsSize = (int)(arguments.size() + 1);
 
 	if (begin < 0) {
 		begin += argumentsSize;
@@ -193,7 +188,9 @@ std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, 
 		end += argumentsSize;
 	}
 
-	end = min((int)argumentsSize - 1, end);
+	argumentsSize--;
+
+	end = min(argumentsSize, end);
 
 	std::string argumentSlice = "";
 

@@ -1,7 +1,5 @@
 #include "shared.h"
 #include "OldCPUSimulator.h"
-#include <string>
-#include <windows.h>
 
 #define MAIN_OUT 2
 #define MAIN_ERR true, false, true, __FILE__, __LINE__
@@ -81,7 +79,7 @@ int main(int argc, char** argv) {
 		}
 	};
 
-	consoleLog("Old CPU Simulator 2.2.4");
+	consoleLog("Old CPU Simulator 2.2.5");
 	consoleLog("By Anthony Kleine", 2);
 
 	// the number of required arguments

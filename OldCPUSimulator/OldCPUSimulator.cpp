@@ -1,7 +1,5 @@
 #include "OldCPUSimulator.h"
-#include <vector>
 #include <math.h>
-#include <windows.h>
 
 #define OLD_CPU_SIMULATOR_OUT true, 1
 #define OLD_CPU_SIMULATOR_ERR true, 1, true, __FILE__, __LINE__
@@ -254,9 +252,9 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 	}
 
 	// one millisecond (approximately)
-	UINT ms = clamp(1, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
+	UINT ms = clamp((UINT)1, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
 	// one second (approximately)
-	UINT s = clamp(1000, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
+	UINT s = clamp((UINT)1000, timeDevCaps.wPeriodMin, timeDevCaps.wPeriodMax);
 	// two seconds (we should never hit this)
 	UINT s2 = s + s;
 	s2 = max(2000, s2);
@@ -279,7 +277,8 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 	// we do this after in case the Refresh Rate before was well above the maximum
 	if (refreshHzFloorFifteen) {
 		maxRefreshHz = floor(maxRefreshHz / 15) * 15;
-		refreshHz = clamp((UINT)min(floor(refreshHz / 15) * 15, maxRefreshHz), ms, s);
+		refreshHz = (UINT)(floor(refreshHz / 15) * 15);
+		refreshHz = clamp(min(refreshHz, (UINT)maxRefreshHz), ms, s);
 	}
 
 	UINT refreshMs = clamp(s / refreshHz, (UINT)ceil(minRefreshMs), s);

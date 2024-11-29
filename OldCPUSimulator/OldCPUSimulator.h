@@ -2,9 +2,6 @@
 #include "shared.h"
 #include <vector>
 #include <map>
-#define WIN32_NO_STATUS
-#include <windows.h>
-#undef WIN32_NO_STATUS
 #include <ntstatus.h>
 #include <TlHelp32.h>
 
@@ -185,15 +182,15 @@ class OldCPUSimulator {
 
 	inline bool OldCPUSimulator::querySystemInformation() {
 		if (!systemInformation) {
-			throw std::runtime_error("systemInformation must not be NULL");
+			throw std::logic_error("systemInformation must not be NULL");
 		}
 
 		if (!systemInformationSize) {
-			throw std::runtime_error("systemInformationSize must not be zero");
+			throw std::logic_error("systemInformationSize must not be zero");
 		}
 
 		ULONG returnSize = 0;
-		NTSTATUS ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation.get(), systemInformationSize, &returnSize);
+		NTSTATUS ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation.get(), (ULONG)systemInformationSize, &returnSize);
 
 		while (ntStatus == STATUS_INFO_LENGTH_MISMATCH) {
 			// if the buffer wasn't large enough, increase the size
@@ -204,7 +201,7 @@ class OldCPUSimulator {
 				throw std::bad_alloc();
 			}
 
-			ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation.get(), systemInformationSize, &returnSize);
+			ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation.get(), (ULONG)systemInformationSize, &returnSize);
 		}
 
 		const size_t SYSTEM_PROCESS_INFORMATION_SIZE = sizeof(__SYSTEM_PROCESS_INFORMATION);
@@ -229,15 +226,15 @@ class OldCPUSimulator {
 		SUSPENDED_THREAD_IDS_MAP::iterator suspendedThreadIDsMapIterator = {};
 
 		do {
-			if ((DWORD)systemProcessInformationPointer->UniqueProcessId == syncedProcessID) {
+			if (*(PDWORD)&systemProcessInformationPointer->UniqueProcessId == syncedProcessID) {
 				systemThreadInformationPointer = (__PSYSTEM_THREAD_INFORMATION)(systemProcessInformationPointer + 1);
 
 				if (!systemThreadInformationPointer) {
-					throw std::runtime_error("systemThreadInformationPointer must not be NULL");
+					throw std::logic_error("systemThreadInformationPointer must not be NULL");
 				}
 
 				for (ULONG i = 0; i < systemProcessInformationPointer->NumberOfThreads; i++) {
-					threadID = (DWORD)systemThreadInformationPointer->ClientId.UniqueThread;
+					threadID = *(PDWORD)&systemThreadInformationPointer->ClientId.UniqueThread;
 
 					suspendedThreadIDsMapIterator = suspendedThreadIDsMap.find(threadID);
 
