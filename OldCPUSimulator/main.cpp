@@ -163,17 +163,6 @@ int main(int argc, char** argv) {
 						return result;
 					}
 
-					/*
-					if (maxMhz <= targetMhz) {
-						std::ostringstream oStringStream;
-						oStringStream << "Target Rate must not exceed or equal the Max Rate of " << maxMhz;
-
-						consoleLog(oStringStream.str().c_str(), 2);
-						help();
-						return result;
-					}
-					*/
-
 					argsRequired++;
 				} else if (arg == "-r" || arg == "--refresh-rate") {
 					refreshHz = strtoul(argv[++i], 0, 0);
