@@ -194,7 +194,7 @@ inline bool closeThread(HANDLE &thread) {
 }
 
 void consoleLog(const char* str = 0, short newline = true, short tab = false, bool err = false, const char* file = 0, unsigned int line = 0);
+std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin = 0, int end = -1);
 bool getMaxMhz(ULONG &maxMhz);
 bool setProcessAffinity(HANDLE process, DWORD affinity);
 bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setProcessInformation);
-std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin = 0, int end = -1);

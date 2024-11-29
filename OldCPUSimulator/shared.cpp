@@ -57,6 +57,44 @@ void consoleLog(const char* str, short newline, short tab, bool err, const char*
 	}
 }
 
+std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, int end) {
+	std::vector<std::string> arguments = {};
+
+	{
+		const std::regex COMMAND_LINE_ARGUMENTS("^\\s*(?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"?|(?:[^\"\\\\\\s]+|\\\\\\S)+|\\\\|\\s+$)+\\s?");
+
+		std::smatch matches = {};
+
+		while (std::regex_search(commandLine, matches, COMMAND_LINE_ARGUMENTS)
+			&& matches.length() > 0) {
+			arguments.push_back(matches[0]);
+			commandLine = matches.suffix();
+		}
+	}
+
+	int argumentsSize = (int)(arguments.size() + 1);
+
+	if (begin < 0) {
+		begin += argumentsSize;
+	}
+
+	begin = max(0, begin);
+
+	if (end < 0) {
+		end += argumentsSize;
+	}
+
+	argumentsSize--;
+	end = min(argumentsSize, end);
+
+	std::string argumentSlice = "";
+
+	for (int i = begin; i < end; i++) {
+		argumentSlice += arguments[i];
+	}
+	return argumentSlice;
+}
+
 bool getMaxMhz(ULONG &maxMhz) {
 	//consoleLog("Getting Max Rate", SHARED_OUT);
 
@@ -159,43 +197,4 @@ bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setP
 		}
 	}
 	return true;
-}
-
-std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, int end) {
-	std::vector<std::string> arguments = {};
-
-	{
-		const std::regex COMMAND_LINE_ARGUMENTS("^\\s*(?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"?|(?:[^\"\\\\\\s]+|\\\\\\S)+|\\\\|\\s+$)+\\s?");
-
-		std::smatch matches = {};
-
-		while (std::regex_search(commandLine, matches, COMMAND_LINE_ARGUMENTS)
-			&& matches.length() > 0) {
-			arguments.push_back(matches[0]);
-			commandLine = matches.suffix();
-		}
-	}
-
-	int argumentsSize = (int)(arguments.size() + 1);
-
-	if (begin < 0) {
-		begin += argumentsSize;
-	}
-
-	begin = max(0, begin);
-
-	if (end < 0) {
-		end += argumentsSize;
-	}
-
-	argumentsSize--;
-
-	end = min(argumentsSize, end);
-
-	std::string argumentSlice = "";
-
-	for (int i = begin; i < end; i++) {
-		argumentSlice += arguments[i];
-	}
-	return argumentSlice;
 }
