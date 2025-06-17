@@ -79,19 +79,19 @@ int main(int argc, char** argv) {
 		}
 	};
 
-	consoleLog("Old CPU Simulator 2.2.5");
+	consoleLog("Old CPU Simulator 2.3.0");
 	consoleLog("By Anthony Kleine", 2);
 
 	// the number of required arguments
 	// including the executable name, even if we don't use it
-	const int MIN_ARGC = 1;
+	static const int MIN_ARGC = 1;
 
 	if (argc < MIN_ARGC) {
 		help();
 		return result;
 	}
 
-	const int MIN_ARGS_REQUIRED = 2;
+	static const int MIN_ARGS_REQUIRED = 2;
 
 	std::string arg = "";
 	int argc2 = argc - 1;

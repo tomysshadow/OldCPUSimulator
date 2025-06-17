@@ -204,7 +204,7 @@ class OldCPUSimulator {
 			ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation.get(), (ULONG)systemInformationSize, &returnSize);
 		}
 
-		const size_t SYSTEM_PROCESS_INFORMATION_SIZE = sizeof(__SYSTEM_PROCESS_INFORMATION);
+		static const size_t SYSTEM_PROCESS_INFORMATION_SIZE = sizeof(__SYSTEM_PROCESS_INFORMATION);
 
 		if (ntStatus != STATUS_SUCCESS || returnSize < SYSTEM_PROCESS_INFORMATION_SIZE || returnSize > systemInformationSize) {
 			throw std::runtime_error("Failed to Query System Information");

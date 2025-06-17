@@ -413,7 +413,7 @@
             this.restoreDefaultsButton.Name = "restoreDefaultsButton";
             this.restoreDefaultsButton.Size = new System.Drawing.Size(94, 23);
             this.restoreDefaultsButton.TabIndex = 14;
-            this.restoreDefaultsButton.Text = "Restore Defaults";
+            this.restoreDefaultsButton.Text = "&Restore Defaults";
             this.restoreDefaultsButton.UseVisualStyleBackColor = true;
             this.restoreDefaultsButton.Click += new System.EventHandler(this.restoreDefaultsButton_Click);
             // 

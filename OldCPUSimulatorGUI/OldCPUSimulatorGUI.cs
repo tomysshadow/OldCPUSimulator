@@ -48,8 +48,14 @@ namespace OldCPUSimulatorGUI {
                         oldCPUSimulatorProcessStandardOutput = oldCPUSimulatorProcess.StandardOutput.ReadToEnd();
                     }
 
-                    if (oldCPUSimulatorProcess.ExitCode != 0 || !ulong.TryParse(oldCPUSimulatorProcessStandardOutput.Split('\n').Last(), out maxMhz)) {
-                        MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (oldCPUSimulatorProcess.ExitCode != 0
+                        || !ulong.TryParse(oldCPUSimulatorProcessStandardOutput.Split('\n').Last(), out maxMhz)) {
+                        MessageBox.Show(
+                            Properties.Resources.CPUSpeedNotDetermined,
+                            Properties.Resources.OldCPUSimulator,
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
                         return false;
                     }
 
@@ -57,7 +63,12 @@ namespace OldCPUSimulatorGUI {
                     maxMhzValueLabel.Text = maxMhz.ToString();
                 }
             } catch {
-                MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    Properties.Resources.CPUSpeedNotDetermined,
+                    Properties.Resources.OldCPUSimulator,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 return false;
             }
             return true;
@@ -82,7 +93,12 @@ namespace OldCPUSimulatorGUI {
             // ensure the Target Rate Combo Box's Selected Item is less than the Max Rate
             if (targetMhzComboBox.DropDownStyle == ComboBoxStyle.DropDown) {
                 if (!ulong.TryParse(targetMhzComboBox.Text, out targetMhz)) {
-                    MessageBox.Show(Properties.Resources.TargetRateValidNumber, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(
+                        Properties.Resources.TargetRateValidNumber,
+                        Properties.Resources.OldCPUSimulator,
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
                     return false;
                 }
 
@@ -97,12 +113,22 @@ namespace OldCPUSimulatorGUI {
             }
 
             if (targetMhz == 0) {
-                MessageBox.Show(Properties.Resources.TargetRateNotZero, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    Properties.Resources.TargetRateNotZero,
+                    Properties.Resources.OldCPUSimulator,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 return false;
             }
 
             if (maxMhz <= targetMhz) {
-                MessageBox.Show(String.Format(Properties.Resources.TargetRateMaxRate, maxMhz), Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    String.Format(Properties.Resources.TargetRateMaxRate, maxMhz),
+                    Properties.Resources.OldCPUSimulator,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 return false;
             }
 
@@ -156,11 +182,22 @@ namespace OldCPUSimulatorGUI {
             // and resumed a minimum of 1 Ms
             // (3 / 4) / (1 / 4) = 3 Ms
             // 3 Ms + 1 Ms = 4 Ms, our minRefreshMs
-            double minRefreshMs = (Math.Max(suspend, resume) / Math.Min(suspend, resume) * (double)refreshHzNumericUpDown.Minimum) + (double)refreshHzNumericUpDown.Minimum;
-            double maxRefreshHz = (minRefreshMs > 0) ? ((double)refreshHzNumericUpDown.Maximum / Math.Ceiling(minRefreshMs)) : (double)refreshHzNumericUpDown.Maximum;
+            double minRefreshMs = (Math.Max(suspend, resume) / Math.Min(suspend, resume)
+                * (double)refreshHzNumericUpDown.Minimum) + (double)refreshHzNumericUpDown.Minimum;
 
-            refreshHzNumericUpDown.Value = MathUtils.Clamp((uint)Math.Min((double)Properties.Settings.Default.RefreshHz, maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
-            refreshHzNumericUpDown.Maximum = MathUtils.Clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+            double maxRefreshHz = (minRefreshMs > 0)
+                ? ((double)refreshHzNumericUpDown.Maximum / Math.Ceiling(minRefreshMs))
+                : (double)refreshHzNumericUpDown.Maximum;
+
+            refreshHzNumericUpDown.Value = MathUtils.Clamp(
+                (uint)Math.Min((double)Properties.Settings.Default.RefreshHz, maxRefreshHz),
+                (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum
+            );
+
+            refreshHzNumericUpDown.Maximum = MathUtils.Clamp(
+                (uint)maxRefreshHz,
+                (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum
+            );
 
             // we do this after in case the Refresh Rate before was well above the maximum
             if (refreshRateFloorFifteenCheckBox.Checked) {
@@ -168,8 +205,16 @@ namespace OldCPUSimulatorGUI {
 
                 refreshHzNumericUpDown.Minimum = 15;
                 refreshHzNumericUpDown.Increment = 15;
-                refreshHzNumericUpDown.Value = MathUtils.Clamp(Math.Min((uint)(Math.Floor(refreshHzNumericUpDown.Value / 15) * 15), (uint)maxRefreshHz), (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
-                refreshHzNumericUpDown.Maximum = MathUtils.Clamp((uint)maxRefreshHz, (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum);
+
+                refreshHzNumericUpDown.Value = MathUtils.Clamp(
+                    Math.Min((uint)(Math.Floor(refreshHzNumericUpDown.Value / 15) * 15), (uint)maxRefreshHz),
+                    (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum
+                );
+
+                refreshHzNumericUpDown.Maximum = MathUtils.Clamp(
+                    (uint)maxRefreshHz,
+                    (uint)refreshHzNumericUpDown.Minimum, (uint)refreshHzNumericUpDown.Maximum
+                );
             }
 
             ShowRefreshRateMinimumMaximum();
@@ -190,40 +235,42 @@ namespace OldCPUSimulatorGUI {
         }
 
         // http://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/
-        private string GetValidArgument(string argument, bool force = false) {
-            if (argument == null) {
-                argument = String.Empty;
+        private string Quoted(string arg, bool force = false) {
+            if (arg == null) {
+                arg = String.Empty;
             }
 
-            if (!force && argument != String.Empty && argument.IndexOfAny(new char[] { ' ', '\t', '\n', '\v', '\"' }) == -1) {
-                return argument;
+            if (!force && arg != String.Empty && arg.IndexOfAny(new char[] { ' ', '\t', '\n', '\v', '\"' }) == -1) {
+                return arg;
             }
 
+            int literal = 0;
             int backslashes = 0;
-            StringBuilder validArgument = new StringBuilder("\"");
+            StringBuilder result = new StringBuilder("\"");
 
-            for (int i = 0; i < argument.Length; i++) {
-                backslashes = 0;
+            for (int i = 0; i < arg.Length; i++) {
+                char a = arg[i];
 
-                while (i != argument.Length && argument[i].ToString().Equals("\\", StringComparison.Ordinal)) {
+                if (a.ToString().Equals("\\", StringComparison.Ordinal)) {
                     backslashes++;
-                    i++;
+                    continue;
                 }
 
-                if (i != argument.Length) {
-                    if (argument[i].ToString().Equals("\"", StringComparison.Ordinal)) {
-                        validArgument.Append('\\', backslashes + backslashes + 1);
-                    } else {
-                        validArgument.Append('\\', backslashes);
-                    }
-
-                    validArgument.Append(argument[i]);
+                literal = backslashes;
+                
+                if (a.ToString().Equals("\"", StringComparison.Ordinal)) {
+                    backslashes = literal * 2 + 1;
                 }
+
+                result.Append('\\', backslashes);
+                result.Append(a);
+                backslashes = 0;
             }
 
-            validArgument.Append('\\', backslashes + backslashes);
-            validArgument.Append("\"");
-            return validArgument.ToString();
+            backslashes = literal * 2;
+            result.Append('\\', backslashes);
+            result.Append("\"");
+            return result.ToString();
         }
 
         private void CreateOldCPUSimulatorProcess() {
@@ -263,7 +310,12 @@ namespace OldCPUSimulatorGUI {
 
                     if (String.IsNullOrWhiteSpace(fullPath)) {
                         Invoke(new MethodInvoker(delegate () {
-                            MessageBox.Show(Properties.Resources.SelectRecentFileFirst, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show(
+                                Properties.Resources.SelectRecentFileFirst,
+                                Properties.Resources.OldCPUSimulator,
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                            );
                         }));
                         return;
                     }
@@ -272,9 +324,12 @@ namespace OldCPUSimulatorGUI {
 
                     // create the Old CPU Simulator Process Start Info
                     oldCPUSimulatorProcessStartInfoArguments.Append(" -sw ");
-                    oldCPUSimulatorProcessStartInfoArguments.Append(GetValidArgument(fullPath, true));
+                    oldCPUSimulatorProcessStartInfoArguments.Append(Quoted(fullPath, true));
 
-                    ProcessStartInfo oldCPUSimulatorProcessStartInfo = new ProcessStartInfo(OLD_CPU_SIMULATOR_PATH, oldCPUSimulatorProcessStartInfoArguments.ToString()) {
+                    ProcessStartInfo oldCPUSimulatorProcessStartInfo = new ProcessStartInfo(
+                        OLD_CPU_SIMULATOR_PATH,
+                        oldCPUSimulatorProcessStartInfoArguments.ToString()
+                    ) {
                         UseShellExecute = false,
                         RedirectStandardError = true,
                         RedirectStandardOutput = false,
@@ -317,22 +372,43 @@ namespace OldCPUSimulatorGUI {
                                     string lastOldCPUSimulatorProcessStandardError = null;
 
                                     if (lastOldCPUSimulatorProcessStandardErrors.Length > 1) {
-                                        lastOldCPUSimulatorProcessStandardError = lastOldCPUSimulatorProcessStandardErrors[lastOldCPUSimulatorProcessStandardErrors.Length - 2];
+                                        lastOldCPUSimulatorProcessStandardError =
+                                            lastOldCPUSimulatorProcessStandardErrors[lastOldCPUSimulatorProcessStandardErrors.Length - 2];
                                     }
 
                                     if (!String.IsNullOrEmpty(lastOldCPUSimulatorProcessStandardError)) {
-                                        MessageBox.Show(lastOldCPUSimulatorProcessStandardError, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        MessageBox.Show(
+                                            lastOldCPUSimulatorProcessStandardError,
+                                            Properties.Resources.OldCPUSimulator,
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Error
+                                        );
                                     }
                                 }
                                 break;
                                 case -2:
-                                MessageBox.Show(Properties.Resources.NoMultipleInstances, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show(
+                                    Properties.Resources.NoMultipleInstances,
+                                    Properties.Resources.OldCPUSimulator,
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error
+                                );
                                 break;
                                 case -3:
-                                MessageBox.Show(Properties.Resources.CPUSpeedNotDetermined, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show(
+                                    Properties.Resources.CPUSpeedNotDetermined,
+                                    Properties.Resources.OldCPUSimulator,
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error
+                                );
                                 break;
                                 default:
-                                MessageBox.Show(Properties.Resources.OldCPUNotSimulated, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show(
+                                    Properties.Resources.OldCPUNotSimulated,
+                                    Properties.Resources.OldCPUSimulator,
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error
+                                );
                                 break;
                             }
                         }));
@@ -340,7 +416,12 @@ namespace OldCPUSimulatorGUI {
                 } catch {
                     Invoke(new MethodInvoker(delegate () {
                         Show();
-                        MessageBox.Show(Properties.Resources.OldCPUSimulatorProcessUnableToCreate, Properties.Resources.OldCPUSimulator, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(
+                            Properties.Resources.OldCPUSimulatorProcessUnableToCreate,
+                            Properties.Resources.OldCPUSimulator,
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
                     }));
                 }
             });
@@ -396,7 +477,12 @@ namespace OldCPUSimulatorGUI {
                     return;
                 }
 
-                if (MessageBox.Show(Properties.Resources.RunDragAndDroppedFile, Properties.Resources.OldCPUSimulator, MessageBoxButtons.YesNo, MessageBoxIcon.None) == DialogResult.No) {
+                if (MessageBox.Show(
+                    Properties.Resources.RunDragAndDroppedFile,
+                    Properties.Resources.OldCPUSimulator,
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.None
+                ) == DialogResult.No) {
                     return;
                 }
             }
@@ -405,7 +491,12 @@ namespace OldCPUSimulatorGUI {
             try {
                 fullPath = Path.GetFullPath(fullPath);
             } catch {
-                MessageBox.Show(String.Format(Properties.Resources.MissingFile, fullPath), Properties.Resources.OldCPUNotSimulated, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    String.Format(Properties.Resources.MissingFile, fullPath),
+                    Properties.Resources.OldCPUNotSimulated,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 return;
             }
 
@@ -450,7 +541,7 @@ namespace OldCPUSimulatorGUI {
                 return;
             }
 
-            e.Effect = DragDropEffects.Move;
+            e.Effect = DragDropEffects.Copy;
         }
 
         private void WindowDragDrop(DragEventArgs e) {
@@ -578,7 +669,12 @@ namespace OldCPUSimulatorGUI {
         }
 
         private void restoreDefaultsButton_Click(object sender, EventArgs e) {
-            if (MessageBox.Show(Properties.Resources.AreYouSureRestoreDefaults, Properties.Resources.OldCPUSimulator, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No) {
+            if (MessageBox.Show(
+                    Properties.Resources.AreYouSureRestoreDefaults,
+                    Properties.Resources.OldCPUSimulator,
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                ) == DialogResult.No) {
                 return;
             }
 

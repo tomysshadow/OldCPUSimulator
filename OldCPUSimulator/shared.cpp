@@ -61,7 +61,7 @@ std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, 
 	std::vector<std::string> arguments = {};
 
 	{
-		const std::regex COMMAND_LINE_ARGUMENTS("^\\s*(?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"?|(?:[^\"\\\\\\s]+|\\\\\\S)+|\\\\|\\s+$)+\\s?");
+		static const std::regex COMMAND_LINE_ARGUMENTS("^\\s*(?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"?|(?:[^\"\\\\\\s]+|\\\\\\S)+|\\\\|\\s+$)+\\s?");
 
 		std::smatch matches = {};
 
@@ -188,7 +188,7 @@ bool honorTimerResolutionRequests(HANDLE process, SetProcessInformationProc setP
 	processPowerThrottlingState.ControlMask = _PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION;
 	processPowerThrottlingState.StateMask = 0;
 
-	const DWORD PROCESS_POWER_THROTTLING_STATE_SIZE = sizeof(processPowerThrottlingState);
+	static const DWORD PROCESS_POWER_THROTTLING_STATE_SIZE = sizeof(processPowerThrottlingState);
 
 	if (!setProcessInformation(process, _ProcessPowerThrottling, &processPowerThrottlingState, PROCESS_POWER_THROTTLING_STATE_SIZE)) {
 		if (GetLastError() != ERROR_INVALID_PARAMETER) {

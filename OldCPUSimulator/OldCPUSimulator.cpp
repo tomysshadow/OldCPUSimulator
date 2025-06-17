@@ -20,7 +20,15 @@ void OldCPUSimulator::destroy() {
 	}
 }
 
-OldCPUSimulator::OldCPUSimulator(bool setProcessPriorityHigh, bool syncedProcessMainThreadOnly, bool setSyncedProcessAffinityOne, bool refreshHzFloorFifteen) : setProcessPriorityHigh(setProcessPriorityHigh), syncedProcessMainThreadOnly(syncedProcessMainThreadOnly), setSyncedProcessAffinityOne(setSyncedProcessAffinityOne), refreshHzFloorFifteen(refreshHzFloorFifteen) {
+OldCPUSimulator::OldCPUSimulator(
+	bool setProcessPriorityHigh,
+	bool syncedProcessMainThreadOnly,
+	bool setSyncedProcessAffinityOne,
+	bool refreshHzFloorFifteen
+) : setProcessPriorityHigh(setProcessPriorityHigh),
+syncedProcessMainThreadOnly(syncedProcessMainThreadOnly),
+setSyncedProcessAffinityOne(setSyncedProcessAffinityOne),
+refreshHzFloorFifteen(refreshHzFloorFifteen) {
 	HMODULE kernel32ModuleHandle = LoadLibrary(TEXT("KERNEL32.DLL"));
 
 	if (kernel32ModuleHandle) {
@@ -67,7 +75,8 @@ bool OldCPUSimulator::open(std::string commandLine) {
 	PROCESS_INFORMATION processInformation = {};
 
 	// create the processHandle, fail if we can't
-	opened = CreateProcess(NULL, _commandLine.get(), NULL, NULL, FALSE, CREATE_BREAKAWAY_FROM_JOB | CREATE_SUSPENDED, NULL, NULL, &startupInfo, &processInformation)
+	opened = CreateProcess(NULL, _commandLine.get(), NULL, NULL, FALSE, CREATE_BREAKAWAY_FROM_JOB | CREATE_SUSPENDED,
+		NULL, NULL, &startupInfo, &processInformation)
 		&& processInformation.hProcess
 		&& processInformation.hThread;
 
@@ -103,7 +112,7 @@ bool OldCPUSimulator::open(std::string commandLine) {
 	JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobObjectInformation = {};
 	jobObjectInformation.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK;
 
-	const size_t JOB_OBJECT_INFORMATION_SIZE = sizeof(jobObjectInformation);
+	static const size_t JOB_OBJECT_INFORMATION_SIZE = sizeof(jobObjectInformation);
 
 	if (!SetInformationJobObject(jobObject, JobObjectExtendedLimitInformation, &jobObjectInformation, JOB_OBJECT_INFORMATION_SIZE)) {
 		consoleLog("Failed to Set Job Object Information", OLD_CPU_SIMULATOR_ERR);
@@ -244,7 +253,7 @@ bool OldCPUSimulator::run(SYNC_MODE syncMode, ULONG maxMhz, ULONG targetMhz, UIN
 	};
 
 	TIMECAPS timeDevCaps = {};
-	const size_t TIME_DEV_CAPS_SIZE = sizeof(timeDevCaps);
+	static const size_t TIME_DEV_CAPS_SIZE = sizeof(timeDevCaps);
 
 	if (timeGetDevCaps(&timeDevCaps, TIME_DEV_CAPS_SIZE) != MMSYSERR_NOERROR) {
 		consoleLog("Failed to Get Time Dev Caps", OLD_CPU_SIMULATOR_ERR);
