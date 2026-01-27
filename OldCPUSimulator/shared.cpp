@@ -66,7 +66,7 @@ std::string getArgumentSliceFromCommandLine(std::string commandLine, int begin, 
 		std::smatch matches = {};
 
 		while (std::regex_search(commandLine, matches, COMMAND_LINE_ARGUMENTS)
-			&& matches.length() > 0) {
+			&& matches.size() > 0) {
 			arguments.push_back(matches[0]);
 			commandLine = matches.suffix();
 		}
