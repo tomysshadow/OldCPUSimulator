@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TOMYSSHADOW")]
 [assembly: AssemblyProduct("OldCPUSimulatorGUI")]
-[assembly: AssemblyCopyright("Copyright © Anthony Kleine 2025")]
+[assembly: AssemblyCopyright("Copyright © Anthony Kleine 2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -174,10 +174,6 @@ class OldCPUSimulator {
 
 		systemInformationSize = pageSize;
 		systemInformation = std::unique_ptr<BYTE[]>(new BYTE[systemInformationSize]);
-
-		if (!systemInformation) {
-			throw std::bad_alloc();
-		}
 	}
 
 	inline bool OldCPUSimulator::querySystemInformation() {
@@ -196,10 +192,6 @@ class OldCPUSimulator {
 			// if the buffer wasn't large enough, increase the size
 			systemInformationSize += systemInformationSize;
 			systemInformation = std::unique_ptr<BYTE[]>(new BYTE[systemInformationSize]);
-
-			if (!systemInformation) {
-				throw std::bad_alloc();
-			}
 
 			ntStatus = ntQuerySystemInformation(SystemProcessInformation, systemInformation.get(), (ULONG)systemInformationSize, &returnSize);
 		}
@@ -221,7 +213,7 @@ class OldCPUSimulator {
 		HANDLE thread = NULL;
 
 		SUSPENDED_THREAD_IDS_VECTOR _suspendedThreadIDsVector = suspendedThreadIDsVector;
-		suspendedThreadIDsVector = {};
+		suspendedThreadIDsVector.clear();
 
 		SUSPENDED_THREAD_IDS_MAP::iterator suspendedThreadIDsMapIterator = {};
 
@@ -229,11 +221,10 @@ class OldCPUSimulator {
 			if (*(PDWORD)&systemProcessInformationPointer->UniqueProcessId == syncedProcessID) {
 				systemThreadInformationPointer = (__PSYSTEM_THREAD_INFORMATION)(systemProcessInformationPointer + 1);
 
-				if (!systemThreadInformationPointer) {
-					throw std::logic_error("systemThreadInformationPointer must not be NULL");
-				}
+				ULONG numberOfThreads = systemProcessInformationPointer->NumberOfThreads;
+				suspendedThreadIDsVector.reserve(numberOfThreads);
 
-				for (ULONG i = 0; i < systemProcessInformationPointer->NumberOfThreads; i++) {
+				for (ULONG i = 0; i < numberOfThreads; i++) {
 					threadID = *(PDWORD)&systemThreadInformationPointer->ClientId.UniqueThread;
 
 					suspendedThreadIDsMapIterator = suspendedThreadIDsMap.find(threadID);
@@ -286,7 +277,7 @@ class OldCPUSimulator {
 		HANDLE thread = NULL;
 
 		SUSPENDED_THREAD_IDS_VECTOR _suspendedThreadIDsVector = suspendedThreadIDsVector;
-		suspendedThreadIDsVector = {};
+		suspendedThreadIDsVector.clear();
 
 		SUSPENDED_THREAD_IDS_MAP::iterator suspendedThreadIDsMapIterator = {};
 
@@ -329,16 +320,14 @@ class OldCPUSimulator {
 			throw std::runtime_error("Failed to Create Toolhelp Snapshot");
 		}
 
-		__try {
-			return _toolhelpSnapshot_snapshotHandle(snapshot);
-		} __finally {
+		SCOPE_EXIT {
 			if (!CloseHandle(snapshot)) {
 				throw std::runtime_error("Failed to Close Handle");
 			}
 
 			snapshot = NULL;
-		}
-		return false;
+		};
+		return _toolhelpSnapshot_snapshotHandle(snapshot);
 	}
 
 	inline void OldCPUSimulator::closeResumedThreads() {
